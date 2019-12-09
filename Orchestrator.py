@@ -35,7 +35,7 @@ class Orchestrator():
 		self.Visualizer = Visualizer() 
 		self.SentimentAnalyzer = SentimentAnalyzer() 
 
-	def read_data(self, path, savePath=None, clean=True, save=False, random=True, number_of_articles = 50):       
+	def read_data(self, path, savePath=None, clean=True, save=False, random=False, number_of_articles = 50):       
 		return self.Reader.Load_Splits(path, savePath=savePath, clean=clean, save=save, shouldRandomize=random, number_of_articles=number_of_articles)
 
 	def imdb(self, model, label_path, vector_path):
@@ -46,8 +46,8 @@ class Orchestrator():
 
 	def train_sent_models(self, all_articles, leanings, article_doc2vec_label_path, article_doc2vec_vector_path, article_doc2vec_model_path, imdb_label_path, imdb_vector_path):
 
-		articles = list(map(lambda article: article.Content, flat_list))
-		labels = list(map(lambda article: article.Label.TargetGender, flat_list))
+		articles = list(map(lambda article: article.Content, all_articles))
+		labels = list(map(lambda article: article.Label.TargetGender, all_articles))
 
 		if (not os.path.exists(article_doc2vec_model_path)):
 			all_articles_model = self.docEmbed.Embed(articles, labels) 
@@ -109,8 +109,8 @@ class Orchestrator():
 			print('\n')
 
 			print('leaning', sent[4])
-			print("content:", sent[0])
-			print("Gender:", sent[1])
+			print("content:", sent[0].Content)
+			print("target:", sent[0].Label.TargetName)
 			print("prediction", sent[2])
 			print("confidence", sent[3])
 
@@ -427,57 +427,14 @@ class Orchestrator():
 	
 
 orchestrator = Orchestrator()
-splits = orchestrator.read_data(ApplicationConstants.all_articles_random, clean=False, save=False, number_of_articles=5000) 
+splits = orchestrator.read_data(ApplicationConstants.all_articles_random, clean=False, save=False, number_of_articles=1000) 
 
-#train embeddings - uncleaned 
 leanings_articles = list(map(lambda leaning: splits[0][leaning][ApplicationConstants.Train] + splits[0][leaning][ApplicationConstants.Validation] + splits[0][leaning][ApplicationConstants.Test], splits[0]))
 leanings = []
 
 for leaning in splits[0]:
 	for article in range(len(splits[0][leaning][ApplicationConstants.Train] + splits[0][leaning][ApplicationConstants.Validation] + splits[0][leaning][ApplicationConstants.Test])):
-		leanings.append(leaning) 
-		print("PRECISION")
-		orchestrator.calc_metrics(bP, fP, uP, nP, hP)
-		print("RECALL")
-		orchestrator.calc_metrics(bR, fR, uR, nR, hR)
-		print("F-1")
-		orchestrator.calc_metrics(bF, fF, uF, nF, hF)
-
-#splits = orchestrator.read_data(ApplicationConstants.all_articles_random, clean=False, save=False, number_of_articles=1000) 
-#orchestrator.train_all(splits)
-cleaned_splits = orchestrator.read_data(ApplicationConstants.cleaned_news_root_path, clean= False, save=False, number_of_articles=1000)
-
-#train embeddings - uncleaned 
-leanings_articles = list(map(lambda leaning: splits[0][leaning][ApplicationConstants.Train] + splits[0][leaning][ApplicationConstants.Validation] + splits[0][leaning][ApplicationConstants.Test], splits[0]))
-leanings = []
-
-for leaning in splits[0]:
-	for article in range(len(splits[0][leaning][ApplicationConstants.Train] + splits[0][leaning][ApplicationConstants.Validation] + splits[0][leaning][ApplicationConstants.Test])):
-		leanings.append(leaning) 
-
-flat_list = [item for sublist in leanings_articles for item in sublist]
-articles = list(map(lambda article: article.Content, flat_list))  
-labels = list(map(lambda article: article.Label.TargetGender, flat_list))
-print("DIRTY BOYS")
-orchestrator.train_sent_models(articles, labels, leanings, ApplicationConstants.all_articles_doc2vec_labels_uncleaned_path, ApplicationConstants.all_articles_doc2vec_vector_uncleaned_path, ApplicationConstants.all_articles_doc2vec_model_uncleaned_path, ApplicationConstants.imdb_sentiment_label_uncleaned_path, ApplicationConstants.imdb_sentiment_vector_uncleaned_path)
-
-#train embeddings - cleaned 
-leanings_articles = list(map(lambda leaning: cleaned_splits[0][leaning][ApplicationConstants.Train] + cleaned_splits[0][leaning][ApplicationConstants.Validation] + cleaned_splits[0][leaning][ApplicationConstants.Test], cleaned_splits[0]))
-leanings = []
-
-for leaning in cleaned_splits[0]:
-	for article in range(len(cleaned_splits[0][leaning][ApplicationConstants.Train] + cleaned_splits[0][leaning][ApplicationConstants.Validation] + cleaned_splits[0][leaning][ApplicationConstants.Test])):
  		leanings.append(leaning) 
 
-flat_list = [item for sublist in leanings_articles for item in sublist]
-cleaned_articles = list(map(lambda article: article.Content, flat_list))  
-cleaned_labels = list(map(lambda article: article.Label.TargetGender, flat_list))
-print("CLEAN BOYS")
-orchestrator.train_sent_models(articles, labels, leanings, ApplicationConstants.all_articles_doc2vec_labels_cleaned_path, ApplicationConstants.all_articles_doc2vec_vector_cleaned_path, ApplicationConstants.all_articles_doc2vec_model_cleaned_path, ApplicationConstants.imdb_sentiment_label_cleaned_path, ApplicationConstants.imdb_sentiment_vector_cleaned_path)
-
-
-flat_list = [item for sublist in leanings_articles for item in sublist]
-
-orchestrator.train_sent_models(flat_list, leanings, ApplicationConstants.all_articles_doc2vec_labels_uncleaned_path, ApplicationConstants.all_articles_doc2vec_vector_uncleaned_path, ApplicationConstants.all_articles_doc2vec_model_uncleaned_path, ApplicationConstants.imdb_sentiment_label_uncleaned_path, ApplicationConstants.imdb_sentiment_vector_uncleaned_path)
-
-
+articles = [item for sublist in leanings_articles for item in sublist]
+orchestrator.train_sent_models(articles, leanings, ApplicationConstants.all_articles_doc2vec_labels_cleaned_path, ApplicationConstants.all_articles_doc2vec_vector_cleaned_path, ApplicationConstants.all_articles_doc2vec_model_cleaned_path, ApplicationConstants.imdb_sentiment_label_cleaned_path, ApplicationConstants.imdb_sentiment_vector_cleaned_path)
