@@ -8,6 +8,11 @@ from Metrics import Metrics
 from Visualizer import Visualizer 
 from imdb_data import LabeledLineSentence
 import ApplicationConstants
+from check_overlap import word_sets
+import nltk
+import re
+import StopWords
+from sklearn.metrics import accuracy_score
 
 #models
 from Models.SVM_engine import SVM
@@ -15,12 +20,14 @@ from Models.KNN_engine import KNN
 from Models.Naive_Bayes_engine import Naive_Bayes
 from Models.Linear_Classification_engine import Linear_Classifier 
 from Models.NN_engine import NN
+from Models.NN_engine import  Linear_NN
 
 #helpers
 import statistics
 import numpy as np 
 import matplotlib.pyplot as plt 
 import os.path
+import random
 
 
 class Orchestrator():
@@ -53,7 +60,7 @@ class Orchestrator():
 			all_articles_model = self.docEmbed.Embed(articles, labels) 
 			all_articles_model.save(article_doc2vec_model_path)
 		else:
-			all_articles_model = self.docEmbed.Load_Model(article_doc2vec_model_path) 
+			all_articles_model = self.docEmbed.Load_Model(article_doc2vec_model_path)
 
 		if (not os.path.exists(article_doc2vec_label_path) or not os.path.exists(article_doc2vec_vector_path)):
 
@@ -424,17 +431,140 @@ class Orchestrator():
 		print("USA SVM: " + str(UttlS /(len(bP)/5)) + " USA KNN: " + str(UttlK/(len(bP)/5)) + " USA NB: " + str(UttlN /(len(bP)/5)) + " USA LC: " +str(UttlL /(len(bP)/5)) + " USA NN: " + str(UttlNet/(len(bP)/5)))
 		print("Huffpost SVM: " + str(HttlS /(len(bP)/5)) + " Huffpost KNN: " + str(HttlK/(len(bp)/5)) + " Huffpost NB: " + str(HttlN /(len(bp)/5)) + " Huffpost LC: " +str(HttlL /(len(bp)/5)) + " Huffpost NN: " + str(HttlNet/(len(bp)/5)))
 		print("NYT SVM: " + str(NttlS /(len(bP)/5)) + " NYT KNN: " + str(NttlK/(len(bp)/5)) + " NYT NB: " + str(NttlN /(len(bp)/5)) + " NYT LC: " +str(NttlL /(len(bp)/5)) + " NYT NN: " + str(NttlNet/(len(bp)/5)))
-	
+
+	def check_word_content(self, word_list, all_articles):
+		articles = list(map(lambda article: article.Content, all_articles))
+
+		bad_words = []
+		ttl = 0
+		#count = 0
+		affected = []
+		count_list = []
+		print(len(articles))
+		for i, article in enumerate(articles):
+			for word in word_list:
+				if re.search(rf'\b{word}\b' ,  article):
+					if word not in bad_words:
+						bad_words.append(word)
+						count_list.append(1)
+
+					else:
+						ind = bad_words.index(word)
+						val = count_list[ind]
+
+						num_exist = val + article.count(word)
+						count_list[ind] = num_exist
+
+					affected.append(i)
+
+		a = []
+		print(affected)
+		[a.append(x) for x in affected if x not in a]
+		print(a)
+		print(bad_words)
+		print("total articles: ", len(a))
+		zipped = list(zip(bad_words, count_list))
+		print("total use: ",zipped)
+
+
+	def calc_word_vector(self, all_articles):
+		word_vector = []
+		count_vector = []
+		punctuation = [',', '.', '"', '!', '?']
+		no_no = ['oval','Oval', 'Rep', 'rep', 'Rep.', 'rep.', 'Dem.', 'Dem', 'dem', 'dem.']
+		articles = list(map(lambda article: article.Content, all_articles))
+		for article in articles:
+			words = nltk.word_tokenize(article)
+			for word in words:
+					word_vector.append(word)
+		return word_vector
+
+	def calc_count_doc_count_vector(self, word_vector, article):
+		words = nltk.word_tokenize(article)
+		count_vector = []
+		for i in range(len(word_vector)):
+			count_vector.append(0)
+		for word in words:
+			if word in word_vector:
+				ind = word_vector.index(word)
+				count_vector[ind] += 1
+
+		return count_vector
+
 
 orchestrator = Orchestrator()
-splits = orchestrator.read_data(ApplicationConstants.all_articles_random, clean=False, save=False, number_of_articles=1000) 
+splits = orchestrator.read_data(ApplicationConstants.cleaned_news_root_path, clean=False, save=False, number_of_articles=1000) #article objects
 
 leanings_articles = list(map(lambda leaning: splits[0][leaning][ApplicationConstants.Train] + splits[0][leaning][ApplicationConstants.Validation] + splits[0][leaning][ApplicationConstants.Test], splits[0]))
-leanings = []
+#print(leanings_articles)
+leanings = [] #flattened leanings
 
 for leaning in splits[0]:
 	for article in range(len(splits[0][leaning][ApplicationConstants.Train] + splits[0][leaning][ApplicationConstants.Validation] + splits[0][leaning][ApplicationConstants.Test])):
- 		leanings.append(leaning) 
+ 		leanings.append(leaning)
 
 articles = [item for sublist in leanings_articles for item in sublist]
-orchestrator.train_sent_models(articles, leanings, ApplicationConstants.all_articles_doc2vec_labels_cleaned_path, ApplicationConstants.all_articles_doc2vec_vector_cleaned_path, ApplicationConstants.all_articles_doc2vec_model_cleaned_path, ApplicationConstants.imdb_sentiment_label_cleaned_path, ApplicationConstants.imdb_sentiment_vector_cleaned_path)
+
+cumulative_word_vec = orchestrator.calc_word_vector(articles)
+articles_list = list(map(lambda article: article.Content, articles))
+labels = list(map(lambda article: article.Label.TargetGender,articles))
+print("zipping and shuffling")
+zippedArticles = list(zip(articles_list, labels))
+random.shuffle(zippedArticles)
+
+list_articles = []
+list_labels = []
+print("unzipping")
+for article, label in zippedArticles:
+	list_articles.append(article)
+	list_labels.append(label)
+
+
+for i, label in enumerate(list_labels):
+	if label == 0:
+		list_labels[i] = -1
+
+count_vectors = []
+for article in list_articles:
+	count_vectors.append(orchestrator.calc_count_doc_count_vector(cumulative_word_vec,article))
+
+trainLen = int(len(count_vectors)*0.8)
+
+
+
+net = Linear_NN()
+weights = net.Train(count_vectors[:trainLen], list_labels[:trainLen], count_vectors[trainLen:], list_labels[trainLen:])
+print("at preds")
+predictions = net.Predict(count_vectors[trainLen:])
+
+print()
+print()
+acc = accuracy_score(labels[trainLen:], predictions)
+
+print("accuracy is: " + str(acc))
+if acc >= .75:
+
+
+	weights = list(str(weights)[2:-2])
+
+
+	resTop = sorted(range(len(weights)), key = lambda sub: weights[sub])[-10:]
+	resBottom = sorted(range(len(weights)), key = lambda sub: weights[sub])[:10]
+
+
+	print(len(weights), len(resTop), len(resBottom))
+	print("Male Top Words: ")
+	for index in resTop:
+		print(cumulative_word_vec[index])
+	print("Female Top Words: ")
+	for index in resBottom:
+		print(cumulative_word_vec[index])
+
+else:
+	print("TUNE HYPERPARAMS DUMMY")
+
+#debias, zhao, not_shared = word_sets()
+
+#orchestrator.check_word_content(not_shared, articles)
+
+#orchestrator.train_sent_models(articles, leanings, ApplicationConstants.all_articles_doc2vec_labels_cleaned_path, ApplicationConstants.all_articles_doc2vec_vector_cleaned_path, ApplicationConstants.all_articles_doc2vec_model_cleaned_path, ApplicationConstants.imdb_sentiment_label_cleaned_path, ApplicationConstants.imdb_sentiment_vector_cleaned_path)

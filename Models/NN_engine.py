@@ -7,6 +7,7 @@ import warnings
 warnings.warn = warn
 
 from sklearn.neural_network import MLPClassifier
+from sklearn.linear_model import Perceptron
 
 
 class NN(implements(IModel)):
@@ -22,5 +23,32 @@ class NN(implements(IModel)):
     def Train(self, trainFeatures, trainLabels, validationFeatures, validationLabels):
         self.Model.fit(trainFeatures, trainLabels)
 
+
     def Predict(self, features): 
         return self.Model.predict(features) , self.Model.predict_proba(features)
+
+class Linear_NN(implements(IModel)):
+
+    def __init__(self):
+        self.Model = self.Build_Model()
+
+    def Build_Model(self):
+
+        model = Perceptron()
+
+
+        #return weights
+
+        return model
+
+    def Train(self, trainFeatures, trainLabels, validationFeatures, validationLabels):
+        print("fitting")
+        self.Model.fit(trainFeatures, trainLabels)
+        print("weights")
+        weights = self.Model.coef_
+
+
+        return weights
+
+    def Predict(self, features):
+        return self.Model.predict(features)
