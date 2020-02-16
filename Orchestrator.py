@@ -21,7 +21,9 @@ import statistics
 import numpy as np 
 import matplotlib.pyplot as plt 
 import os.path
+from nltk.tokenize import sent_tokenize
 
+import sys
 
 class Orchestrator():
 
@@ -35,8 +37,18 @@ class Orchestrator():
 		self.Visualizer = Visualizer() 
 		self.SentimentAnalyzer = SentimentAnalyzer() 
 
-	def read_data(self, path, clean=True, save=False, number_of_articles = 50):       
-		return self.Reader.Load_Splits(path, clean=clean, save=save, number_of_articles=number_of_articles)
+	def read_data(self, path, clean=True, save=False, number_of_articles = 50, splits=True, neutral=False):       
+		return self.Reader.Load_Splits(path, clean=clean, save=save, number_of_articles=number_of_articles, split=splits, neutral=neutral)
+	
+	def get_count(self, articles) -> int:
+		article_count = 0 
+
+		for article in articles:
+			tokens = sent_tokenize(article)
+			article_count += len(tokens)
+
+		return article_count
+
 
 	def imdb(self, model, label_path, vector_path):
 		sources = {'test-neg.txt':'TEST_NEG', 'test-pos.txt':'TEST_POS', 'train-neg.txt':'TRAIN_NEG', 'train-pos.txt':'TRAIN_POS' }
@@ -44,9 +56,31 @@ class Orchestrator():
 		vectors, labels = sentences.generate_imdb_vec(model, label_path, vector_path)
 		return vectors, labels
 
+	def test_sent_models(self, all_articles, leanings, article_doc2vec_model_path, imdb_label_path, imdb_vector_path):
+
+		model = self.docEmbed.Load_Model(article_doc2vec_model_path) 
+
+		#need empty labels for the tagged document 
+		neutral_labels = [0] * len(neutral_articles)
+		neutral_labels, neutral_vectors = self.docEmbed.gen_vec(model, all_articles, neutral_labels)
+
+		imdb_vec, imdb_labels = self.imdb(model, imdb_label_path, imdb_vector_path)
+		models = [SVM()]
+		for model in models:
+
+			sentiments = [] 
+
+			model.Train(imdb_vec, imdb_labels, None, None)
+			predictions, _ = model.Predict(neutral_vectors)
+
+			for index, prediction in enumerate(predictions):
+
+					sentiments.append((leanings[index], prediction))
+
+			self.Visualizer.graph_neutral(sentiments)
+
+
 	def train_sent_models(self, all_articles, all_labels, leanings, article_doc2vec_label_path, article_doc2vec_vector_path, article_doc2vec_model_path, imdb_label_path, imdb_vector_path):
-
-
 		if (not os.path.exists(article_doc2vec_model_path)):
 			all_articles_model = self.docEmbed.Embed(all_articles, all_labels) 
 			all_articles_model.save(article_doc2vec_model_path)
@@ -110,7 +144,7 @@ class Orchestrator():
 		''' 
 
 		#emb = self.docEmbed.word2vec() 
-		targets, regressors, model = self.docEmbed.Embed(articles, labels, fold, leaning)
+		targets, regressors, model = self.docEmbed.Embed(articles, labels)
 
 		return list(targets), regressors, model
 	
@@ -123,21 +157,6 @@ class Orchestrator():
 
 		''' 
 		models = [SVM(), KNN(), Naive_Bayes(), Linear_Classifier(), NN()]
-		bP = []
-		bR = []
-		bF = []
-		fP = []
-		fR = []
-		fF = []
-		uP = []
-		uR = []
-		uF = []
-		hP = []
-		hR = []
-		hF = []
-		nP = []
-		nR = []
-		nF = []
 
 		#models = [NN()]
 
@@ -177,263 +196,59 @@ class Orchestrator():
 					#get prediction from embeddings 
 					model.Train(training_embeddings, training_labels, validation_embeddings, validation_labels)
 					prediction, confidence = model.Predict(test_embeddings)
-					'''
-					print("Model:", str(type(model)).split('.')[2].split('\'')[0], "precision:", self.Metrics.Precision(prediction, test_labels), "recall:", self.Metrics.Recall(prediction, test_labels), "F-Measure:", self.Metrics.Fmeasure(prediction, test_labels))   
-					if leaning == "breitbart":
-						bP.append(self.Metrics.Precision(prediction, test_labels))
-						bR.append(self.Metrics.Recall(prediction, test_labels))
-						bF.append(self.Metrics.Fmeasure(prediction, test_labels))
-					if leaning == "fox":
-						fP.append(self.Metrics.Precision(prediction, test_labels))
-						fR.append(self.Metrics.Recall(prediction, test_labels))
-						fF.append(self.Metrics.Fmeasure(prediction, test_labels))
-					if leaning == "usa_today":
-						uP.append(self.Metrics.Precision(prediction, test_labels))
-						uR.append(self.Metrics.Recall(prediction, test_labels))
-						uF.append(self.Metrics.Fmeasure(prediction, test_labels))
-					if leaning == "new_york_times":
-						nP.append(self.Metrics.Precision(prediction, test_labels))
-						nR.append(self.Metrics.Recall(prediction, test_labels))
-						nF.append(self.Metrics.Fmeasure(prediction, test_labels))
-					if leaning == "huffpost":
-						hP.append(self.Metrics.Precision(prediction, test_labels))
-						hR.append(self.Metrics.Recall(prediction, test_labels))
-						hF.append(self.Metrics.Fmeasure(prediction, test_labels))
-					'''
 
 
 				#model = models[0] 
 				#model.Model.coefs_[model.Model.n_layers_ - 2]
 				if split_count == 1:
 					self.Visualizer.plot_TSNE(leaning, training_embeddings + validation_embeddings + test_embeddings, training_labels + validation_labels + test_labels, training_dataset + validation_dataset + test_dataset)
-		'''
-		BttlS = 0
-		BttlK = 0
-		BttlN = 0
-		BttlL = 0
-		BttlNet = 0
-		FttlS = 0
-		FttlK = 0
-		FttlN = 0
-		FttlL = 0
-		FttlNet = 0
-		UttlS = 0
-		UttlK = 0
-		UttlN = 0
-		UttlL = 0
-		UttlNet = 0
-		HttlS = 0
-		HttlK = 0
-		HttlN = 0
-		HttlL = 0
-		HttlNet = 0
-		NttlS = 0
-		NttlK = 0
-		NttlN = 0
-		NttlL = 0
-		NttlNet = 0
-
 		
-		for i in range(len(bP)):
-			if i %5 == 0:
-				BttlS +=bP[i]
-				FttlS +=fP[i]
-				UttlS += uP[i]
-				HttlS += hP[i]
-				NttlS += nP[i]
-			if i % 5 == 1:
-				BttlK +=bP[i]
-				FttlK +=fP[i]
-				UttlK += uP[i]
-				HttlK += hP[i]
-				NttlK += nP[i]
-			if i % 5 == 2:
-				BttlN +=bP[i]
-				FttlN +=fP[i]
-				UttlN += uP[i]
-				HttlN += hP[i]
-				NttlN += nP[i]
-			if i %5 == 3:
-				BttlL +=bP[i]
-				FttlL +=fP[i]
-				UttlL += uP[i]
-				HttlL += hP[i]
-				NttlL += nP[i]
-			if i%5 == 4:
-				BttlNet +=bP[i]
-				FttlNet +=fP[i]
-				UttlNet += uP[i]
-				HttlNet += hP[i]
-				NttlNet += nP[i]
-		bp = bP
-		print("Precisions- Breitbart SVM: " + str(BttlS /(len(bP)/5)) + "Breitbart KNN:" + str(BttlK/(len(bP)/5)) + "Breitbart NB:" + str(BttlN /(len(bP)/5)) + "Breitbart LC: " +str(BttlL /(len(bP)/5)) + "Breitbart NN:" + str(BttlNet/(len(bP)/5)))
-		print("Precisions- Fox SVM: " + str(FttlS /(len(bP)/5)) + "Fox KNN:" + str(FttlK/(len(bP)/5)) + "Fox NB:" + str(FttlN /(len(bP)/5)) + "Fox LC: " +str(FttlL /(len(bP)/5)) + "Fox NN:" + str(FttlNet/(len(bP)/5)))
-		print("Precisions- USA SVM: " + str(UttlS /(len(bP)/5)) + "USA KNN:" + str(UttlK/(len(bP)/5)) + "USA NB:" + str(UttlN /(len(bP)/5)) + "USA LC: " +str(UttlL /(len(bP)/5)) + "USA NN:" + str(UttlNet/(len(bP)/5)))
-		print("Precisions- Huffpost SVM: " + str(HttlS /(len(bP)/5)) + "Huffpost KNN:" + str(HttlK/(len(bp)/5)) + "Huffpost NB:" + str(HttlN /(len(bp)/5)) + "Huffpost LC: " +str(HttlL /(len(bp)/5)) + "Huffpost NN:" + str(HttlNet/(len(bp)/5)))
-		print("Precisions- NYT SVM: " + str(NttlS /(len(bP)/5)) + "NYT KNN:" + str(NttlK/(len(bp)/5)) + "NYT NB:" + str(NttlN /(len(bp)/5)) + "NYT LC: " +str(NttlL /(len(bp)/5)) + "NYT NN:" + str(NttlNet/(len(bp)/5)))
-	
-		BttlS = 0
-		BttlK = 0
-		BttlN = 0
-		BttlL = 0
-		BttlNet = 0
-		FttlS = 0
-		FttlK = 0
-		FttlN = 0
-		FttlL = 0
-		FttlNet = 0
-		UttlS = 0
-		UttlK = 0
-		UttlN = 0
-		UttlL = 0
-		UttlNet = 0
-		HttlS = 0
-		HttlK = 0
-		HttlN = 0
-		HttlL = 0
-		HttlNet = 0
-		NttlS = 0
-		NttlK = 0
-		NttlN = 0
-		NttlL = 0
-		NttlNet = 0
-
-		bp = bP
-		for i in range(len(bR)):
-			if i %5 == 0:
-				BttlS +=bR[i]
-				FttlS +=fR[i]
-				UttlS += uR[i]
-				HttlS += hR[i]
-				NttlS += nR[i]
-			if i % 5 == 1:
-				BttlK +=bR[i]
-				FttlK +=fR[i]
-				UttlK += uR[i]
-				HttlK += hR[i]
-				NttlK += nR[i]
-			if i % 5 == 2:
-				BttlN +=bR[i]
-				FttlN +=fR[i]
-				UttlN += uR[i]
-				HttlN += hR[i]
-				NttlN += nR[i]
-			if i %5 == 3:
-				BttlL +=bR[i]
-				FttlL +=fR[i]
-				UttlL += uR[i]
-				HttlL += hR[i]
-				NttlL += nR[i]
-			if i%5 == 4:
-				BttlNet +=bR[i]
-				FttlNet +=fR[i]
-				UttlNet += uR[i]
-				HttlNet += hR[i]
-				NttlNet += nR[i]
-		print("Recalls- Breitbart SVM: " + str(BttlS /(len(bP)/5)) + "Breitbart KNN:" + str(BttlK/(len(bp)/5)) + "Breitbart NB:" + str(BttlN /(len(bp)/5)) + "Breitbart LC: " +str(BttlL /(len(bp)/5)) + "Breitbart NN:" + str(BttlNet/(len(bp)/5)))
-		print("Recalls- Fox SVM: " + str(FttlS /(len(bP)/5)) + "Fox KNN:" + str(FttlK/(len(bp)/5)) + "Fox NB:" + str(FttlN /(len(bp)/5)) + "Fox LC: " +str(FttlL /(len(bp)/5)) + "Fox NN:" + str(FttlNet/(len(bp)/5)))
-		print("Recalls- USA SVM: " + str(UttlS /(len(bP)/5)) + "USA KNN:" + str(UttlK/(len(bp)/5)) + "USA NB:" + str(UttlN /(len(bp)/5)) + "USA LC: " +str(UttlL /(len(bp)/5)) + "USA NN:" + str(UttlNet/(len(bp)/5)))
-		print("Recalls- Huffpost SVM: " + str(HttlS /(len(bP)/5)) + "Huffpost KNN:" + str(HttlK/(len(bp)/5)) + "Huffpost NB:" + str(HttlN /(len(bp)/5)) + "Huffpost LC: " +str(HttlL /(len(bp)/5)) + "Huffpost NN:" + str(HttlNet/(len(bp)/5)))
-		print("Recalls- NYT SVM: " + str(NttlS /(len(bP)/5)) + "NYT KNN:" + str(NttlK/(len(bp)/5)) + "NYT NB:" + str(NttlN /(len(bp)/5)) + "NYT LC: " +str(NttlL /(len(bp)/5)) + "NYT NN:" + str(NttlNet/(len(bp)/5)))
-	
-
-		BttlS = 0
-		BttlK = 0
-		BttlN = 0
-		BttlL = 0
-		BttlNet = 0
-		FttlS = 0
-		FttlK = 0
-		FttlN = 0
-		FttlL = 0
-		FttlNet = 0
-		UttlS = 0
-		UttlK = 0
-		UttlN = 0
-		UttlL = 0
-		UttlNet = 0
-		HttlS = 0
-		HttlK = 0
-		HttlN = 0
-		HttlL = 0
-		HttlNet = 0
-		NttlS = 0
-		NttlK = 0
-		NttlN = 0
-		NttlL = 0
-		NttlNet = 0
-
-		bp = bP
-		for i in range(len(bR)):
-			if i %5 == 0:
-				BttlS +=bF[i]
-				FttlS +=fF[i]
-				UttlS += uF[i]
-				HttlS += hF[i]
-				NttlS += nF[i]
-			if i % 5 == 1:
-				BttlK +=bF[i]
-				FttlK +=fF[i]
-				UttlK += uF[i]
-				HttlK += hF[i]
-				NttlK += nF[i]
-			if i % 5 == 2:
-				BttlN +=bF[i]
-				FttlN +=fF[i]
-				UttlN += uF[i]
-				HttlN += hF[i]
-				NttlN += nF[i]
-			if i %5 == 3:
-				BttlL +=bF[i]
-				FttlL +=fF[i]
-				UttlL += uF[i]
-				HttlL += hF[i]
-				NttlL += nF[i]
-			if i%5 == 4:
-				BttlNet +=bF[i]
-				FttlNet +=fF[i]
-				UttlNet += uF[i]
-				HttlNet += hF[i]
-				NttlNet += nF[i]
-		print("F1- Breitbart SVM: " + str(BttlS /(len(bP)/5)) + "Breitbart KNN:" + str(BttlK/(len(bp)/5)) + "Breitbart NB:" + str(BttlN /(len(bp)/5)) + "Breitbart LC: " +str(BttlL /(len(bp)/5)) + "Breitbart NN:" + str(BttlNet/(len(bp)/5)))
-		print("F1- Fox SVM: " + str(FttlS /(len(bP)/5)) + "Fox KNN:" + str(FttlK/(len(bp)/5)) + "Fox NB:" + str(FttlN /(len(bp)/5)) + "Fox LC: " +str(FttlL /(len(bp)/5)) + "Fox NN:" + str(FttlNet/(len(bp)/5)))
-		print("F1- USA SVM: " + str(UttlS /(len(bP)/5)) + "USA KNN:" + str(UttlK/(len(bp)/5)) + "USA NB:" + str(UttlN /(len(bp)/5)) + "USA LC: " +str(UttlL /(len(bp)/5)) + "USA NN:" + str(UttlNet/(len(bp)/5)))
-		print("F1- Huffpost SVM: " + str(HttlS /(len(bP)/5)) + "Huffpost KNN:" + str(HttlK/(len(bp)/5)) + "Huffpost NB:" + str(HttlN /(len(bp)/5)) + "Huffpost LC: " +str(HttlL /(len(bp)/5)) + "Huffpost NN:" + str(HttlNet/(len(bp)/5)))
-		print("F1- NYT SVM: " + str(NttlS /(len(bP)/5)) + "NYT KNN:" + str(NttlK/(len(bp)/5)) + "NYT NB:" + str(NttlN /(len(bp)/5)) + "NYT LC: " +str(NttlL /(len(bp)/5)) + "NYT NN:" + str(NttlNet/(len(bp)/5)))
-		'''  
 	  
 orchestrator = Orchestrator()
-splits = orchestrator.read_data(ApplicationConstants.all_articles_random, clean=False, save=False, number_of_articles=25) 
-#cleaned_splits = orchestrator.read_data(ApplicationConstants.cleaned_news_root_path, clean=False, save=False, number_of_articles=1000)
+#splits = orchestrator.read_data(ApplicationConstants.all_articles, clean=False, save=False, number_of_articles=25) 
+cleaned_splits = orchestrator.read_data(ApplicationConstants.cleaned_news_root_path, clean=False, save=False, number_of_articles=50)
+neutral_data = orchestrator.read_data(ApplicationConstants.articles_neutral, clean=True, save=False, number_of_articles=20, splits=False, neutral=True)
 
 #train embeddings - uncleaned 
-leanings_articles = list(map(lambda leaning: splits[0][leaning][ApplicationConstants.Train] + splits[0][leaning][ApplicationConstants.Validation] + splits[0][leaning][ApplicationConstants.Test], splits[0]))
-leanings = []
-
-for leaning in splits[0]:
-	for article in range(len(splits[0][leaning][ApplicationConstants.Train] + splits[0][leaning][ApplicationConstants.Validation] + splits[0][leaning][ApplicationConstants.Test])):
-		leanings.append(leaning) 
-
-flat_list = [item for sublist in leanings_articles for item in sublist]
-
-articles = list(map(lambda article: article.Content, flat_list))  
-labels = list(map(lambda article: article.Label.TargetGender, flat_list))
-
-orchestrator.train_sent_models(articles, labels, leanings, ApplicationConstants.all_articles_doc2vec_labels_uncleaned_path, ApplicationConstants.all_articles_doc2vec_vector_uncleaned_path, ApplicationConstants.all_articles_doc2vec_model_uncleaned_path, ApplicationConstants.imdb_sentiment_label_uncleaned_path, ApplicationConstants.imdb_sentiment_vector_uncleaned_path)
-
-# #train embeddings - cleaned 
-# leanings_articles = list(map(lambda leaning: cleaned_splits[0][leaning][ApplicationConstants.Train] + cleaned_splits[0][leaning][ApplicationConstants.Validation] + cleaned_splits[0][leaning][ApplicationConstants.Test], cleaned_splits[0]))
+# leanings_articles = list(map(lambda leaning: splits[0][leaning][ApplicationConstants.Train] + splits[0][leaning][ApplicationConstants.Validation] + splits[0][leaning][ApplicationConstants.Test], splits[0]))
+# count = len(leanings_articles)
 # leanings = []
 
-# for leaning in cleaned_splits[0]:
-# 	for article in range(len(cleaned_splits[0][leaning][ApplicationConstants.Train] + cleaned_splits[0][leaning][ApplicationConstants.Validation] + cleaned_splits[0][leaning][ApplicationConstants.Test])):
+# for leaning in splits[0]:
+# 	for article in range(len(splits[0][leaning][ApplicationConstants.Train] + splits[0][leaning][ApplicationConstants.Validation] + splits[0][leaning][ApplicationConstants.Test])):
 # 		leanings.append(leaning) 
 
 # flat_list = [item for sublist in leanings_articles for item in sublist]
-# cleaned_articles = list(map(lambda article: article.Content, flat_list))  
-# cleaned_labels = list(map(lambda article: article.Label.TargetGender, flat_list))
 
-# orchestrator.train_sent_models(cleaned_articles, cleaned_labels, leanings, ApplicationConstants.all_articles_doc2vec_labels_cleaned_path, ApplicationConstants.all_articles_doc2vec_vector_cleaned_path, ApplicationConstants.all_articles_doc2vec_model_cleaned_path, ApplicationConstants.imdb_sentiment_label_cleaned_path, ApplicationConstants.imdb_sentiment_vector_cleaned_path)
+# articles = list(map(lambda article: article.Content, flat_list))  
+# labels = list(map(lambda article: article.Label.TargetGender, flat_list))
+			
+
+#train embeddings - cleaned 
+leanings_articles = list(map(lambda leaning: cleaned_splits[0][leaning][ApplicationConstants.Train] + cleaned_splits[0][leaning][ApplicationConstants.Validation] + cleaned_splits[0][leaning][ApplicationConstants.Test], cleaned_splits[0]))
+leanings = []
+
+for leaning in cleaned_splits[0]:
+	for article in range(len(cleaned_splits[0][leaning][ApplicationConstants.Train] + cleaned_splits[0][leaning][ApplicationConstants.Validation] + cleaned_splits[0][leaning][ApplicationConstants.Test])):
+		leanings.append(leaning) 
+
+flat_list = [item for sublist in leanings_articles for item in sublist]
+cleaned_articles = list(map(lambda article: article.Content, flat_list))  
+cleaned_labels = list(map(lambda article: article.Label.TargetGender, flat_list))
+
+orchestrator.train_sent_models(cleaned_articles, cleaned_labels, leanings, ApplicationConstants.all_articles_doc2vec_labels_cleaned_path, ApplicationConstants.all_articles_doc2vec_vector_cleaned_path, ApplicationConstants.all_articles_doc2vec_model_cleaned_path, ApplicationConstants.imdb_sentiment_label_cleaned_path, ApplicationConstants.imdb_sentiment_vector_cleaned_path)
+
+#neutral data
+leanings_articles = list(map(lambda data: data[1], neutral_data))
+neutral_leanings = []
+for leaning in neutral_data:
+	for article in range(len(leaning[1])):
+		neutral_leanings.append(leaning[0]) 
+flat_list = [item for sublist in leanings_articles for item in sublist]
+neutral_articles = list(map(lambda article: article.Content, flat_list))  
+
+
+orchestrator.test_sent_models(neutral_articles, neutral_leanings, ApplicationConstants.all_articles_doc2vec_model_cleaned_path, ApplicationConstants.imdb_sentiment_label_cleaned_path, ApplicationConstants.imdb_sentiment_vector_cleaned_path)
 
 
 

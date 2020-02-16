@@ -1,0 +1,312 @@
+{
+  "sents": [
+    {
+      "leaning": "breitbart",
+      "target": "Donald_Trump",
+      "prediction": "1",
+      "confidence": "0.41508503061093965",
+      "content": "\u201d The Knights of Columbus is the largest Catholic men\u2019s service organization in the world  President Trump\u2019s representative to the Vatican, Ambassador Callista Gingrich, and Archbishop Bashar Warda of Erbil, Iraq, were also present at the White House"
+    },
+    {
+      "leaning": "breitbart",
+      "target": "Donald_Trump",
+      "prediction": "1",
+      "confidence": "0.6609742243318724",
+      "content": " You\u2019ve got a lot of Democrats wringing their hands that they did not see, as Will Hurd\u2014 a moderate Democrat, excuse me, a moderate Republican who\u2019s retiring this year\u2014 said he did not see overwhelming, compelling, clear, and convincing evidence  Many of those Democrats, especially the ones who represent the 31 Trump-Pence districts from \u201916, they have to go back home and say, \u201cI know I promised to lower your drug prices"
+    },
+    {
+      "leaning": "breitbart",
+      "target": "Donald_Trump",
+      "prediction": "0",
+      "confidence": "-0.5415102001585225",
+      "content": " President Donald Trump started a trade war with China as a long-term strategy to slow the Chinese economy  Klobuchar falsely claimed during Wednesday\u2019s debate that Trump does not have a foreign policy strategy, especially pertaining to China"
+    },
+    {
+      "leaning": "breitbart",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "0",
+      "confidence": "-0.533075388011658",
+      "content": "\u201d Sanders teased an endorsement from freshman lawmaker Rep  Alexandria Ocasio-Cortez (D-NY) during Tuesday night\u2019s debate, and reports surfaced quickly after, indicating Ocasio-Cortez, Rep"
+    },
+    {
+      "leaning": "breitbart",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "0",
+      "confidence": "-0.19791170514410197",
+      "content": " \u201cA lot of people think that folks like your typical lawyer or doctor are in \u2018the 1% \u2019 That may be bc it\u2019s hard to conceive how bad runaway inequality has gotten,\u201d Ocasio-Cortez wrote"
+    },
+    {
+      "leaning": "breitbart",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "1",
+      "confidence": "0.42898527673613757",
+      "content": "\u00a0Rep  Alexandria Ocasio-Cortez (D-NY), an author of the Green New Deal, has repeatedly taken aim at Biden\u2019s climate change proposal for fossil fuels to be eliminated by 2050"
+    },
+    {
+      "leaning": "breitbart",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "0",
+      "confidence": "-0.17654725782889705",
+      "content": " \u201cThis is the face of socialism and ignorance,\u201d Heng said  \u201cDoes Alexandria Ocasio-Cortez know the horror of socialism?\u201d \u201cMy father was minutes from death in Cambodia before a forced marriage saved his life"
+    },
+    {
+      "leaning": "breitbart",
+      "target": "Donald_Trump",
+      "prediction": "0",
+      "confidence": "-0.5448377154604469",
+      "content": " The justices did not comment on Monday in leaving in place a decision by the Court of International Trade that ruled against steel importers and other users of imported steel who challenged the 25% tariff on steel that Trump imposed in 2018  The importers argue that Trump does not have unbounded authority under the Constitution to regulate trade"
+    },
+    {
+      "leaning": "breitbart",
+      "target": "Donald_Trump",
+      "prediction": "1",
+      "confidence": "0.5696186538896233",
+      "content": " That\u2019s the whole general\u00a0election,\" Kevin Sheekey told\u00a0CNN's \"At This Hour with Kate Bolduan \" \"Right now, Donald Trump is\u00a0winning"
+    },
+    {
+      "leaning": "breitbart",
+      "target": "Donald_Trump",
+      "prediction": "1",
+      "confidence": "0.11069664624526096",
+      "content": " but answered with something that should have been done by the time he is sworn in as president  \"The first thing I would do is make sure that we defeat Donald Trump"
+    },
+    {
+      "leaning": "breitbart",
+      "target": "Donald_Trump",
+      "prediction": "0",
+      "confidence": "-0.1595573777579913",
+      "content": ", corresponded with WikiLeaks before the 2016 presidential election, a dialogue of which the president\u2019s son confirmed Monday night on Twitter  In a series of tweets, Trump Jr"
+    },
+    {
+      "leaning": "breitbart",
+      "target": "Donald_Trump",
+      "prediction": "1",
+      "confidence": "0.527759229555543",
+      "content": " \u201cA total loser!\u201d Trump tweeted, in response to a post from campaign manager Brad Parscale about George Conway -- who despite his wife's senior role in the administration has emerged as an outspoken Trump critic  \u201cWe all know that @realDonaldTrump turned down Mr"
+    },
+    {
+      "leaning": "fox",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "0",
+      "confidence": "-0.8333803811606346",
+      "content": " Her comments came during a House Oversight Committee hearing Tuesday with John Kerry, the former Secretary of State, and Chuck Hagel, the former Secretary of Defense, where the subject of the role of global warming and national security was discussed  Ocasio-Cortez first asked Hagel: \u201cDo you think that neglecting to address these threats is \u2013 could contribute to an American \u2013 the loss of American life?\u201d PELOSI APPEARS TO MOCK OCASIO-CORTEZ OVER-RELIANCE ON TWITTER FOR SUPPORT When he responded in the affirmative, she asked: \u201cAnd do you think that denial or even delaying in that action could cost us American lives?\u201d When he again replied \u201cyes,\u201d she asked Kerry: \u201cDo you think that appointing a federal panel that questions 26 years of established climate science (could) be responsible for the loss of American life?\u201d When Kerry said: \u201cIt could be,\u201d\u00a0she again followed up: \u201cSo I think what we have laid out here is a very clear moral problem and in terms of leadership, if we fail to act or even if we delay in acting, we will have blood on our hands? I don\u2019t know if you\u2019re allowed to agree with that Secretary Kerry or Secretary Hagel, but would you agree with that assessment?\u201d CROWLEY HAD DIRT ON OCASIO-CORTEZ BUT DECIDED NOT TO USE IT IN CAMPAIGN Kerry replied: \u201cAs long as we do nothing, congresswoman, we are complicit in our acts of omission and commission of what we\u2019re doing to choose for our energy, etc"
+    },
+    {
+      "leaning": "fox",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "1",
+      "confidence": "0.5390986738769737",
+      "content": "\u00a0There is no easy way to solve\u00a0it \" CLICK TO GET THE FOX NEWS APP On Tuesday, both Ocasio-Cortez\u00a0and\u00a0Sen"
+    },
+    {
+      "leaning": "fox",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "1",
+      "confidence": "0.23780228550413582",
+      "content": " Because I think an agency that pins children down + forcibly injects them w/ antipsychotic drugs shouldn\u2019t be given more power,\u201d AOC\u2019s first tweet read  OCASIO-CORTEZ CALLS TO ABOLISH ICE, SAYS LATINOS MUST BE EXEMPT FROM IMMIGRATON LAWS BECAUSE THEY ARE 'NATIVE' TO US \u201cWhat I DID say was that I had to go back to my district & share the MTR vote to explain why a pro-ICE amendment was slipped into a gun safety law"
+    },
+    {
+      "leaning": "fox",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "0",
+      "confidence": "-0.057927850304308054",
+      "content": " Alexandria Ocasio-Cortez\u2019s closed-door warning last week that Democrats who vote with Republicans are \"putting themselves\u00a0on a list\" \u2013 a comment interpreted as a primary challenge threat  Ocasio-Cortez has since downplayed her comments, made in the wake of 26 Democrats joining Republicans to vote for a provision requiring Immigration and Customs Enforcement to be notified if illegal immigrants attempt to purchase guns"
+    },
+    {
+      "leaning": "fox",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "0",
+      "confidence": "-0.28876250999904746",
+      "content": " Following McConnell\u2019s tweet, another gunman attacked a popular nightlife district in Dayton in the early hours of Sunday morning  Ocasio-Cortez called out McConnell in a tweet on Sunday for \u201cgiving bogus excuses\u201d as to why the Senate hasn\u2019t taken up the measure passed in the House that would tighten background checks for people seeking to purchase a firearm"
+    },
+    {
+      "leaning": "fox",
+      "target": "Donald_Trump",
+      "prediction": "1",
+      "confidence": "0.9133677196356031",
+      "content": " Costs might\u00a0go down in the aggregate, but individuals and families aren\u2019t aggregates  Elizabeth Warren's choice:\u00a0'Medicare for All' purity or a path to beating Trump? For example, Warren keeps saying that the total you pay for health care would end up being less under Medicare for All because it will eliminate out-of-pocket costs like premiums and copays"
+    },
+    {
+      "leaning": "fox",
+      "target": "Donald_Trump",
+      "prediction": "0",
+      "confidence": "-0.08546745374329404",
+      "content": "S  diplomat told lawmakers his staff overheard the president pressing for a Ukrainian investigation into his rivals\u00a0\u2013 a bombshell revelation the president has denied\u00a0\u2013 Trump was hoping to turn the tide in Louisiana's razor-thin race for governor"
+    },
+    {
+      "leaning": "fox",
+      "target": "Donald_Trump",
+      "prediction": "0",
+      "confidence": "-0.2967606937485075",
+      "content": " One ridiculous statement after another \" When asked about Robert De Niro and other's outspoken backlash towards Trump, Voight said \"perhaps they'll come to an understanding that that's wrong"
+    },
+    {
+      "leaning": "fox",
+      "target": "Donald_Trump",
+      "prediction": "0",
+      "confidence": "-0.09861651226999749",
+      "content": " State Supreme Court Justice Saliann Scarpulla of Manhattan ruled on Thursday that Trump pay $2 million in damages to various nonprofit groups to settle allegations that he and his family used the Trump Foundation to further his political and business interests  Though Trump admitted the misconduct in court documents, he issued a defiant statement in which he accused New York\u2019s attorney general of mischaracterizing the settlement process for political purposes"
+    },
+    {
+      "leaning": "fox",
+      "target": "Donald_Trump",
+      "prediction": "1",
+      "confidence": "0.5770102308814057",
+      "content": "\" Dr  Sean Conley, the president\u2019s physician, dismissed speculation that the president had been brought to the hospital for chest pain and specifically said Trump was not evaluated for \"any urgent or acute issues"
+    },
+    {
+      "leaning": "usa_today",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "0",
+      "confidence": "-0.06102755906517168",
+      "content": "S-Mexico border  \"Wayfair workers couldn\u2019t stomach they were making beds to cage children,\" Ocasio-Cortez tweeted"
+    },
+    {
+      "leaning": "usa_today",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "1",
+      "confidence": "0.3764081288328746",
+      "content": " Ireland, Jr  as potentially threatening against Ocasio-Cortez"
+    },
+    {
+      "leaning": "usa_today",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "0",
+      "confidence": "-0.17246300078300383",
+      "content": " Hikind \" But Ocasio-Cortez, who has said she has received many threats,\u00a0reserved the right to block those she felt were harassing her"
+    },
+    {
+      "leaning": "usa_today",
+      "target": "Donald_Trump",
+      "prediction": "1",
+      "confidence": "1.0449812207698708",
+      "content": " Even Sen  Mitt Romney (R-Utah), one of Trump\u2019s biggest critics who called the situation in Syria a \u201cvery dark moment in American history,\u201d struggled to name a solution"
+    },
+    {
+      "leaning": "usa_today",
+      "target": "Donald_Trump",
+      "prediction": "1",
+      "confidence": "0.1430142449192958",
+      "content": "  and an A$AP Rocky mention? During Wednesday\u2019s hearing, Sondland explained that he believed there was a quid pro quo at play between Ukraine and Trump, meaning that Ukrainians had to respond\u00a0to Trump\u2019s requests to get a White House call or meeting"
+    },
+    {
+      "leaning": "usa_today",
+      "target": "Donald_Trump",
+      "prediction": "0",
+      "confidence": "-0.29547870694405093",
+      "content": " away\u201d during his appearance on \u201cFox News Sunday \u201d \u201cThis kind of dumb and unfair interview would never have happened in the @FoxNews past,\u201d Trump wrote, adding that Wallace \u201cwill never be his father,\u201d the late journalist Mike Wallace"
+    },
+    {
+      "leaning": "usa_today",
+      "target": "Donald_Trump",
+      "prediction": "1",
+      "confidence": "0.4535593374810661",
+      "content": "S  Office of Government Ethics for former President Barack Obama and Trump"
+    },
+    {
+      "leaning": "usa_today",
+      "target": "Donald_Trump",
+      "prediction": "0",
+      "confidence": "-0.3220164204302847",
+      "content": ") said President Donald Trump\u2019s dealings with Ukraine are \u201cso much worse\u201d than former President Richard Nixon\u2019s actions in the Watergate scandal, which prompted his resignation from office  Pelosi, during an interview with CBS\u2019s \u201cFace the Nation\u201d that aired Sunday, discussed the House\u2019s ongoing impeachment inquiry that focuses on Trump\u2019s efforts to get Ukraine to investigate political rival Joe Biden"
+    },
+    {
+      "leaning": "huffpost",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "1",
+      "confidence": "0.05503374801694924",
+      "content": " \u201cWe cannot allow for this \u201d Ocasio-Cortez, a fierce critic of the Trump administration, was among four Democratic members of Congress to testify before fellow lawmakers about what they saw during visits to the border"
+    },
+    {
+      "leaning": "huffpost",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "1",
+      "confidence": "0.20732939757083776",
+      "content": ") on Saturday, calling the Democratic Party\u2019s reluctance to impeach President Donald Trump a \u201cnational scandal \u201d \u201cAt this point, the bigger national scandal isn\u2019t the president\u2019s lawbreaking behavior \u2015 it is the Democratic Party\u2019s refusal to impeach him,\u201d Ocasio-Cortez tweeted late Saturday"
+    },
+    {
+      "leaning": "huffpost",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "0",
+      "confidence": "-0.03217279360199035",
+      "content": "\u201d The lawmaker tweeted a CNN Politics article\u00a0that detailed multiple times Trump has made a wild statement, only for it to be downplayed by his high-profile GOP supporters as nothing more than a gag \u2014 the latest being Trump\u2019s suggestion that China should investigate his potential 2020 rival Joe Biden  \u201cWhen Republicans say our nation\u2019s laws are \u2018just a joke,\u2019 they mean it,\u201d Ocasio-Cortez wrote"
+    },
+    {
+      "leaning": "huffpost",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "1",
+      "confidence": "0.07877257877141772",
+      "content": " Earlier this month, a woman working with LaRouche PAC appeared at a town hall meeting that Rep  Alexandria Ocasio-Cortez (D-N"
+    },
+    {
+      "leaning": "huffpost",
+      "target": "Donald_Trump",
+      "prediction": "1",
+      "confidence": "0.49601926699130855",
+      "content": " The move could put the SEAL commander, Rear Adm  Collin Green, in direct conflict with President Trump, who last week cleared the sailor, Chief Petty Officer Edward Gallagher, of any judicial punishment in the war crimes case"
+    },
+    {
+      "leaning": "huffpost",
+      "target": "Donald_Trump",
+      "prediction": "0",
+      "confidence": "-0.54741934188775",
+      "content": " \u201cHe represents everything that Chicago isn\u2019t \u2014 racism, sexism, xenophobia \u201d She flicked her hand dismissively in the direction of the Trump building, where the president\u2019s name is emblazoned in jumbo letters on one of its glassy sides"
+    },
+    {
+      "leaning": "huffpost",
+      "target": "Donald_Trump",
+      "prediction": "0",
+      "confidence": "-0.29122674990753367",
+      "content": " Giuliani, the former New York mayor at the center of the impeachment investigation into the conduct of Ukraine policy, makes a living selling cybersecurity advice through his companies  President Trump even named him the administration\u2019s first informal \u201ccybersecurity adviser"
+    },
+    {
+      "leaning": "huffpost",
+      "target": "Donald_Trump",
+      "prediction": "0",
+      "confidence": "-0.007372665814092936",
+      "content": "\u201d The bill comes as Mr  Trump is trying to strike a trade deal with China, one of the central goals of his presidency"
+    },
+    {
+      "leaning": "huffpost",
+      "target": "Donald_Trump",
+      "prediction": "0",
+      "confidence": "-0.25372902264417335",
+      "content": "\u201d Mr  Trump began the day with a 53-minute phone call to Fox & Friends in which he repeated a familiar list of accusations and falsehoods, which he amplified again on Saturday with a string of Twitter posts"
+    },
+    {
+      "leaning": "huffpost",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "1",
+      "confidence": "0.5792476060109406",
+      "content": " Comparisons to the Nazi regime, one of which Ms  Ocasio-Cortez made last month when she called American detention facilities \u201cconcentration camps,\u201d are also routinely met with outrage"
+    },
+    {
+      "leaning": "huffpost",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "0",
+      "confidence": "-0.22203899944432706",
+      "content": " Ms  Ocasio-Cortez, a New York Democrat, was streaming on Instagram Live, answering questions submitted through the live chat feature as she grated cheese and sang along to Janelle Mon\u00e1e"
+    },
+    {
+      "leaning": "new_york_times",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "0",
+      "confidence": "-0.2817546869003326",
+      "content": " \u201cThis administration has established concentration camps on the southern border of the United States for immigrants, where they are being brutalized with dehumanizing conditions and dying,\u201d Ms  Ocasio-Cortez wrote on Twitter, amplifying comments she had made on her Instagram feed on Monday night"
+    },
+    {
+      "leaning": "new_york_times",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "1",
+      "confidence": "0.3272578261464118",
+      "content": " Pressley swept Cambridge and Boston to crush Capuano, 60,046 to 42,430 districtwide  The same pattern emerged in the widely publicized defeat of Joe Crowley, another 10-term incumbent, by Alexandria Ocasio-Cortez in the Democratic primary in a House district that straddles the Bronx and Queens"
+    },
+    {
+      "leaning": "new_york_times",
+      "target": "Alexandria_ocasio-cortez",
+      "prediction": "1",
+      "confidence": "0.37828942831591755",
+      "content": " Ms  Ocasio-Cortez, a former organizer for Bernie Sanders\u2019s presidential campaign, has declared it time for generational, racial and ideological change"
+    }
+  ]
+}

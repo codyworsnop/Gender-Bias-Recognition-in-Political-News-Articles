@@ -10,6 +10,7 @@ import copy
 from preprocessor import Preprocessor
 import random
 
+from nltk.tokenize import sent_tokenize
 
 class DataReader():
     ''' This class is used to read and create json driven objects. ''' 
@@ -114,7 +115,16 @@ class DataReader():
             data = json.load(read_file, object_hook=self.object_decoder)
         return data
 
-    def Load_Splits(self, filePath, number_of_articles=50, clean=True, save=False):
+    def get_count(self, articles) -> int:
+        article_count = 0 
+
+        for article in articles:
+            tokens = sent_tokenize(article)
+            article_count += len(tokens)
+
+        return article_count
+
+    def Load_Splits(self, filePath, number_of_articles=50, clean=True, save=False, neutral=False, split=True):
 
         candidate_split_file_names = [ApplicationConstants.fold_1, ApplicationConstants.fold_2, ApplicationConstants.fold_3, ApplicationConstants.fold_4, ApplicationConstants.fold_5]
 
@@ -125,62 +135,29 @@ class DataReader():
             data = json.load(read_file, object_hook=self.object_decoder)
 
         #separate per source
-        candidates = [ApplicationConstants.DonaldTrump, ApplicationConstants.JoeBiden, ApplicationConstants.MitchMcconnell, ApplicationConstants.BernieSanders, ApplicationConstants.BarrackObama, 
-                      ApplicationConstants.HillaryClinton, ApplicationConstants.AlexandriaOcasioCortez, ApplicationConstants.BetsyDevos, ApplicationConstants.ElizabethWarren, ApplicationConstants.SarahPalin]
+        if (not neutral): 
 
-        breitbart = []
-        fox = [] 
-        usa = []
-        huffpost = []
-        nyt = [] 
+            candidates = [ApplicationConstants.DonaldTrump, ApplicationConstants.JoeBiden, ApplicationConstants.MitchMcconnell, ApplicationConstants.BernieSanders, ApplicationConstants.BarrackObama, 
+                        ApplicationConstants.HillaryClinton, ApplicationConstants.AlexandriaOcasioCortez, ApplicationConstants.BetsyDevos, ApplicationConstants.ElizabethWarren, ApplicationConstants.SarahPalin]
 
-        for candidate in candidates: 
-            
-            breitbart += list(filter(lambda article: article.Label.TargetName == candidate, data[ApplicationConstants.Breitbart].Articles))[:number_of_articles]
-            fox += list(filter(lambda article: article.Label.TargetName == candidate, data[ApplicationConstants.Fox].Articles))[:number_of_articles]
-            usa += list(filter(lambda article: article.Label.TargetName == candidate, data[ApplicationConstants.usa_today].Articles))[:number_of_articles]
-            huffpost += list(filter(lambda article: article.Label.TargetName == candidate, data[ApplicationConstants.HuffPost].Articles))[:number_of_articles]
-            nyt += list(filter(lambda article: article.Label.TargetName == candidate, data[ApplicationConstants.New_york_times].Articles))[:number_of_articles]
-        
-            # print(candidate + "\n\n")
-            # titles = list(map(lambda article: article.Title, breitbart + fox + usa + huffpost + nyt))
-            # for title in titles:
-            #     print ("\n" + title)    
+            breitbart = []
+            fox = [] 
+            usa = []
+            huffpost = []
+            nyt = [] 
 
-        sources = [(ApplicationConstants.Breitbart, breitbart), (ApplicationConstants.Fox, fox), (ApplicationConstants.usa_today, usa), (ApplicationConstants.HuffPost, huffpost), (ApplicationConstants.New_york_times, nyt)]
-   
-        # for source_tuple in sources: 
+            for candidate in candidates: 
+                
+                breitbart += list(filter(lambda article: article.Label.TargetName == candidate, data[ApplicationConstants.Breitbart].Articles))[:number_of_articles]
+                fox += list(filter(lambda article: article.Label.TargetName == candidate, data[ApplicationConstants.Fox].Articles))[:number_of_articles]
+                usa += list(filter(lambda article: article.Label.TargetName == candidate, data[ApplicationConstants.usa_today].Articles))[:number_of_articles]
+                huffpost += list(filter(lambda article: article.Label.TargetName == candidate, data[ApplicationConstants.HuffPost].Articles))[:number_of_articles]
+                nyt += list(filter(lambda article: article.Label.TargetName == candidate, data[ApplicationConstants.New_york_times].Articles))[:number_of_articles]
 
-        #      source_name = source_tuple[0]
-        #      source = source_tuple[1]
-
-        # #     #candidates
-        #      dt_breitbart = list(filter(lambda article: article.Label.TargetName == ApplicationConstants.DonaldTrump, source))
-        #      jb_breitbart = list(filter(lambda article: article.Label.TargetName == ApplicationConstants.JoeBiden, source))
-        #      bs_breitbart = list(filter(lambda article: article.Label.TargetName == ApplicationConstants.BernieSanders, source))
-        #      jm_breitbart = list(filter(lambda article: article.Label.TargetName == ApplicationConstants.MitchMcconnell, source))
-        #      bo_breitbart = list(filter(lambda article: article.Label.TargetName == ApplicationConstants.BarrackObama, source))
-        #      hc_breitbart = list(filter(lambda article: article.Label.TargetName == ApplicationConstants.HillaryClinton, source))
-        #      sp_breitbart = list(filter(lambda article: article.Label.TargetName == ApplicationConstants.SarahPalin, source))
-        #      aoc_breitbart = list(filter(lambda article: article.Label.TargetName == ApplicationConstants.AlexandriaOcasioCortez, source))
-        #      bd_breitbart = list(filter(lambda article: article.Label.TargetName == ApplicationConstants.BetsyDevos, source))
-        #      ew_breitbart = list(filter(lambda article: article.Label.TargetName == ApplicationConstants.ElizabethWarren, source))
-        #      print(source_name)
-        #      print("trump:", len(dt_breitbart))
-        #      print("joe biden:", len(jb_breitbart))
-        #      print("bernie:", len(bs_breitbart))
-        #      print("mitch:", len(jm_breitbart))
-        #      print("obama:", len(bo_breitbart))
-        #      print("hillary:", len(hc_breitbart))
-        #      print("sarah:", len(sp_breitbart))
-        #      print("aoc:", len(aoc_breitbart))
-        #      print("betsy:", len(bd_breitbart))
-        #      print("warren:", len(ew_breitbart))
-        #      print("Cleaning data ", end='')
-            # sys.stdout.flush()
-
-      	  #clean data 
-
+            sources = [(ApplicationConstants.Breitbart, breitbart), (ApplicationConstants.Fox, fox), (ApplicationConstants.usa_today, usa), (ApplicationConstants.HuffPost, huffpost), (ApplicationConstants.New_york_times, nyt)]
+        else:
+            sources = [(ApplicationConstants.Breitbart, data[ApplicationConstants.Breitbart].Articles), (ApplicationConstants.Fox, data[ApplicationConstants.Fox].Articles), (ApplicationConstants.usa_today, data[ApplicationConstants.usa_today].Articles), (ApplicationConstants.HuffPost, data[ApplicationConstants.HuffPost].Articles), (ApplicationConstants.New_york_times, data[ApplicationConstants.New_york_times].Articles)]
+       
         for source_index, source in enumerate(sources): 
 
             print(' . ', end='')
@@ -193,15 +170,13 @@ class DataReader():
             for article_index, article in enumerate(articles):
 
                 #convert labels to ints
-                if (article.Label.TargetGender == ApplicationConstants.Female):
-                    article.Label.TargetGender = 0
-                elif (article.Label.TargetGender == ApplicationConstants.Male):
-                    article.Label.TargetGender = 1
+                if (not neutral):
+                    if (article.Label.TargetGender == ApplicationConstants.Female):
+                        article.Label.TargetGender = 0
+                    elif (article.Label.TargetGender == ApplicationConstants.Male):
+                        article.Label.TargetGender = 1
 
                 content = article.Content
-
-               # print(article.Title)
-
                 if (clean):
                     cleaned_content = self.Preprocessor.Clean(content)
                     sources[source_index][1][article_index].Content = cleaned_content 
@@ -214,61 +189,67 @@ class DataReader():
             serialized_data = self.class_to_json(reconstructed_dictionary)
             self.save_to_file(ApplicationConstants.cleaned_news_root_path, serialized_data)
 
-        print("\nDone! \nStarting splitting . . . ")
+        print("\nDone!")
 
-        #loop over each split 
-        for split_file_name in candidate_split_file_names: 
+        if (split):
 
-            training_candidates = []
-            validation_candidates = []
-            test_candidates = []
-            split = {}
+            print("\nStarting splitting . . .")
+            #loop over each split 
+            for split_file_name in candidate_split_file_names: 
 
-            #open split file 
-            with open(split_file_name, 'r') as split_read:
-                split_info = split_read.read()
+                training_candidates = []
+                validation_candidates = []
+                test_candidates = []
+                split = {}
 
-            #parse the split 
-            groups = split_info.split('\n')
+                #open split file 
+                with open(split_file_name, 'r') as split_read:
+                    split_info = split_read.read()
 
-            for group in groups:
-                candidate_group_mapping = group.split(' ')
+                #parse the split 
+                groups = split_info.split('\n')
 
-                #partition groups
-                if (len(candidate_group_mapping) == 3):
+                for group in groups:
+                    candidate_group_mapping = group.split(' ')
 
-                    #need to lower these to match the json data
-                    candidate_group_mapping[0] = candidate_group_mapping[0].lower()
-                    candidate_group_mapping[1] = candidate_group_mapping[1].lower()
+                    #partition groups
+                    if (len(candidate_group_mapping) == 3):
 
-                    #training
-                    if candidate_group_mapping[2] == '0': 
-                        training_candidates.append(candidate_group_mapping[0] + "_" + candidate_group_mapping[1])
-                    #validation
-                    elif candidate_group_mapping[2] == '1': 
-                        validation_candidates.append(candidate_group_mapping[0] + "_" + candidate_group_mapping[1])
-                    #test
-                    elif candidate_group_mapping[2] == '2': 
-                        test_candidates.append(candidate_group_mapping[0] + "_" + candidate_group_mapping[1])
+                        #need to lower these to match the json data
+                        candidate_group_mapping[0] = candidate_group_mapping[0].lower()
+                        candidate_group_mapping[1] = candidate_group_mapping[1].lower()
 
-            #loop over all sources
-            for source_tuple in sources: 
+                        #training
+                        if candidate_group_mapping[2] == '0': 
+                            training_candidates.append(candidate_group_mapping[0] + "_" + candidate_group_mapping[1])
+                        #validation
+                        elif candidate_group_mapping[2] == '1': 
+                            validation_candidates.append(candidate_group_mapping[0] + "_" + candidate_group_mapping[1])
+                        #test
+                        elif candidate_group_mapping[2] == '2': 
+                            test_candidates.append(candidate_group_mapping[0] + "_" + candidate_group_mapping[1])
+
+                #loop over all sources
+                for source_tuple in sources: 
+                    
+                    source_name = source_tuple[0]
+                    source = copy.deepcopy(source_tuple[1])
+                    split[source_name] = {}
+
+                    #get the training data defined by the split 
+                    split[source_name][ApplicationConstants.Train] = list(filter(lambda article: article.Label.TargetName.lower() in training_candidates, source))
+
+                    #get the validation data defined by the split
+                    split[source_name][ApplicationConstants.Validation] = list(filter(lambda article: article.Label.TargetName.lower() in validation_candidates, source))
+
+                    #get the test data define by the split  
+                    split[source_name][ApplicationConstants.Test] = list(filter(lambda article: article.Label.TargetName.lower() in test_candidates, source))
+
+        
+                split_list.append(split) 
                 
-                source_name = source_tuple[0]
-                source = copy.deepcopy(source_tuple[1])
-                split[source_name] = {}
+            print("Return splits . . . ")
+            return split_list
 
-                #get the training data defined by the split 
-                split[source_name][ApplicationConstants.Train] = list(filter(lambda article: article.Label.TargetName.lower() in training_candidates, source))
-
-                #get the validation data defined by the split
-                split[source_name][ApplicationConstants.Validation] = list(filter(lambda article: article.Label.TargetName.lower() in validation_candidates, source))
-
-                #get the test data define by the split  
-                split[source_name][ApplicationConstants.Test] = list(filter(lambda article: article.Label.TargetName.lower() in test_candidates, source))
-
-      
-            split_list.append(split) 
-            
-        print("Return splits . . . ")
-        return split_list
+        else:
+            return sources 
