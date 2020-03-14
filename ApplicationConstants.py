@@ -1,5 +1,5 @@
 #Application Constants
-
+butts = "butts"
 #Filenames
 all_articles = "./Data/articles.updatedv2.json"
 all_articles_random = "./Data/articles_random_v2.json"
