@@ -218,7 +218,7 @@ class Visualizer():
 					if (os.path.exists('store/pretrained_model.model')):
 						pretrained_article_model = self.docEmbed.Load_Model('store/pretrained_model.model')
 					else:
-						pretrained_article_model = self.docEmbed.Embed(atn_content, atn_labels, vector_size=300, epochs=2)
+						pretrained_article_model = self.docEmbed.Embed(atn_content, atn_labels, vector_size=300, epochs=20) #started with 2. was not working. 20 worked well
 						pretrained_article_model.save('store/pretrained_model.model')
 
 					fine_tuned_model = self.docEmbed.fine_tune(articles, labels, pretrained_article_model)

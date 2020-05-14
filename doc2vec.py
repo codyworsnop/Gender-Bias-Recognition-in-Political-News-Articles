@@ -32,7 +32,7 @@ class doc():
 			return model 
 		return None
 
-	def Embed(self, articles, labels, vector_size=50, epochs=100):
+	def Embed(self, articles, labels, vector_size=50, epochs=100): #default started at 100 (altered in visualizer)
 
 		tagged_doc_articles = [TaggedDocument(words=word_tokenize(_d.lower()), tags=[labels[i]]) for i, _d in enumerate(articles)]
 		#random.shuffle(tagged_doc_articles)
@@ -50,7 +50,7 @@ class doc():
 		#model.save("d2v.model")
 		#print("model saved")
 
-	def fine_tune(self, articles, labels, model, epochs=50, learning_rate=0.0001): 
+	def fine_tune(self, articles, labels, model, epochs=50, learning_rate=0.0001): #change this to alter the fine_tune epochs
 
 		tagged_doc_articles = [TaggedDocument(words=word_tokenize(_d.lower()), tags=[labels[i]]) for i, _d in enumerate(articles)]
 		model.train(tagged_doc_articles, total_examples = model.corpus_count, epochs=epochs, start_alpha=learning_rate, end_alpha=learning_rate)
