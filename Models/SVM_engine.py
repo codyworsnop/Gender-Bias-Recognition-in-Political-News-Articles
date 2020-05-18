@@ -19,6 +19,7 @@ class SVM(implements(IModel)):
     def Train(self, trainFeatures, trainLabels, validationFeatures, validationLabels):
         self.Model.fit(trainFeatures, trainLabels)
 
+
     def Predict(self, features, shouldPredictConfidences=False): 
         
         prediction = self.Model.predict(features) 
