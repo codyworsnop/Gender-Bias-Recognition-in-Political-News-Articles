@@ -44,7 +44,7 @@ class doc():
 		model.train(tagged_doc_articles, total_examples = model.corpus_count, epochs= model.epochs, callbacks=[logger])
 
 		
-		print("Loss:", model.get_latest_training_loss())
+		print("Loss: Fuck this shit")#, model.get_latest_training_loss())
 		return model
 
 		#model.save("d2v.model")
@@ -66,7 +66,7 @@ class doc():
 class EpochLogger(CallbackAny2Vec):
 	
 	def on_epoch_end(self, model): 
-		print("Loss:", model.get_latest_training_loss)
+		print("Loss: Fuck this shit")#, model.get_latest_training_loss)
 
 
 
