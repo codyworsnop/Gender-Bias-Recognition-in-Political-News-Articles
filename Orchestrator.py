@@ -533,7 +533,7 @@ class Orchestrator():
 			pretrain_content.append(self.filter_ATN_content(article))
 
 		pretrain_labels = list(map(lambda article: article.Label, all_the_news))  # these values are null since ATN doesn't have gender labels
-		#nums = random.sample(range(0, 20000), 10)
+		nums = random.sample(range(0, 20000), 10)
 		#for num in nums:
 			#print(pretrain_content[num])
 		#jkhkjhkjhk
