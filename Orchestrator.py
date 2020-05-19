@@ -515,6 +515,7 @@ class Orchestrator():
 		content = re.sub("\\\'", '\'', content)
 		content = re.sub("\\xa0", ' ', content)
 		content = re.sub("\(\)", '', content)
+		content = re.sub(" ing ", '', content)
 
 		return content
 
