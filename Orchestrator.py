@@ -20,6 +20,7 @@ from Models.Naive_Bayes_engine import Naive_Bayes
 from Models.Linear_Classification_engine import Linear_Classifier 
 from Models.NN_engine import NN
 from Models.NN_engine import  Linear_NN
+import random
 
 #helpers
 import statistics
@@ -492,13 +493,49 @@ class Orchestrator():
 
 	#def test_hyperparams(self):
 
+	def filter_ATN_content(self, content, publication=None):
+		content = re.sub("â€œ|â€\?|“|”|\"\"", '"', content)
+		content = re.sub("â€œ|â€\?|” | ”|\"\"", '"', content)
+		content = re.sub('â€"', '—', content)
+		content = content.lower()
+		content = re.sub('(?:https?:)?//[\w\d]+\.[\w\d/\.]+', '', content)
+		content = re.sub('[\w\d/\.]+(?:\.com|\.net|\.org|\.co)[\w\d/\.]*', '', content)
+		content = re.sub(' {2,}', ' ', content)
+		content = re.sub(r"#(\w+)", '', content)
+		content = re.sub(r"@(\w+)", '', content)
+		content = re.sub("reuters", '', content)
+		content = re.sub("(reuters)", '', content)
+		content = re.sub("\\/", ' ', content)
+		content = re.sub("(?<=/)[^/]+(?=/)", ' ', content)
+		content = re.sub("\\n", '', content)
+		content = re.sub("\\'s", '\'s', content)
+		content = re.sub("\\'t", '\'t', content)
+		content = re.sub("\\'d", '\'d', content)
+		content = re.sub("\\'re", '\'re', content)
+		content = re.sub("\\\'", '\'', content)
+		content = re.sub("\\xa0", ' ', content)
+		content = re.sub("\(\)", '', content)
+
+		return content
+
 	def pretrain_and_fineTune(self, dirty=True):
 		reader = DataReader()
-		all_the_news = reader.Load_ATN(ApplicationConstants.all_the_news_path)
-		pretrain_content = list(map(lambda article: article.Content, all_the_news))[:int(
-			len(all_the_news) * 0.25)]  # grabbing only half cuz my computer can't fit training all this in memory
-		pretrain_labels = list(map(lambda article: article.Label, all_the_news))[
-					 :int(len(all_the_news) * 0.25)]  # these values are null since ATN doesn't have gender labels
+		portionToLoad = 0.01
+		all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_newer_path, portionToLoad)
+
+		dirty_pretrain_content = list(map(lambda article: article.Content, all_the_news))  # grabbing only half cuz my computer can't fit training all this in memory
+		#print(dirty_pretrain_content[:10])
+		#print()
+
+		pretrain_content = []
+		for article in dirty_pretrain_content:
+			pretrain_content.append(self.filter_ATN_content(article))
+
+		pretrain_labels = list(map(lambda article: article.Label, all_the_news))  # these values are null since ATN doesn't have gender labels
+		#nums = random.sample(range(0, 20000), 10)
+		#for num in nums:
+			#print(pretrain_content[num])
+		#jkhkjhkjhk
 		f = open("pretrain_and_fineTune.txt", "a+")
 		pretrain_epochs = [10, 25, 50, 100, 200, 500, 1000]
 		fineTune_epochs = [10, 25, 50, 100, 200, 500, 1000]
@@ -571,7 +608,7 @@ class Orchestrator():
 			input("Press Enter to continue...")
 
 orchestrator = Orchestrator()
-articles = orchestrator.get_all_articles()
+#articles = orchestrator.get_all_articles()
 #orchestrator.run_bow(articles)
 orchestrator.pretrain_and_fineTune(dirty = True)
 #orchestrator.print_all_the_news()

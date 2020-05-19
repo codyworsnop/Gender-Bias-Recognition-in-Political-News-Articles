@@ -11,6 +11,10 @@ from preprocessor import Preprocessor
 import random
 import sqlite3
 import csv
+import sys
+
+
+csv.field_size_limit(sys.maxsize)
 
 class DataReader():
     ''' This class is used to read and create json driven objects. ''' 
@@ -128,7 +132,17 @@ class DataReader():
 
         return polarities
 
-
+    def Load_newer_ATN(self, filepath, portion):
+        articles = []
+        numtoload = portion * 2700000
+        count = 0
+        with open(filepath) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter = ',')
+            for row in csv_reader:
+                if count < numtoload:
+                    articles.append(Article(row[7], row[9], None, row[6], row[8], row[2], None))
+                count += 1
+        return articles
     def Load_ATN(self, filePath):
 
         articles = []
