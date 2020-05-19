@@ -500,9 +500,10 @@ class Orchestrator():
 		pretrain_labels = list(map(lambda article: article.Label, all_the_news))[
 					 :int(len(all_the_news) * 0.25)]  # these values are null since ATN doesn't have gender labels
 		f = open("pretrain_and_fineTune.txt", "a+")
-		pretrain_epochs = [10, 25, 50, 100, 200]
-		fineTune_epochs = [10, 25, 50, 100, 200]
-		vector_sizes = [10, 100, 200, 300, 500]
+		pretrain_epochs = [10, 25, 50, 100, 200, 500, 1000]
+		fineTune_epochs = [10, 25, 50, 100, 200, 500, 1000]
+		vector_sizes = [10, 100, 200, 300, 500, 1000, 2000, 5000]
+
 		for vector_size in vector_sizes:
 			for pretrain_epoch in pretrain_epochs:
 				for fineTune_epoch in fineTune_epochs:
@@ -519,8 +520,11 @@ class Orchestrator():
 					else:
 						finetuneSet = reader.Load_Splits(ApplicationConstants.all_articles_random_v2_cleaned, None, number_of_articles=50,
 												clean=False, save=False, shouldRandomize=False)
+					precisionTtl = 0
+					recallTtl = 0
+					f1Ttl = 0
 
-					for leaning in finetuneSet[0]:
+					for i, leaning in enumerate(finetuneSet[0]):
 						training_dataset = finetuneSet[0][leaning][ApplicationConstants.Train]
 						validation_dataset = finetuneSet[0][leaning][ApplicationConstants.Validation]
 						test_dataset = finetuneSet[0][leaning][ApplicationConstants.Test]
@@ -542,22 +546,35 @@ class Orchestrator():
 							  self.Metrics.Precision(prediction, FT_Test_labels), "recall:",
 							  self.Metrics.Recall(prediction, FT_Test_labels), "F-Measure:",
 							  self.Metrics.Fmeasure(prediction, FT_Test_labels))
-
-						f.write("Training vector size " + str(vector_size) + " pretrain " + str(pretrain_epoch) + " finetune " + str(fineTune_epoch) + "")
-						f.write(" Model: "+ str(type(model)).split('.')[2].split('\'')[0]+ " precision:" +
+						if i == 0:
+							f.write("Training vector size " + str(vector_size) + " pretrain " + str(pretrain_epoch) + " finetune " + str(fineTune_epoch) + "\n")
+						f.write("Model: "+ str(type(model)).split('.')[2].split('\'')[0]+ " precision:" +
 							  str(self.Metrics.Precision(prediction, FT_Test_labels))+ " recall: "+
 							  str(self.Metrics.Recall(prediction, FT_Test_labels))+ " F-Measure: " +
 							  str(self.Metrics.Fmeasure(prediction, FT_Test_labels)) + "\n")
+						recallTtl += self.Metrics.Recall(prediction, FT_Test_labels)
+						precisionTtl += self.Metrics.Precision(prediction, FT_Test_labels)
+						f1Ttl += self.Metrics.Fmeasure(prediction, FT_Test_labels)
+						if i == 4:
+							f.write("Average recall: " + str(recallTtl /5) + " Average precision: " + str(precisionTtl/5) + " Average F1 " + str(f1Ttl/5) + "\n")
 		f.close()
 		#article_labels, article_embeddings = self.docEmbed.gen_vec(pretrained_article_model, articles, labels)
 		#
+	def print_all_the_news(self):
+		reader = DataReader()
+		all_the_news = reader.Load_ATN(ApplicationConstants.all_the_news_path)
+		pretrain_content = list(map(lambda article: article.Content, all_the_news))[:int(
+			len(all_the_news) * 0.25)]  # grabbing only half cuz my computer can't fit training all this in memory
 
+		for article in pretrain_content:
+			print(article)
+			input("Press Enter to continue...")
 
 orchestrator = Orchestrator()
 articles = orchestrator.get_all_articles()
 #orchestrator.run_bow(articles)
 orchestrator.pretrain_and_fineTune(dirty = True)
-
+#orchestrator.print_all_the_news()
 #debias, zhao, not_shared = word_sets()
 
 #orchestrator.check_word_content(not_shared, articles)
