@@ -521,7 +521,7 @@ class Orchestrator():
 
 	def pretrain_and_fineTune(self, dirty=True):
 		reader = DataReader()
-		portionToLoad = 0.01
+		portionToLoad = 0.25
 		all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_newer_path, portionToLoad)
 
 		dirty_pretrain_content = list(map(lambda article: article.Content, all_the_news))  # grabbing only half cuz my computer can't fit training all this in memory
@@ -533,24 +533,24 @@ class Orchestrator():
 			pretrain_content.append(self.filter_ATN_content(article))
 
 		pretrain_labels = list(map(lambda article: article.Label, all_the_news))  # these values are null since ATN doesn't have gender labels
-		nums = random.sample(range(0, 20000), 10)
+		#nums = random.sample(range(0, 20000), 10)
 		#for num in nums:
 			#print(pretrain_content[num])
 		#jkhkjhkjhk
-		f = open("pretrain_and_fineTune.txt", "a+")
-		pretrain_epochs = [10, 25, 50, 100, 200, 500, 1000]
-		fineTune_epochs = [10, 25, 50, 100, 200, 500, 1000]
-		vector_sizes = [10, 100, 200, 300, 500, 1000, 2000, 5000]
+		f = open("pretrain_and_fineTune_cleaned.txt", "a+")
+		pretrain_epochs = [10, 25, 50, 100, 200, 500]
+		fineTune_epochs = [10, 25, 50, 100, 200, 500]
+		vector_sizes = [20, 100, 200, 300, 500, 1000]
 
 		for vector_size in vector_sizes:
 			for pretrain_epoch in pretrain_epochs:
 				for fineTune_epoch in fineTune_epochs:
-					if (os.path.exists('store/pretrained_model.model')):
-						pretrained_article_model = self.docEmbed.Load_Model('store/pretrained_model.model')
-					else:
-						pretrained_article_model = self.docEmbed.Embed(pretrain_content, pretrain_labels, vector_size=vector_size,
+					#if (os.path.exists('store/pretrained_model.model')):
+					#	pretrained_article_model = self.docEmbed.Load_Model('store/pretrained_model.model')
+					#else:
+					pretrained_article_model = self.docEmbed.Embed(pretrain_content, pretrain_labels, vector_size=vector_size,
 																	   epochs=pretrain_epoch)  # started with 2. was not working. 20 worked well
-						pretrained_article_model.save('store/pretrained_model.model')
+					#pretrained_article_model.save('store/pretrained_model.model')
 
 					if dirty:
 						finetuneSet = reader.Load_Splits(ApplicationConstants.all_articles_random_v2, None, number_of_articles=50,
