@@ -551,6 +551,7 @@ class Orchestrator():
 					#if (os.path.exists('store/pretrained_model.model')):
 					#	pretrained_article_model = self.docEmbed.Load_Model('store/pretrained_model.model')
 					#else:
+					print("Pretraining")
 					pretrained_article_model = self.docEmbed.Embed(pretrain_content, pretrain_labels, vector_size=vector_size,
 																	   epochs=pretrain_epoch)  # started with 2. was not working. 20 worked well
 					#pretrained_article_model.save('store/pretrained_model.model')
@@ -564,7 +565,7 @@ class Orchestrator():
 					precisionTtl = 0
 					recallTtl = 0
 					f1Ttl = 0
-
+					print("Fine tuning folds")
 					for i, leaning in enumerate(finetuneSet[0]):
 						training_dataset = finetuneSet[0][leaning][ApplicationConstants.Train]
 						validation_dataset = finetuneSet[0][leaning][ApplicationConstants.Validation]
