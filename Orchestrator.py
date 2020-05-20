@@ -525,7 +525,7 @@ class Orchestrator():
 		print("Loading %.2f All The News" % portionToLoad)
 		all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_newer_path, portionToLoad)
 
-		dirty_pretrain_content = list(map(lambda article: article.Content, all_the_news))  # grabbing only half cuz my computer can't fit training all this in memory
+		dirty_pretrain_content = np.asarray(list(map(lambda article: article.Content, all_the_news)))  # grabbing only half cuz my computer can't fit training all this in memory
 		#print(dirty_pretrain_content[:10])
 		#print()
 
@@ -533,8 +533,11 @@ class Orchestrator():
 		print("Cleaning All The News")
 		for article in dirty_pretrain_content:
 			pretrain_content.append(self.filter_ATN_content(article))
+		pretrain_content = np.asarray(pretrain_content)
+		input("Press Enter to continue...")
 		del dirty_pretrain_content
-		pretrain_labels = list(map(lambda article: article.Label, all_the_news))  # these values are null since ATN doesn't have gender labels
+		input("Press Enter to continue...")
+		pretrain_labels = np.asarray(list(map(lambda article: article.Label, all_the_news)) ) # these values are null since ATN doesn't have gender labels
 		#print(len(pretrain_content), pretrain_labels[:10])
 		#nums = random.sample(range(0, 20000), 10)
 		#for num in nums:

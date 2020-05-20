@@ -12,6 +12,7 @@ import random
 import sqlite3
 import csv
 import sys
+import numpy as np
 
 
 csv.field_size_limit(sys.maxsize)
@@ -140,9 +141,12 @@ class DataReader():
             csv_reader = csv.reader(csv_file, delimiter = ',')
             for row in csv_reader:
                 if count < numtoload:
-                    articles.append(Article(row[7], row[9], -1, row[6], row[8], row[2], -1))
+                    articles.append(Article(row[7], row[9], 0, row[6], row[8], row[2], 0))
+                else:
+                    break
                 count += 1
-        return articles
+
+        return np.asarray(articles)
     def Load_ATN(self, filePath):
 
         articles = []
