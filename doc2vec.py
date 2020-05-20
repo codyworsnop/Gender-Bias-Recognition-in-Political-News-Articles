@@ -32,9 +32,13 @@ class doc():
 			return model 
 		return None
 
-	def Embed(self, articles, labels, vector_size=50, epochs=100): #default started at 100 (altered in visualizer)
+	def Embed(self, articles, labels, vector_size=50, epochs=100, lower = True): #default started at 100 (altered in visualizer)
 		print("Tagging atn")
-		tagged_doc_articles = [TaggedDocument(words=word_tokenize(_d.lower()), tags=[labels[i]]) for i, _d in enumerate(articles)]
+		if lower:
+			tagged_doc_articles = [TaggedDocument(words=word_tokenize(_d.lower()), tags=[labels[i]]) for i, _d in enumerate(articles)]
+		else:
+			tagged_doc_articles = [TaggedDocument(words=word_tokenize(_d), tags=[labels[i]]) for i, _d in
+								   enumerate(articles)]
 		#random.shuffle(tagged_doc_articles)
 
 		#dm 1 is pv-dm, dm 0 is pv-dbow size is feature vec size, alpha is lr, negative is noise words, sample is thresh for down smample

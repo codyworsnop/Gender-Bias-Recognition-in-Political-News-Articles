@@ -140,7 +140,7 @@ class DataReader():
             csv_reader = csv.reader(csv_file, delimiter = ',')
             for row in csv_reader:
                 if count < numtoload:
-                    articles.append(Article(row[7], row[9], None, row[6], row[8], row[2], None))
+                    articles.append(Article(row[7], row[9], -1, row[6], row[8], row[2], -1))
                 count += 1
         return articles
     def Load_ATN(self, filePath):
