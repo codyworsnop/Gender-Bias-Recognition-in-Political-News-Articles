@@ -146,7 +146,7 @@ class DataReader():
                     break
                 count += 1
 
-        return np.asarray(articles)
+        return articles
     def Load_ATN(self, filePath):
 
         articles = []
