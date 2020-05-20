@@ -521,7 +521,7 @@ class Orchestrator():
 
 	def pretrain_and_fineTune(self, dirty=True):
 		reader = DataReader()
-		portionToLoad = 0.001
+		portionToLoad = 0.25
 		print("Loading %.2f All The News" % portionToLoad)
 		all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_newer_path, portionToLoad)
 
@@ -535,7 +535,7 @@ class Orchestrator():
 			pretrain_content.append(self.filter_ATN_content(article))
 		del dirty_pretrain_content
 		pretrain_labels = list(map(lambda article: article.Label, all_the_news))  # these values are null since ATN doesn't have gender labels
-		print(len(pretrain_content), pretrain_labels[:10])
+		#print(len(pretrain_content), pretrain_labels[:10])
 		#nums = random.sample(range(0, 20000), 10)
 		#for num in nums:
 			#print(pretrain_content[num])
