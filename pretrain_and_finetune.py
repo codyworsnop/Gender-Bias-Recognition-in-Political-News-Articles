@@ -46,7 +46,7 @@ def filter_ATN_content( content, publication=None):
 def pretrain_and_fineTune( dirty=True):
     reader = DataReader()  # adds 2 G
     input("Press Enter to continue...")
-    portionToLoad = 0.001
+    portionToLoad = 0.25
     print("Loading %.2f All The News" % portionToLoad)
     all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_newer_path, portionToLoad)
 
