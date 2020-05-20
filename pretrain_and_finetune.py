@@ -46,7 +46,7 @@ def filter_ATN_content( content, publication=None):
 def pretrain_and_fineTune( dirty=True):
     reader = DataReader()  # adds 2 G
     input("Press Enter to continue...")
-    portionToLoad = 0.20
+    portionToLoad = 0.001
     print("Loading %.2f All The News" % portionToLoad)
     all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_newer_path, portionToLoad)
 
@@ -93,6 +93,7 @@ def pretrain_and_fineTune( dirty=True):
                                                                epochs=pretrain_epoch,
                                                                lower=False)  # started with 2. was not working. 20 worked well
                 # pretrained_article_model.save('store/pretrained_model.model')
+                del docEmbed
                 reader = DataReader()
                 if dirty:
                     finetuneSet = reader.Load_Splits(ApplicationConstants.all_articles_random_v2, None,
@@ -118,7 +119,7 @@ def pretrain_and_fineTune( dirty=True):
                         map(lambda article: article.Label.TargetGender, training_dataset + validation_dataset))
                     fineTune_test_articles = list(map(lambda article: article.Content, test_dataset))
                     fineTune_test_labels = list(map(lambda article: article.Label.TargetGender, test_dataset))
-
+                    docEmbed = doc()
                     fine_tuned_model = docEmbed.fine_tune(fineTune_train_articles, fineTune_train_labels,
                                                                pretrained_article_model, fineTune_epoch)
                     FT_Train_labels, FT_Train_embeddings = docEmbed.gen_vec(fine_tuned_model,
@@ -128,7 +129,7 @@ def pretrain_and_fineTune( dirty=True):
                                                                                fineTune_test_labels)
                     print("Training vector size " + str(vector_size) + " pretrain " + str(
                         pretrain_epoch) + " finetune " + str(fineTune_epoch))
-                    #git del docEmbed
+                    del docEmbed
                     model = NN()
                     model.Train(FT_Train_embeddings[:len(training_dataset)], FT_Train_labels[:len(training_dataset)],
                                 FT_Train_embeddings[len(training_dataset):], FT_Train_labels[len(training_dataset):])
