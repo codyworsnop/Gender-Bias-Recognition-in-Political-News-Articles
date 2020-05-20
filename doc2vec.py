@@ -33,14 +33,17 @@ class doc():
 		return None
 
 	def Embed(self, articles, labels, vector_size=50, epochs=100): #default started at 100 (altered in visualizer)
-
+		print("Tagging atn")
 		tagged_doc_articles = [TaggedDocument(words=word_tokenize(_d.lower()), tags=[labels[i]]) for i, _d in enumerate(articles)]
 		#random.shuffle(tagged_doc_articles)
 
 		#dm 1 is pv-dm, dm 0 is pv-dbow size is feature vec size, alpha is lr, negative is noise words, sample is thresh for down smample
-		model = Doc2Vec(vector_size=vector_size, alpha = 0.001, min_alpha = 0.00025, min_count = 1, epochs=epochs, negative=1, dm = 0, workers = multiprocessing.cpu_count(), compute_loss=True) 
+		print("Generating model")
+		model = Doc2Vec(vector_size=vector_size, alpha = 0.001, min_alpha = 0.00025, min_count = 1, epochs=epochs, negative=1, dm = 0, workers = multiprocessing.cpu_count(), compute_loss=True)
+		print("building vocab")
 		model.build_vocab(tagged_doc_articles)
 		logger = EpochLogger()
+		print("training model")
 		model.train(tagged_doc_articles, total_examples = model.corpus_count, epochs= model.epochs, callbacks=[logger])
 
 		
