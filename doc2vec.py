@@ -46,9 +46,9 @@ class doc():
 		model = Doc2Vec(vector_size=vector_size, alpha = 0.001, min_alpha = 0.00025, min_count = 3, epochs=epochs, negative=1, dm = 0, workers = multiprocessing.cpu_count(), compute_loss=True)
 		print("building vocab")
 		model.build_vocab(tagged_doc_articles)
-		logger = EpochLogger()
+		#logger = EpochLogger()
 		print("training model")
-		model.train(tagged_doc_articles, total_examples = model.corpus_count, epochs= model.epochs, callbacks=[logger])
+		model.train(tagged_doc_articles, total_examples = model.corpus_count, epochs= model.epochs)#, callbacks=[logger])
 
 		
 		print("Loss: Fuck this shit")#, model.get_latest_training_loss())
