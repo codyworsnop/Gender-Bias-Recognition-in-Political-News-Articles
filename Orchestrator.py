@@ -522,6 +522,7 @@ class Orchestrator():
 	def pretrain_and_fineTune(self, dirty=True):
 		reader = DataReader()
 		portionToLoad = 0.25
+		print("Loading %.2f All The News" % portionToLoad)
 		all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_newer_path, portionToLoad)
 
 		dirty_pretrain_content = list(map(lambda article: article.Content, all_the_news))  # grabbing only half cuz my computer can't fit training all this in memory
@@ -529,6 +530,7 @@ class Orchestrator():
 		#print()
 
 		pretrain_content = []
+		print("Cleaning All The News")
 		for article in dirty_pretrain_content:
 			pretrain_content.append(self.filter_ATN_content(article))
 
@@ -537,6 +539,7 @@ class Orchestrator():
 		#for num in nums:
 			#print(pretrain_content[num])
 		#jkhkjhkjhk
+		print("Opening file to append to")
 		f = open("pretrain_and_fineTune_cleaned.txt", "a+")
 		pretrain_epochs = [10, 25, 50, 100, 200, 500]
 		fineTune_epochs = [10, 25, 50, 100, 200, 500]
