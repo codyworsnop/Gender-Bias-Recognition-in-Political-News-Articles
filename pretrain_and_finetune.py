@@ -46,7 +46,7 @@ def filter_ATN_content( content, publication=None):
 def pretrain_and_fineTune( dirty=True):
     reader = DataReader()  # adds 2 G
     input("Press Enter to continue...")
-    portionToLoad = 0.001
+    portionToLoad = 0.20
     print("Loading %.2f All The News" % portionToLoad)
     all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_newer_path, portionToLoad)
 
@@ -128,7 +128,7 @@ def pretrain_and_fineTune( dirty=True):
                                                                                fineTune_test_labels)
                     print("Training vector size " + str(vector_size) + " pretrain " + str(
                         pretrain_epoch) + " finetune " + str(fineTune_epoch))
-                    #del docEmbed
+                    #git del docEmbed
                     model = NN()
                     model.Train(FT_Train_embeddings[:len(training_dataset)], FT_Train_labels[:len(training_dataset)],
                                 FT_Train_embeddings[len(training_dataset):], FT_Train_labels[len(training_dataset):])
