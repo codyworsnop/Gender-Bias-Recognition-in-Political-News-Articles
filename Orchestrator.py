@@ -64,7 +64,7 @@ class Orchestrator():
 			print("confidence", sent[3])
 
 	def calc_plane_dist(self, gender):
-		ttlBreitbartPos,ttlBreitbartNeg, breitbartneg, breitbartpos, ttlFoxPos, ttlFoxNeg, foxneg, foxpos, ttlUsaPos, ttlUsaNeg, usaneg, usapos, ttlHuffPos, ttlHufNeg, huffneg, huffpos, ttlNytPos, ttlNytNeg, nytneg, nytpos = 0
+		ttlBreitbartPos,ttlBreitbartNeg, breitbartneg, breitbartpos, ttlFoxPos, ttlFoxNeg, foxneg, foxpos, ttlUsaPos, ttlUsaNeg, usaneg, usapos, ttlHuffPos, ttlHufNeg, huffneg, huffpos, ttlNytPos, ttlNytNeg, nytneg, nytpos = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
 		for i in range(len(gender)):
 			if gender[i][0] == 'breitbart':
@@ -199,21 +199,7 @@ class Orchestrator():
 
 		''' 
 		#models = [SVM(), KNN(), Naive_Bayes(), Linear_Classifier(), NN()]
-		bP = []
-		bR = []
-		bF = []
-		fP = []
-		fR = []
-		fF = []
-		uP = []
-		uR = []
-		uF = []
-		hP = []
-		hR = []
-		hF = []
-		nP = []
-		nR = []
-		nF = []
+		bP, bR, bF, fP, fR, fF, uP, uR, uF, hP, hR, hF, nP, nR, nF = [], [], [], [], [], [], [], [], [], [], [], [], [], []
 
 		models = [NN()]
 
@@ -290,8 +276,8 @@ class Orchestrator():
 		return articles
 
 	def calc_metrics(self, bP, fP, uP, hP, nP ):
-		BreitbartTtlSvm, BreitbartTtlKnn, BreitbartTtlNB, BreitbartTtlLin, BreitbartTtlNN, FoxTtlSvm, FoxTtlKnn, FoxTtlNB, FoxTtlLin, FoxTtlNN, UsaTtlSvm, UsaTtlKnn, UsaTtlNB, UsaTtlLin, UsaTtlNN,  = 0
-		HuffTtlSvm, HuffTtlKnn, HuffTtlNB, HuffTtlLin, HuffTtlNN, NytTtlSvm, NytTtlKnn, NytTtlNB, NytTtlLin, NytTtlNN = 0
+		BreitbartTtlSvm, BreitbartTtlKnn, BreitbartTtlNB, BreitbartTtlLin, BreitbartTtlNN, FoxTtlSvm, FoxTtlKnn, FoxTtlNB, FoxTtlLin, FoxTtlNN, UsaTtlSvm, UsaTtlKnn, UsaTtlNB, UsaTtlLin, UsaTtlNN  = 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0
+		HuffTtlSvm, HuffTtlKnn, HuffTtlNB, HuffTtlLin, HuffTtlNN, NytTtlSvm, NytTtlKnn, NytTtlNB, NytTtlLin, NytTtlNN = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
 
 		for i in range(len(bP)):
