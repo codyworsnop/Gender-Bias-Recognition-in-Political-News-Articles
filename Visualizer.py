@@ -156,9 +156,9 @@ class Visualizer():
 
 	def calc_sent_custom(self, sentiment): 
 
-		if (sentiment[0] < 0.4): 
+		if (sentiment[0] < 0.5): 
 			return 'neg'
-		elif (sentiment[0] > 0.6):
+		elif (sentiment[0] > 0.5):
 			return 'pos'
 
 	def calc_sent_vader(self, sentiment):

@@ -45,22 +45,24 @@ class Sentiment():
 		tokens = tokenizer.tokenize(article.Content) 
 		avg_polarity = [] 	
 		negations = ['not', 'isn\'t', 'wasn\'t', ]
-		#word_polarities = dict(polarities)
-		
-		for index, token in enumerate(tokens):
-			
+		threshold = 0.1
+	#	word_polarities = dict(polarities)
 
+		for index, token in enumerate(tokens):
 			if (token in polarities):
 
 				value = float(polarities[token])
+
 				if (tokens[index - 1] in negations):
 					value *= -1 
 
-				avg_polarity.append(value)
+				if (value < 0.5 - threshold or value > 0.5 + threshold):
+					avg_polarity.append(value)
 
 		if len(avg_polarity) == 0:
 			return 0.5
-		
+			
+		print (len(avg_polarity))
 		return sum(avg_polarity) / len(avg_polarity)
 	
 	def train_sent_customlexicon(self, all_articles, leanings, reader):
@@ -70,7 +72,7 @@ class Sentiment():
 		file = open('Data/polarities.txt', 'rb')
 		polarities = pickle.load(file)
 		file.close()
-		#polarities = reader.load_politics('store/politics.tsv')
+		# polarities = reader.load_politics('store/politics.tsv')
 
 		for article_index, article in enumerate(all_articles):
 
