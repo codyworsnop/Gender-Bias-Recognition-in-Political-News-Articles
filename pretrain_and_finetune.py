@@ -77,9 +77,12 @@ def pretrain_and_fineTune( dirty=True):
     print("Opening file to append to")
     f_av = open("pretrain_and_fineTune_cleaned_av.txt", "a+")
     f = open("pretrain_and_fineTune_cleaned.txt", "a+")
-    pretrain_epochs = [200, 100, 50, 25, 10]
-    fineTune_epochs = [200, 100, 50, 25, 10]
-    vector_sizes = [500, 300, 100, 50, 20]
+    pretrain_epochs = [25, 50, 100]#, 200]
+    #pretrain_epochs = [10]
+    #fineTune_epochs = [10]
+    #vector_sizes = [50]
+    fineTune_epochs = [25, 50, 100]#, 200]
+    vector_sizes = [100, 300, 500]
 
     for vector_size in vector_sizes:
         for pretrain_epoch in pretrain_epochs:
