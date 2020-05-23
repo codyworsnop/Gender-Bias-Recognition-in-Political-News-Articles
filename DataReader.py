@@ -141,7 +141,7 @@ class DataReader():
             csv_reader = csv.reader(csv_file, delimiter = ',')
             for row in csv_reader:
                 if count < numtoload:
-                    articles.append(Article(row[7], row[9], 0, row[6], row[8], row[2], 0))
+                    articles.append(Article(row[7], row[9], 2, row[6], row[8], row[2], 2))
                 else:
                     break
                 count += 1
