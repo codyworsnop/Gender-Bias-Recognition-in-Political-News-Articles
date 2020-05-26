@@ -79,8 +79,8 @@ def pretrain_and_fineTune( dirty=True):
     #pretrain_epochs = [10]
     #fineTune_epochs = [10]
     #vector_sizes = [50]
-    fineTune_epochs = [25, 50, 100]#, 200]
-    vector_sizes = [100, 300, 500]
+    fineTune_epochs = [ 50, 100]#, 200]
+    vector_sizes = [100, 300, 20]
 
 
     for pretrain_epoch in pretrain_epochs:
