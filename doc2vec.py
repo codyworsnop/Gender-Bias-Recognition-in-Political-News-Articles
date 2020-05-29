@@ -43,7 +43,7 @@ class doc():
 
 		#dm 1 is pv-dm, dm 0 is pv-dbow size is feature vec size, alpha is lr, negative is noise words, sample is thresh for down smample
 		print("Generating model")
-		model = Doc2Vec(vector_size=vector_size, alpha = 0.1, min_alpha = 0.025, min_count = 1, epochs=epochs, negative=1, dm = 0, workers = multiprocessing.cpu_count(), compute_loss=True)
+		model = Doc2Vec(vector_size=vector_size, alpha = 0.001, min_alpha = 0.00025, min_count = 1, epochs=epochs, negative=1, dm = 0, workers = multiprocessing.cpu_count(), compute_loss=True)
 		print("building vocab")
 		model.build_vocab(tagged_doc_articles)
 		#logger = EpochLogger()
@@ -57,7 +57,7 @@ class doc():
 		#model.save("d2v.model")
 		#print("model saved")
 
-	def fine_tune(self, articles, labels, model, epochs=50, learning_rate=0.02): #change this to alter the fine_tune epochs
+	def fine_tune(self, articles, labels, model, epochs=50, learning_rate=0.0002): #change this to alter the fine_tune epochs
 
 		tagged_doc_articles = [TaggedDocument(words=word_tokenize(_d.lower()), tags=[labels[i]]) for i, _d in enumerate(articles)]
 		model.train(tagged_doc_articles, total_examples = model.corpus_count, epochs=epochs, start_alpha=learning_rate)#, end_alpha=learning_rate)
