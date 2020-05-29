@@ -43,69 +43,69 @@ def filter_ATN_content( content, publication=None):
     return content
 
 
-def pretrain_and_fineTune( dirty=True):
+def pretrain_and_fineTune(dirty=True, notBaseline = True):
     reader = DataReader()  # adds 2 G
     #input("Press Enter to continue...")
-    portionToLoad = 0.0001
+    portionToLoad = 0.20
     print("Loading %.2f All The News" % portionToLoad)
-    all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_newer_path, portionToLoad)
+    if notBaseline:
+        all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_newer_path, portionToLoad)
 
-    dirty_pretrain_content = list(map(lambda article: article.Content,
-                                      all_the_news))  # grabbing only half cuz my computer can't fit training all this in memory
-    #input("Press Enter to continue...")
-    # print(dirty_pretrain_content[:10])
-    # print()
+        dirty_pretrain_content = list(map(lambda article: article.Content,
+                                          all_the_news))  # grabbing only half cuz my computer can't fit training all this in memory
 
-    pretrain_content = []
-    print("Cleaning All The News")
-    for article in dirty_pretrain_content:
-        pretrain_content.append(filter_ATN_content(article))
 
-    #input("Press Enter to continue...")
-    dirty_pretrain_content.clear()
-    del dirty_pretrain_content
-    #input("Press Enter to continue...")
-    pretrain_labels = list(
-        map(lambda article: article.Label, all_the_news))  # these values are null since ATN doesn't have gender labels
-    del all_the_news
-    del reader
-    # print(len(pretrain_content), pretrain_labels[:10])
-    # nums = random.sample(range(0, 20000), 10)
-    # for num in nums:
-    # print(pretrain_content[num])
-    # jkhkjhkjhk
-    print("Opening file to append to")
-    pretrain_epochs = [25, 50, 100]#, 200]
-    #pretrain_epochs = [10]
-    #fineTune_epochs = [10]
-    #vector_sizes = [50]
-    fineTune_epochs = [ 25, 50, 100]#, 200]
-    vector_sizes = [20, 100, 300]
+        pretrain_content = []
+        print("Cleaning All The News")
+        for article in dirty_pretrain_content:
+            pretrain_content.append(filter_ATN_content(article))
 
+
+        dirty_pretrain_content.clear()
+        del dirty_pretrain_content
+
+        pretrain_labels = list(
+            map(lambda article: article.Label, all_the_news))  # these values are null since ATN doesn't have gender labels
+        del all_the_news
+        del reader
+
+        print("Opening file to append to")
+        pretrain_epochs = [25, 50, 100]#, 200]
+        fineTune_epochs = [ 25, 50, 100]#, 200]
+        vector_sizes = [20, 100, 300]
+        avFile = "pretrain_and_fineTune_cleaned_av.txt"
+        allfile = "pretrain_and_fineTune_cleaned.txt"
+    else:
+        pretrain_epochs = [0]
+        fineTune_epochs = [25, 50]
+        vector_sizes =[100]
+        avFile = "pretrain_and_fineTune_cleaned_av_noPretrain.txt"
+        allfile = "pretrain_and_fineTune_cleaned_noPretrain.txt"
 
     for pretrain_epoch in pretrain_epochs:
         for fineTune_epoch in fineTune_epochs:
             for vector_size in vector_sizes:
-                if (pretrain_epoch == 25 and fineTune_epoch == 25 and vector_size == 100) or (pretrain_epoch == 25 and fineTune_epoch == 25 and vector_size == 300):
+                if (pretrain_epoch == 25 and fineTune_epoch == 25 and vector_size == 100 and notBaseline == True) or (pretrain_epoch == 25 and fineTune_epoch == 25 and vector_size == 300):
                     print("skipping")
                     print(pretrain_epoch, fineTune_epoch, vector_size)
                     continue
                 else:
                     print("doing")
                     print(pretrain_epoch, fineTune_epoch, vector_size)
-                    with open("pretrain_and_fineTune_cleaned_av.txt", "a+") as f_av:
-                        with open("pretrain_and_fineTune_cleaned.txt", "a+") as f:
+                    with open(avFile, "a+") as f_av:
+                        with open(allfile, "a+") as f:
                             # if (os.path.exists('store/pretrained_model.model')):
                             #	pretrained_article_model = self.docEmbed.Load_Model('store/pretrained_model.model')
                             # else:
-                            print("Pretraining")
-                            docEmbed = doc()
-                            pretrained_article_model = docEmbed.Embed(pretrain_content, pretrain_labels,
-                                                                           vector_size=vector_size,
-                                                                           epochs=pretrain_epoch,
-                                                                           lower=False)  # started with 2. was not working. 20 worked well
-                            # pretrained_article_model.save('store/pretrained_model.model')
-                            del docEmbed
+                            if notBaseline:
+                                print("Pretraining")
+                                docEmbed = doc()
+                                pretrained_article_model = docEmbed.Embed(pretrain_content, pretrain_labels,
+                                                                               vector_size=vector_size,
+                                                                               epochs=pretrain_epoch,
+                                                                               lower=False)  # started with 2. was not working. 20 worked well
+                                # pretrained_article_model.save('store/pretrained_model.model')
+                                del docEmbed
                             reader = DataReader()
                             if dirty:
                                 finetuneSet = reader.Load_Splits(ApplicationConstants.all_articles_random_v2, None,
@@ -119,7 +119,8 @@ def pretrain_and_fineTune( dirty=True):
                             breitbartTtlPrecision, foxTtlPrecision, usaTtlPrecision, huffTtlPrecision, nytTtlPrecision = 0, 0, 0, 0, 0
                             breitbartTtlRecall, foxTtlRecall, usaTtlRecall, huffTtlRecall, nytTtlRecall = 0, 0, 0, 0, 0
                             breitbartTtlF1, foxTtlF1, usaTtlF1, huffTtlF1, nytTtlF1 = 0, 0, 0, 0, 0
-                            print("Fine tuning folds")
+                            if notBaseline:
+                                print("Fine tuning folds")
 
                             f.write("Training vector size " + str(vector_size) + " pretrain " + str(
                                 pretrain_epoch) + " finetune " + str(fineTune_epoch) + "\n")
@@ -144,13 +145,20 @@ def pretrain_and_fineTune( dirty=True):
                                     fineTune_test_labels = list(map(lambda article: article.Label.TargetGender, test_dataset))
 
                                     docEmbed = doc()
-                                    fine_tuned_model = docEmbed.fine_tune(fineTune_train_articles, fineTune_train_labels,
-                                                                               pretrained_article_model, fineTune_epoch)
+                                    if notBaseline:
+                                        fine_tuned_model = docEmbed.fine_tune(fineTune_train_articles, fineTune_train_labels,
+                                                                                   pretrained_article_model, fineTune_epoch)
+                                    else:
+                                        fine_tuned_model = docEmbed.Embed(fineTune_train_articles, fineTune_train_labels,
+                                                                                  vector_size=vector_size,
+                                                                                  epochs=pretrain_epoch,
+                                                                                  lower=False)
                                     FT_Train_labels, FT_Train_embeddings = docEmbed.gen_vec(fine_tuned_model,
-                                                                                                 fineTune_train_articles,
-                                                                                                 fineTune_train_labels)
-                                    FT_Test_labels, TF_Test_embeddings = docEmbed.gen_vec(fine_tuned_model, fineTune_test_articles,
-                                                                                               fineTune_test_labels)
+                                                                                            fineTune_train_articles,
+                                                                                            fineTune_train_labels)
+                                    FT_Test_labels, TF_Test_embeddings = docEmbed.gen_vec(fine_tuned_model,
+                                                                                          fineTune_test_articles,
+                                                                                          fineTune_test_labels)
 
                                     del docEmbed
 
@@ -244,4 +252,7 @@ def print_all_the_news():
         print(article)
         input("Press Enter to continue...")
 
-pretrain_and_fineTune(True)
+
+
+
+pretrain_and_fineTune(True, False)
