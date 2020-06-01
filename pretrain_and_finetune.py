@@ -151,7 +151,7 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
                                     else:
                                         fine_tuned_model = docEmbed.Embed(fineTune_train_articles, fineTune_train_labels,
                                                                                   vector_size=vector_size,
-                                                                                  epochs=pretrain_epoch,
+                                                                                  epochs=fineTune_epoch,
                                                                                   lower=False)
                                     FT_Train_labels, FT_Train_embeddings = docEmbed.gen_vec(fine_tuned_model,
                                                                                             fineTune_train_articles,
