@@ -77,10 +77,10 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
         allfile = "pretrain_and_fineTune_cleaned_oldnums.txt"
     else:
         pretrain_epochs = [0]
-        fineTune_epochs = [25, 50]
-        vector_sizes =[100]
-        avFile = "pretrain_and_fineTune_cleaned_av_noPretrain.txt"
-        allfile = "pretrain_and_fineTune_cleaned_noPretrain.txt"
+        fineTune_epochs = [100]
+        vector_sizes =[50]
+        avFile = "pretrain_and_fineTune_cleaned_av_oldnums.txt"
+        allfile = "pretrain_and_fineTune_cleaned_oldnums.txt"
 
     for pretrain_epoch in pretrain_epochs:
         for fineTune_epoch in fineTune_epochs:
@@ -255,4 +255,4 @@ def print_all_the_news():
 
 
 
-pretrain_and_fineTune(True, True)
+pretrain_and_fineTune(True, False)
