@@ -105,7 +105,7 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
                                                                                epochs=pretrain_epoch,
                                                                                lower=False)  # started with 2. was not working. 20 worked well
                                 # pretrained_article_model.save('store/pretrained_model.model')
-
+                                del docEmbed
                             reader = DataReader()
                             if dirty:
                                 finetuneSet = reader.Load_Splits(ApplicationConstants.all_articles_random_v2, None,
@@ -144,12 +144,11 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
                                     fineTune_test_articles = list(map(lambda article: article.Content, test_dataset))
                                     fineTune_test_labels = list(map(lambda article: article.Label.TargetGender, test_dataset))
 
-
+                                    docEmbed = doc()
                                     if notBaseline:
                                         fine_tuned_model = docEmbed.fine_tune(fineTune_train_articles, fineTune_train_labels,
                                                                                    pretrained_article_model, fineTune_epoch)
                                     else:
-                                        docEmbed = doc()
                                         fine_tuned_model = docEmbed.Embed(fineTune_train_articles, fineTune_train_labels,
                                                                                   vector_size=vector_size,
                                                                                   epochs=pretrain_epoch,
@@ -161,7 +160,7 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
                                                                                           fineTune_test_articles,
                                                                                           fineTune_test_labels)
 
-
+                                    del docEmbed
 
                                     model = NN()
                                     model.Train(FT_Train_embeddings[:len(training_dataset)], FT_Train_labels[:len(training_dataset)],
