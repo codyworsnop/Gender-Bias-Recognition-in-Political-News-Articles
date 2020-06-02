@@ -70,17 +70,17 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
         del reader
 
         print("Opening file to append to")
-        pretrain_epochs = [100]#[25, 50, 100]#, 200]
-        fineTune_epochs = [100]#[ 25, 50, 100]#, 200]
-        vector_sizes = [50] #[20, 100, 300]
-        avFile = "pretrain_and_fineTune_cleaned_av_oldnums.txt"
-        allfile = "pretrain_and_fineTune_cleaned_oldnums.txt"
+        pretrain_epochs = [25, 50, 100]#, 200]
+        fineTune_epochs = [ 25, 50, 100]#, 200]
+        vector_sizes = [20, 100, 300]
+        avFile = "pretrain_and_fineTune_atnClean_av.txt"
+        allfile = "pretrain_and_fineTune_atnClean.txt"
     else:
         pretrain_epochs = [0]
         fineTune_epochs = [100]
         vector_sizes =[50]
-        avFile = "pretrain_and_fineTune_cleaned_av_oldnums.txt"
-        allfile = "pretrain_and_fineTune_cleaned_oldnums.txt"
+        avFile = "pretrain_and_fineTune_nopretrain_av.txt"
+        allfile = "pretrain_and_fineTune_nopretrain_oldnums.txt"
 
     for pretrain_epoch in pretrain_epochs:
         for fineTune_epoch in fineTune_epochs:
@@ -97,6 +97,7 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
                             # if (os.path.exists('store/pretrained_model.model')):
                             #	pretrained_article_model = self.docEmbed.Load_Model('store/pretrained_model.model')
                             # else:
+                            docEmbed = doc()
                             if notBaseline:
                                 print("Pretraining")
                                 docEmbed = doc()
@@ -105,7 +106,7 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
                                                                                epochs=pretrain_epoch,
                                                                                lower=False)  # started with 2. was not working. 20 worked well
                                 # pretrained_article_model.save('store/pretrained_model.model')
-                                del docEmbed
+                                #del docEmbed
                             reader = DataReader()
                             if dirty:
                                 finetuneSet = reader.Load_Splits(ApplicationConstants.all_articles_random_v2, None,
@@ -144,65 +145,68 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
                                     fineTune_test_articles = list(map(lambda article: article.Content, test_dataset))
                                     fineTune_test_labels = list(map(lambda article: article.Label.TargetGender, test_dataset))
 
-                                    docEmbed = doc()
+                                    #docEmbed = doc()
                                     if notBaseline:
-                                        fine_tuned_model = docEmbed.fine_tune(fineTune_train_articles, fineTune_train_labels,
+                                        fine_tuned_model = docEmbed.fine_tune(fineTune_train_articles + fineTune_test_articles, fineTune_train_labels + fineTune_test_labels,
                                                                                    pretrained_article_model, fineTune_epoch)
                                     else:
-                                        fine_tuned_model = docEmbed.Embed(fineTune_train_articles, fineTune_train_labels,
+                                        fine_tuned_model = docEmbed.Embed(fineTune_train_articles + fineTune_test_articles, fineTune_train_labels + fineTune_test_labels,
                                                                                   vector_size=vector_size,
                                                                                   epochs=fineTune_epoch,
-                                                                                  lower=False)
-                                    FT_Train_labels, FT_Train_embeddings = docEmbed.gen_vec(fine_tuned_model,
-                                                                                            fineTune_train_articles,
-                                                                                            fineTune_train_labels)
-                                    FT_Test_labels, TF_Test_embeddings = docEmbed.gen_vec(fine_tuned_model,
-                                                                                          fineTune_test_articles,
-                                                                                          fineTune_test_labels)
+                                                                                  lower=True)
+                                    FT_labels, FT_embeddings = docEmbed.gen_vec(fine_tuned_model,
+                                                                                            fineTune_train_articles + fineTune_test_articles,
+                                                                                            fineTune_train_labels + fineTune_test_labels)
+                                    #FT_Test_labels, TF_Test_embeddings = docEmbed.gen_vec(fine_tuned_model,
+                                                                                          #fineTune_test_articles,
+                                                                                          #fineTune_test_labels)
+                                    FT_labels = list(FT_labels)
 
-                                    del docEmbed
+                                    #del docEmbed
 
                                     model = NN()
-                                    model.Train(FT_Train_embeddings[:len(training_dataset)], FT_Train_labels[:len(training_dataset)],
-                                                FT_Train_embeddings[len(training_dataset):], FT_Train_labels[len(training_dataset):])
-                                    prediction = model.Predict(TF_Test_embeddings)
+                                    #print(len(FT_embeddings),len(FT_labels), len(training_dataset), len(validation_dataset), len(test_dataset))
+                                    model.Train(FT_embeddings[:len(training_dataset) + len(validation_dataset)], FT_labels[:len(training_dataset) + len(validation_dataset)],
+                                                FT_embeddings[len(training_dataset):len(training_dataset) + len(validation_dataset)], FT_labels[len(training_dataset):len(training_dataset) + len(validation_dataset)])
+                                    prediction = model.Predict(FT_embeddings[len(training_dataset) + len(validation_dataset):])
 
                                     Met = Metrics()
                                     if j == 0:
                                         lean = "Breitbart"
-                                        breitbartTtlPrecision += Met.Precision(prediction, FT_Test_labels)
-                                        breitbartTtlRecall += Met.Recall(prediction, FT_Test_labels)
-                                        breitbartTtlF1 += Met.Fmeasure(prediction, FT_Test_labels)
+                                        #print(len(prediction), len(FT_labels), len(training_dataset) + len(validation_dataset))
+                                        breitbartTtlPrecision += Met.Precision(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
+                                        breitbartTtlRecall += Met.Recall(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
+                                        breitbartTtlF1 += Met.Fmeasure(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
                                     if j == 1:
                                         lean = "Fox"
-                                        foxTtlPrecision += Met.Precision(prediction, FT_Test_labels)
-                                        foxTtlRecall += Met.Recall(prediction, FT_Test_labels)
-                                        foxTtlF1 += Met.Fmeasure(prediction, FT_Test_labels)
+                                        foxTtlPrecision += Met.Precision(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
+                                        foxTtlRecall += Met.Recall(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
+                                        foxTtlF1 += Met.Fmeasure(prediction,FT_labels[len(training_dataset) + len(validation_dataset):])
                                     if j == 2:
                                         lean = "USA"
-                                        usaTtlPrecision += Met.Precision(prediction, FT_Test_labels)
-                                        usaTtlRecall += Met.Recall(prediction, FT_Test_labels)
-                                        usaTtlF1 += Met.Fmeasure(prediction, FT_Test_labels)
+                                        usaTtlPrecision += Met.Precision(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
+                                        usaTtlRecall += Met.Recall(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
+                                        usaTtlF1 += Met.Fmeasure(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
                                     if j == 3:
                                         lean = "Huff"
-                                        huffTtlPrecision += Met.Precision(prediction, FT_Test_labels)
-                                        huffTtlRecall += Met.Recall(prediction, FT_Test_labels)
-                                        huffTtlF1 += Met.Fmeasure(prediction, FT_Test_labels)
+                                        huffTtlPrecision += Met.Precision(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
+                                        huffTtlRecall += Met.Recall(prediction,FT_labels[len(training_dataset) + len(validation_dataset):])
+                                        huffTtlF1 += Met.Fmeasure(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
                                     if j == 4:
                                         lean = "NYT"
-                                        nytTtlPrecision += Met.Precision(prediction, FT_Test_labels)
-                                        nytTtlRecall += Met.Recall(prediction, FT_Test_labels)
-                                        nytTtlF1 += Met.Fmeasure(prediction, FT_Test_labels)
+                                        nytTtlPrecision += Met.Precision(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
+                                        nytTtlRecall += Met.Recall(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
+                                        nytTtlF1 += Met.Fmeasure(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
                                     print("Leaning:", lean, "precision:",
-                                          Met.Precision(prediction, FT_Test_labels), "recall:",
-                                          Met.Recall(prediction, FT_Test_labels), "F-Measure:",
-                                          Met.Fmeasure(prediction, FT_Test_labels))
+                                          Met.Precision(prediction, FT_labels[len(training_dataset) + len(validation_dataset):]), "recall:",
+                                          Met.Recall(prediction, FT_labels[len(training_dataset) + len(validation_dataset):]), "F-Measure:",
+                                          Met.Fmeasure(prediction, FT_labels[len(training_dataset) + len(validation_dataset):]))
 
 
                                     f.write("Leaning: " + lean + " precision:" +
-                                            str(Met.Precision(prediction, FT_Test_labels)) + " recall: " +
-                                            str(Met.Recall(prediction, FT_Test_labels)) + " F-Measure: " +
-                                            str(Met.Fmeasure(prediction, FT_Test_labels)) + "\n")
+                                            str(Met.Precision(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])) + " recall: " +
+                                            str(Met.Recall(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])) + " F-Measure: " +
+                                            str(Met.Fmeasure(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])) + "\n")
                                     del model
 
                                     del Met
@@ -255,4 +259,4 @@ def print_all_the_news():
 
 
 
-pretrain_and_fineTune(True, False)
+pretrain_and_fineTune(dirty = True, notBaseline=True)
