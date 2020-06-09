@@ -70,7 +70,7 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
         del reader
 
         print("Opening file to append to")
-        pretrain_epochs = [25, 50, 100]#, 200]
+        pretrain_epochs = [25, 50, 100]#, 200] #fix the next 5 lines
         fineTune_epochs = [ 25, 50, 100]#, 200]
         vector_sizes = [20, 100, 300]
         avFile = "pretrain_and_fineTune_atnClean_av.txt"
@@ -114,7 +114,7 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
                                                                  number_of_articles=50,
                                                                  clean=False, save=False, shouldRandomize=False)
                             else:
-                                finetuneSet = reader.Load_Splits(ApplicationConstants.all_articles_random_v2_cleaned, None,
+                                finetuneSet = reader.Load_Splits(ApplicationConstants.all_articles_random_v3_cleaned, None,
                                                                  number_of_articles=50,
                                                                  clean=False, save=False, shouldRandomize=False)
                             del reader
@@ -260,4 +260,4 @@ def print_all_the_news():
 
 
 
-pretrain_and_fineTune(dirty = True, notBaseline=True)
+pretrain_and_fineTune(dirty = False, notBaseline=True)
