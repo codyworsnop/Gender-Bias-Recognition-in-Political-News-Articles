@@ -28,6 +28,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os.path
 
+import spacy
 
 class Orchestrator():
 
@@ -353,33 +354,50 @@ class Orchestrator():
 		print("total use: ",zipped)
 
 
-	def calc_word_vector(self, all_articles):
+	def calc_word_vector(self, all_articles, not_pos = True):
+		nlp = spacy.load("en_core_web_lg")
 		word_vector = []
-		count_vector = []
-		from nltk.corpus import stopwords
-		stops = list(stopwords.words('english'))
-		punctuation = [',', '.', '\"','"','!', '?', '\'', '$', ''', '\n', ' ', '-', '_', ':', ';', '%', '—', '–', ''', '•']
-		no_no = ['oval','Oval', 'Rep', 'rep', 'Rep.', 'rep.', 'Dem.', 'Dem', 'dem', 'dem.', 'son', 'p.m', 'ms']
-		articles = list(map(lambda article: article.Content, all_articles))
-		for article in articles:
-			words = nltk.word_tokenize(article)
-			for word in words:
-				if '.' in word or ',' in word:
-					word = word[:-1]
-				word = word.lower()
-				if word not in no_no and word not in punctuation and word not in word_vector and word not in stops:
-					word_vector.append(word)
-		return word_vector
+
+		if not_pos:
+			from nltk.corpus import stopwords
+			stops = list(stopwords.words('english'))
+			punctuation = [',', '.', '\"','"','!', '?', '\'', '$', ''', '\n', ' ', '-', '_', ':', ';', '%', '—', '–', ''', '•']
+			no_no = ['oval','Oval', 'Rep', 'rep', 'Rep.', 'rep.', 'Dem.', 'Dem', 'dem', 'dem.', 'son', 'p.m', 'ms']
+		for i, split in enumerate(all_articles):
+			print("Fold " + str(i + 1))
+			for j, leaning in enumerate(split):
+				training_dataset = split[leaning][ApplicationConstants.Train]
+				validation_dataset = split[leaning][ApplicationConstants.Validation]
+				test_dataset = split[leaning][ApplicationConstants.Test]
+				all_articles = list(map(lambda art: art.Content, training_dataset + validation_dataset + test_dataset))
+				for article in all_articles:
+					document = nlp(article)
+					if not_pos:
+						for word in document:
+							if '.' in word or ',' in word:
+								word = word[:-1]
+							word = word.lower()
+							if word not in no_no and word not in punctuation and word not in word_vector and word not in stops:
+								word_vector.append(word)
+					else:
+						for token in document:
+							if token.pos_ is "ADJ":  # and token not in no_no and token not in punctuation:
+								word = token.lemma_
+								word_vector.append(word)
+				return word_vector
 
 	def calc_count_doc_count_vector(self, word_vector, article):
-		words = nltk.word_tokenize(article)
+		nlp = spacy.load("en_core_web_lg")
+		words = nlp(article)
 		count_vector = []
 		for i in range(len(word_vector)):
 			count_vector.append(0)         
 		for word in words:
-			if '.' in word or ',' in word:
-				word = word[:-1]
-			word = word.lower()
+			if '.' in word.text or ',' in word.text:
+				word = word.text[:-1]
+				word = word.lower()
+			else:
+				word = word.lemma_
 			if word in word_vector:
 				ind = word_vector.index(word)
 				count_vector[ind] += 1
@@ -404,21 +422,31 @@ class Orchestrator():
 		articles = [item for sublist in leanings_articles for item in sublist]
 		return articles
 
-	def run_bow(self, articles):
-		if os.path.isfile('store/np_cum_vec.npy'):
-			numpy_cumulative = np.load('store/np_cum_vec.npy')
+	def run_bow(self, articles, file_name_1, file_name_2, model_name, not_pos = True):
+		if os.path.isfile(file_name_1):
+			numpy_cumulative = np.load(file_name_1)
 			cumulative_word_vec = numpy_cumulative.tolist()
 
 		else:
-			cumulative_word_vec = self.calc_word_vector(articles)
+			cumulative_word_vec = self.calc_word_vector(articles, not_pos)
 
 			numpy_cumulative = np.array(cumulative_word_vec)
-			np.save('store/np_cum_vec.npy', numpy_cumulative)
+			np.save(file_name_1, numpy_cumulative)
 			print("store/total num words = " + str(len(cumulative_word_vec)))
 
-
-		articles_list = list(map(lambda article: article.Content, articles))
-		labels = list(map(lambda article: article.Label.TargetGender, articles))
+		for i, split in enumerate(articles):
+			print("Fold " + str(i + 1))
+			for j, leaning in enumerate(split):
+				if i is 0 and j is 0:
+					training_dataset = split[leaning][ApplicationConstants.Train]
+					validation_dataset = split[leaning][ApplicationConstants.Validation]
+					test_dataset = split[leaning][ApplicationConstants.Test]
+					articles_list = list(map(lambda article: article.Content, training_dataset + validation_dataset + test_dataset))
+					labels = list(map(lambda article: article.Label.TargetGender, training_dataset + validation_dataset +test_dataset))
+				else:
+					break
+			if i > 0:
+				break
 		print("zipping and shuffling")
 		zippedArticles = list(zip(articles_list, labels))
 		random.shuffle(zippedArticles)
@@ -438,15 +466,15 @@ class Orchestrator():
 		print("appending")
 		count_vectors = []
 		print(len(list_articles))
-		if os.path.isfile('store/np_count_vec.npy'):
-			numpy_cumulative = np.load('store/np_count_vec.npy')
+		if os.path.isfile(file_name_2):
+			numpy_cumulative = np.load(file_name_2)
 			count_vectors = numpy_cumulative.tolist()
 		else:
 			for article in list_articles:
 				count_vectors.append(self.calc_count_doc_count_vector(cumulative_word_vec, article))
 			numpy_count = np.array(count_vectors)
 
-			np.save('store/np_count_vec.npy', numpy_count)
+			np.save(file_name_2, numpy_count)
 		trainLen = int(len(count_vectors) * 0.8)
 
 		print("building net")
@@ -468,7 +496,7 @@ class Orchestrator():
 		resTop = sorted(range(len(weights)), key=lambda sub: weights[sub])[-21:]
 		resBottom = sorted(range(len(weights)), key=lambda sub: weights[sub])[:21]
 
-		pickle.dump(net, open("perceptron2.sav", 'wb'))
+		pickle.dump(net, open(model_name, 'wb'))
 		print("Male Top Words: ")
 		for index in resTop:
 			print(cumulative_word_vec[index], float(weights[index]))
@@ -480,10 +508,10 @@ class Orchestrator():
 
 
 orchestrator = Orchestrator()
-orchestrator.read_data(ApplicationConstants.all_articles_random_v3, clean = True, save = True, savePath = "./Data/articles_random_v3_cleaned.json",  random= False, number_of_articles = 50)
+articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v3, random= False, number_of_articles = 1000)
 #input("Press Enter to continue...") adds 1 G to mem
 #articles = orchestrator.get_all_articles()
-#orchestrator.run_bow(articles)
+orchestrator.run_bow(articles, "store/np_cum_vec_POS.npy", "store/np_count_vec_POS.npy", "perceptron_POS.sav", False)
 #orchestrator.pretrain_and_fineTune(dirty = True)
 #orchestrator.print_all_the_news()
 #debias, zhao, not_shared = word_sets()
