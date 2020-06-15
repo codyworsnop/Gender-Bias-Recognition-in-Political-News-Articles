@@ -479,7 +479,8 @@ class Orchestrator():
 	#def test_hyperparams(self):
 
 
-#orchestrator = Orchestrator()
+orchestrator = Orchestrator()
+orchestrator.read_data(ApplicationConstants.all_articles_random_v3, clean = True, save = True, savePath = "./Data/articles_random_v3_cleaned.json",  random= False, number_of_articles = 50)
 #input("Press Enter to continue...") adds 1 G to mem
 #articles = orchestrator.get_all_articles()
 #orchestrator.run_bow(articles)
