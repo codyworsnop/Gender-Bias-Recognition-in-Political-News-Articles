@@ -357,11 +357,12 @@ class Orchestrator():
 	def calc_word_vector(self, all_articles, not_pos = True):
 		nlp = spacy.load("en_core_web_lg")
 		word_vector = []
-
+		punctuation = [',', '.', '\"', '"', '!', '?', '\'', '$', ''', '\n', ' ', '-', '_', ':', ';', '%', '—', '–', ''',
+					   '•']
 		if not_pos:
 			from nltk.corpus import stopwords
 			stops = list(stopwords.words('english'))
-			punctuation = [',', '.', '\"','"','!', '?', '\'', '$', ''', '\n', ' ', '-', '_', ':', ';', '%', '—', '–', ''', '•']
+			#punctuation = [',', '.', '\"','"','!', '?', '\'', '$', ''', '\n', ' ', '-', '_', ':', ';', '%', '—', '–', ''', '•']
 			no_no = ['oval','Oval', 'Rep', 'rep', 'Rep.', 'rep.', 'Dem.', 'Dem', 'dem', 'dem.', 'son', 'p.m', 'ms']
 		for i, split in enumerate(all_articles):
 			print("Fold " + str(i + 1))
@@ -381,9 +382,10 @@ class Orchestrator():
 								word_vector.append(word)
 					else:
 						for token in document:
-							if token.pos_ is "ADJ":  # and token not in no_no and token not in punctuation:
+							if token.pos_ is "ADJ" and token.lemma_ not in word_vector and token.text not in punctuation:  # and token not in no_no and token not in punctuation:
 								word = token.lemma_
 								word_vector.append(word)
+				#print(word_vector)
 				return word_vector
 
 	def calc_count_doc_count_vector(self, word_vector, article):
