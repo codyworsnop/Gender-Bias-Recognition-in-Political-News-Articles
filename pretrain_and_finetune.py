@@ -70,11 +70,13 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
         del reader
 
         print("Opening file to append to")
-        pretrain_epochs = [50]#, 200] #fix the next 5 lines
-        fineTune_epochs = [ 50, 100]#, 200]
-        vector_sizes = [ 100]
-        avFile = "pretrain_and_fineTune_atnClean_av.txt"
-        allfile = "pretrain_and_fineTune_atnClean.txt"
+
+        pretrain_epochs = [25]#[25, 50, 100]#, 200] #fix the next 5 lines
+        fineTune_epochs = [100]#[ 25, 50, 100]#, 200]
+        vector_sizes = [100]#[20, 100, 300]
+        avFile = "pretrain_and_cleaned_fineTune_av.txt"#"pretrain_and_fineTune_atnClean_av.txt"
+        allfile = "pretrain_and_cleaned_fineTune.txt"#"pretrain_and_fineTune_atnClean.txt"
+
     else:
         pretrain_epochs = [0]
         fineTune_epochs = [100]
@@ -86,7 +88,7 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
         for fineTune_epoch in fineTune_epochs:
             for vector_size in vector_sizes:
                 
-                if (pretrain_epoch == 25 and fineTune_epoch == 25 and vector_size == 100 and notBaseline == True) or (pretrain_epoch == 25 and fineTune_epoch == 25 and vector_size == 300) or (pretrain_epoch == 25 and fineTune_epoch == 25 and vector_size == 20):
+                if (pretrain_epoch == 0 and fineTune_epoch == 0 and vector_size == 100 and notBaseline == True) or (pretrain_epoch == 0 and fineTune_epoch == 0 and vector_size == 300) or (pretrain_epoch == 0 and fineTune_epoch == 0 and vector_size == 20):
                     print("skipping")
                     print(pretrain_epoch, fineTune_epoch, vector_size)
                     continue
