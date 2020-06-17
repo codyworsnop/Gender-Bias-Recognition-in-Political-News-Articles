@@ -520,7 +520,7 @@ class Orchestrator():
 		acc = accuracy_score(list_labels[trainLen:], predictions)
 		target_names = ['Female', 'Male']
 		print("accuracy is: " + str(acc))
-		if acc > 0.65:
+		if acc >= 0.63:
 			print(classification_report(list_labels[trainLen:], predictions, target_names=target_names))
 
 			weights = weights[0]
