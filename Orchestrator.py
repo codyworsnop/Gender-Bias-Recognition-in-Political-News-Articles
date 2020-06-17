@@ -354,16 +354,16 @@ class Orchestrator():
 		print("total use: ",zipped)
 
 
-	def calc_word_vector(self, all_articles, not_pos = True):
+	def calc_word_vector(self, all_articles, not_pos = True, lemmad = True):
 		nlp = spacy.load("en_core_web_lg")
 		word_vector = []
 		punctuation = [',', '.', '\"', '"', '!', '?', '\'', '$', ''', '\n', ' ', '-', '_', ':', ';', '%', '—', '–', ''',
-					   '•']
+					   '•', ' ', ', ']
 		if not_pos:
 			from nltk.corpus import stopwords
 			stops = list(stopwords.words('english'))
 			#punctuation = [',', '.', '\"','"','!', '?', '\'', '$', ''', '\n', ' ', '-', '_', ':', ';', '%', '—', '–', ''', '•']
-			no_no = ['oval','Oval', 'Rep', 'rep', 'Rep.', 'rep.', 'Dem.', 'Dem', 'dem', 'dem.', 'son', 'p.m', 'ms']
+			#no_no = ['oval','Oval', 'Rep', 'rep', 'Rep.', 'rep.', 'Dem.', 'Dem', 'dem', 'dem.', 'son', 'p.m', 'ms']
 		for i, split in enumerate(all_articles):
 			print("Fold " + str(i + 1))
 			for j, leaning in enumerate(split):
@@ -374,32 +374,61 @@ class Orchestrator():
 				for article in all_articles:
 					document = nlp(article)
 					if not_pos:
-						for word in document:
-							if '.' in word or ',' in word:
-								word = word[:-1]
-							word = word.lower()
-							if word not in no_no and word not in punctuation and word not in word_vector and word not in stops:
-								word_vector.append(word)
+						for token in document:
+							if not token.is_punct:
+								if not lemmad:
+									word = token.orth_.lower()
+									if word[0] == '-':
+										word = word[1:]
+									if word[-1] == "-":
+										word = word[:-1]
+									if word not in punctuation and word not in word_vector and word not in stops:
+										word_vector.append(word)
+								else:
+									word = token.lemma_.lower()
+							#word = word.lower()
+									if word[0] == '-':
+										word = word[1:]
+									if word[-1] == "-":
+										word = word[:-1]
+									if word not in punctuation and word not in word_vector and word not in stops:
+										word_vector.append(word)
 					else:
 						for token in document:
-							if token.pos_ is "ADJ" and token.lemma_ not in word_vector and token.text not in punctuation:  # and token not in no_no and token not in punctuation:
-								word = token.lemma_
+							if token.pos_ is "ADJ" and token.orth_.lower() not in word_vector and token.text not in punctuation:  # and token not in no_no and token not in punctuation:
+								if not lemmad:
+									word = token.orth_.lower()
+									if word[0] == '-':
+										word = word[1:]
+									if word[-1] == "-":
+										word = word[:-1]
+								else:
+									word = token.lemmad_.orth_.lower()
+									if word[0] == '-':
+										word = word[1:]
+									if word[-1] == "-":
+										word = word[:-1]
 								word_vector.append(word)
-				#print(word_vector)
+				print(word_vector)
 				return word_vector
 
-	def calc_count_doc_count_vector(self, word_vector, article):
+	def calc_count_doc_count_vector(self, word_vector, article, lemmad = True):
 		nlp = spacy.load("en_core_web_lg")
 		words = nlp(article)
 		count_vector = []
 		for i in range(len(word_vector)):
-			count_vector.append(0)         
-		for word in words:
-			if '.' in word.text or ',' in word.text:
-				word = word.text[:-1]
-				word = word.lower()
+			count_vector.append(0)
+
+		for token in words:
+			if lemmad:
+				word = token.lemma_.lower()
 			else:
-				word = word.lemma_
+				word = token.orth_.lower()
+				# word = word.lower()
+			if word[0] == '-':
+				word = word[1:]
+			if len(word) > 1 and word[-1] == "-":
+				word = word[:-1]
 			if word in word_vector:
 				ind = word_vector.index(word)
 				count_vector[ind] += 1
@@ -424,13 +453,13 @@ class Orchestrator():
 		articles = [item for sublist in leanings_articles for item in sublist]
 		return articles
 
-	def run_bow(self, articles, file_name_1, file_name_2, model_name, not_pos = True):
+	def run_bow(self, articles, file_name_1, file_name_2, model_name, not_pos = True, lemmad = True):
 		if os.path.isfile(file_name_1):
 			numpy_cumulative = np.load(file_name_1)
 			cumulative_word_vec = numpy_cumulative.tolist()
 
 		else:
-			cumulative_word_vec = self.calc_word_vector(articles, not_pos)
+			cumulative_word_vec = self.calc_word_vector(articles, not_pos, lemmad)
 
 			numpy_cumulative = np.array(cumulative_word_vec)
 			np.save(file_name_1, numpy_cumulative)
@@ -473,11 +502,13 @@ class Orchestrator():
 			count_vectors = numpy_cumulative.tolist()
 		else:
 			for article in list_articles:
-				count_vectors.append(self.calc_count_doc_count_vector(cumulative_word_vec, article))
+				count_vectors.append(self.calc_count_doc_count_vector(cumulative_word_vec, article, lemmad))
 			numpy_count = np.array(count_vectors)
 
 			np.save(file_name_2, numpy_count)
 		trainLen = int(len(count_vectors) * 0.8)
+		acc = 0
+
 
 		print("building net")
 		net = SVM()
@@ -489,31 +520,31 @@ class Orchestrator():
 		acc = accuracy_score(list_labels[trainLen:], predictions)
 		target_names = ['Female', 'Male']
 		print("accuracy is: " + str(acc))
+		if acc > 0.65:
+			print(classification_report(list_labels[trainLen:], predictions, target_names=target_names))
 
-		print(classification_report(list_labels[trainLen:], predictions, target_names=target_names))
+			weights = weights[0]
+			#print(weights)
 
-		weights = weights[0]
-		print(weights)
-
-		resTop = sorted(range(len(weights)), key=lambda sub: weights[sub])[-21:]
-		resBottom = sorted(range(len(weights)), key=lambda sub: weights[sub])[:21]
-
-		pickle.dump(net, open(model_name, 'wb'))
-		print("Male Top Words: ")
-		for index in resTop:
-			print(cumulative_word_vec[index], float(weights[index]))
-		print("Female Top Words: ")
-		for index in resBottom:
-			print(cumulative_word_vec[index], float(weights[index]))
+			resTop = sorted(range(len(weights)), key=lambda sub: weights[sub])[-21:]
+			resBottom = sorted(range(len(weights)), key=lambda sub: weights[sub])[:21]
+			model_name_amp = model_name + "_" + str(acc)
+			pickle.dump(net, open(model_name_amp, 'wb'))
+			print("Male Top Words: ")
+			for index in resTop:
+				print(cumulative_word_vec[index], float(weights[index]))
+			print("Female Top Words: ")
+			for index in resBottom:
+				print(cumulative_word_vec[index], float(weights[index]))
 
 	#def test_hyperparams(self):
 
 
 orchestrator = Orchestrator()
-articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v3, random= False, number_of_articles = 1000)
+articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v3_cleaned, random= False, number_of_articles = 50)
 #input("Press Enter to continue...") adds 1 G to mem
 #articles = orchestrator.get_all_articles()
-orchestrator.run_bow(articles, "store/np_cum_vec_POS.npy", "store/np_count_vec_POS.npy", "perceptron_POS.sav", False)
+orchestrator.run_bow(articles, "store/np_cum_vec_l_50.npy", "store/np_count_vec_l_50.npy", "perceptron_l_50.sav", True, True)
 #orchestrator.pretrain_and_fineTune(dirty = True)
 #orchestrator.print_all_the_news()
 #debias, zhao, not_shared = word_sets()
