@@ -404,7 +404,7 @@ class Orchestrator():
 									if word[-1] == "-":
 										word = word[:-1]
 								else:
-									word = token.lemmad_.orth_.lower()
+									word = token.lemma_.lower()
 									if word[0] == '-':
 										word = word[1:]
 									if word[-1] == "-":
