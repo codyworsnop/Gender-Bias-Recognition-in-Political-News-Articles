@@ -468,7 +468,7 @@ class Orchestrator():
 		for i, split in enumerate(articles):
 			print("Fold " + str(i + 1))
 			for j, leaning in enumerate(split):
-				if i is 0 and j is 0:
+				if i is 0:
 					training_dataset = split[leaning][ApplicationConstants.Train]
 					validation_dataset = split[leaning][ApplicationConstants.Validation]
 					test_dataset = split[leaning][ApplicationConstants.Test]
