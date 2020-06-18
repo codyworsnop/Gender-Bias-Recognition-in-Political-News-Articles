@@ -401,13 +401,13 @@ class Orchestrator():
 									word = token.orth_.lower()
 									if word[0] == '-':
 										word = word[1:]
-									if word[-1] == "-":
+									if len(word) > 1 and  word[-1] == "-":
 										word = word[:-1]
 								else:
 									word = token.lemma_.lower()
 									if word[0] == '-':
 										word = word[1:]
-									if word[-1] == "-":
+									if len(word) > 1 and word[-1] == "-":
 										word = word[:-1]
 								word_vector.append(word)
 			#print(word_vector)
