@@ -511,10 +511,11 @@ class Orchestrator():
 
 
 		print("building net")
-		net = SVM()
+		#net = SVM()
+		net = Linear_NN()
 		print("training")
-		net.Train(count_vectors[:trainLen], list_labels[:trainLen], count_vectors[trainLen:], list_labels[trainLen:])
-		weights = net.Get_Weights()
+		weights = net.Train(count_vectors[:trainLen], list_labels[:trainLen], count_vectors[trainLen:], list_labels[trainLen:])
+		#weights = net.Get_Weights()
 		predictions = net.Predict(count_vectors[trainLen:])
 
 		acc = accuracy_score(list_labels[trainLen:], predictions)
@@ -538,6 +539,8 @@ class Orchestrator():
 				print(cumulative_word_vec[index], float(weights[index]))
 
 	#def test_hyperparams(self):
+
+	#def count_adjectives:
 
 
 orchestrator = Orchestrator()
