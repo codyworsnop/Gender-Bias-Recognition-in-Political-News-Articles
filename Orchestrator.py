@@ -367,6 +367,7 @@ class Orchestrator():
 		for i, split in enumerate(all_articles):
 			print("Fold " + str(i + 1))
 			for j, leaning in enumerate(split):
+				print("calc word vec", leaning)
 				training_dataset = split[leaning][ApplicationConstants.Train]
 				validation_dataset = split[leaning][ApplicationConstants.Validation]
 				test_dataset = split[leaning][ApplicationConstants.Test]
@@ -409,8 +410,8 @@ class Orchestrator():
 									if word[-1] == "-":
 										word = word[:-1]
 								word_vector.append(word)
-				print(word_vector)
-				return word_vector
+			#print(word_vector)
+			return word_vector
 
 	def calc_count_doc_count_vector(self, word_vector, article, lemmad = True):
 		nlp = spacy.load("en_core_web_lg")
@@ -464,20 +465,29 @@ class Orchestrator():
 			numpy_cumulative = np.array(cumulative_word_vec)
 			np.save(file_name_1, numpy_cumulative)
 			print("store/total num words = " + str(len(cumulative_word_vec)))
-
+		list_articles_list = []
+		list_labels = []
 		for i, split in enumerate(articles):
 			print("Fold " + str(i + 1))
 			for j, leaning in enumerate(split):
+
 				if i is 0:
 					training_dataset = split[leaning][ApplicationConstants.Train]
 					validation_dataset = split[leaning][ApplicationConstants.Validation]
 					test_dataset = split[leaning][ApplicationConstants.Test]
 					articles_list = list(map(lambda article: article.Content, training_dataset + validation_dataset + test_dataset))
+					list_articles_list.append(articles_list)
 					labels = list(map(lambda article: article.Label.TargetGender, training_dataset + validation_dataset +test_dataset))
+					list_labels.append(labels)
 				else:
 					break
 			if i > 0:
 				break
+		articles_list = [j for sub in list_articles_list for j in sub]
+		labels = [j for sub in list_labels for j in sub]
+		#print(articles_list)
+		#print(labels)
+		#fafdadfsd
 		print("zipping and shuffling")
 		zippedArticles = list(zip(articles_list, labels))
 		random.shuffle(zippedArticles)
@@ -546,7 +556,7 @@ orchestrator = Orchestrator()
 articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v3_cleaned, random= False, number_of_articles = 50)
 #input("Press Enter to continue...") adds 1 G to mem
 #articles = orchestrator.get_all_articles()
-orchestrator.run_bow(articles, "store/np_cum_vec_l_50.npy", "store/np_count_vec_l_50.npy", "perceptron_l_50.sav", True, True)
+orchestrator.run_bow(articles, "store/np_cum_vec_l_50.npy", "store/np_count_vec_l_50.npy", "perceptron_l_50.sav", False, True)
 #orchestrator.pretrain_and_fineTune(dirty = True)
 #orchestrator.print_all_the_news()
 #debias, zhao, not_shared = word_sets()
