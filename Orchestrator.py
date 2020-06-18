@@ -511,11 +511,10 @@ class Orchestrator():
 
 
 		print("building net")
-		#net = SVM()
-		net = Linear_NN()
+		net = SVM()
 		print("training")
-		weights = net.Train(count_vectors[:trainLen], list_labels[:trainLen], count_vectors[trainLen:], list_labels[trainLen:])
-		#weights = net.Get_Weights()
+		net.Train(count_vectors[:trainLen], list_labels[:trainLen], count_vectors[trainLen:], list_labels[trainLen:])
+		weights = net.Get_Weights()
 		predictions = net.Predict(count_vectors[trainLen:])
 
 		acc = accuracy_score(list_labels[trainLen:], predictions)
