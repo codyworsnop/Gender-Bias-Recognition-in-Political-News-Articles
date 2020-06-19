@@ -13,7 +13,7 @@ class SVM(implements(IModel)):
         self.Metrics = Metrics()
     def Build_SVM(self):
 
-        model = svm.SVC(kernel='linear', gamma='auto', probability = False)
+        model = svm.SVC(kernel='linear', gamma='auto', probability = False, tol = 0.0001)
         return model 
 
     def Train(self, trainFeatures, trainLabels, validationFeatures, validationLabels):
