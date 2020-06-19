@@ -558,7 +558,7 @@ orchestrator = Orchestrator()
 articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v3_cleaned, random= False, number_of_articles = 50)
 #input("Press Enter to continue...") adds 1 G to mem
 #articles = orchestrator.get_all_articles()
-orchestrator.run_bow(articles, "store/np_cum_vec_POS_l_50.npy", "store/np_count_vec_POS_l_50.npy", "perceptron_POS_l_50.sav", False, True)
+orchestrator.run_bow(articles, "store/np_cum_vec_l_50.npy", "store/np_count_vec_l_50.npy", "perceptron_POS_l_50.sav", True, True)
 #orchestrator.run_bow(articles, "store/np_cum_vec_POS_50.npy", "store/np_count_vec_POS_50.npy", "perceptron_POS_50.sav", False, False)
 #orchestrator.pretrain_and_fineTune(dirty = True)
 #orchestrator.print_all_the_news()
