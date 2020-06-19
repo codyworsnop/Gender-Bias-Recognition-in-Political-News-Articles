@@ -396,20 +396,22 @@ class Orchestrator():
 										word_vector.append(word)
 					else:
 						for token in document:
-							if token.pos_ is "ADJ" and token.orth_.lower() not in word_vector and token.text not in punctuation:  # and token not in no_no and token not in punctuation:
-								if not lemmad:
+							if not lemmad:
+								if token.pos_ is "ADJ" and token.orth_.lower() not in word_vector and token.text not in punctuation:
 									word = token.orth_.lower()
 									if word[0] == '-':
 										word = word[1:]
-									if len(word) > 1 and  word[-1] == "-":
+									if len(word) > 1 and word[-1] == "-":
 										word = word[:-1]
-								else:
+									word_vector.append(word)
+							else:
+								if token.pos_ is "ADJ" and token.lemma_.lower() not in word_vector and token.text not in punctuation:
 									word = token.lemma_.lower()
 									if word[0] == '-':
 										word = word[1:]
 									if len(word) > 1 and word[-1] == "-":
 										word = word[:-1]
-								word_vector.append(word)
+									word_vector.append(word)
 			#print(word_vector)
 			return word_vector
 
@@ -553,7 +555,7 @@ class Orchestrator():
 
 
 orchestrator = Orchestrator()
-articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v3_cleaned, random= False, number_of_articles = 50)
+articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v3_cleaned, random= False, number_of_articles = 1)
 #input("Press Enter to continue...") adds 1 G to mem
 #articles = orchestrator.get_all_articles()
 orchestrator.run_bow(articles, "store/np_cum_vec_POS_l_50.npy", "store/np_count_vec_POS_l_50.npy", "perceptron_POS_l_50.sav", False, True)
