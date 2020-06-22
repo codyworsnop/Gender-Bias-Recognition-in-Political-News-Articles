@@ -540,7 +540,7 @@ class Orchestrator():
 
 			resTop = sorted(range(len(weights)), key=lambda sub: weights[sub])[-21:]
 			resBottom = sorted(range(len(weights)), key=lambda sub: weights[sub])[:21]
-			model_name_amp = model_name + "_" + str(acc)
+			model_name_amp = model_name + "_" + str(acc) + "_.sav"
 			pickle.dump(net, open(model_name_amp, 'wb'))
 			print("Male Top Words: ")
 			for index in resTop:
@@ -558,7 +558,7 @@ orchestrator = Orchestrator()
 articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v3, random= False, number_of_articles = 50)
 #input("Press Enter to continue...") adds 1 G to mem
 #articles = orchestrator.get_all_articles()
-orchestrator.run_bow(articles, "store/np_cum_vec_POS_ld_50.npy", "store/np_count_vec_POS_ld_50.npy", "perceptron_POS_ld_50.sav", False, True) #note, perceptron_POS_50.sav on mworks02 should actually be perceptron_50.sav
+orchestrator.run_bow(articles, "store/np_cum_vec_POS_ld_50.npy", "store/np_count_vec_POS_ld_50.npy", "perceptron_POS_ld_50",False, True)
 #orchestrator.run_bow(articles, "store/np_cum_vec_POS_50.npy", "store/np_count_vec_POS_50.npy", "perceptron_POS_50.sav", False, False)
 #orchestrator.pretrain_and_fineTune(dirty = True)
 #orchestrator.print_all_the_news()
