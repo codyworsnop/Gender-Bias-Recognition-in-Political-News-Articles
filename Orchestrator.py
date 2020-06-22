@@ -555,7 +555,8 @@ class Orchestrator():
 
 
 orchestrator = Orchestrator()
-articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v3, random= False, number_of_articles = 50)
+#articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v3, random= False, number_of_articles = 50)
+articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v4_cleaned, random=False, number_of_articles=50)
 #input("Press Enter to continue...") adds 1 G to mem
 #articles = orchestrator.get_all_articles()
 #orchestrator.run_bow(articles, "store/np_cum_vec_POS_ld_50.npy", "store/np_count_vec_POS_ld_50.npy", "perceptron_POS_ld_50",False, True)#run bow on adj, lemmad
