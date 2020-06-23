@@ -56,7 +56,10 @@ class Preprocessor():
         #remove whole words from stop list 
         for word in StopWords.StopWords: 
             reg_string = '\\b' + word + '((-[a-zA-Z]*)|([,.!?;"\' ]))'
-            data = re.sub(reg_string, '', data, flags = re.I) 
+            data = re.sub(reg_string, '', data, flags = re.I)
+
+        #replace huperson with human (an unintended consequence of our man/person regex swap)
+        data = re.sub('huperson', 'human', data,  flags = re.I)
 
         #return processed_data
         return data
