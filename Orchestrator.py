@@ -395,9 +395,10 @@ class Orchestrator():
 									if word not in punctuation and word not in word_vector and word not in stops:
 										word_vector.append(word)
 					else:
+						ms = [' M. ', ' m. ']
 						for token in document:
 							if not lemmad:
-								if token.pos_ is "ADJ" and token.orth_.lower() not in word_vector and token.text not in punctuation:
+								if token.pos_ is "ADJ" and token.orth_.lower() not in word_vector and token.text not in punctuation and token.text not in ms:
 									word = token.orth_.lower()
 									if word[0] == '-':
 										word = word[1:]
@@ -405,7 +406,7 @@ class Orchestrator():
 										word = word[:-1]
 									word_vector.append(word)
 							else:
-								if token.pos_ is "ADJ" and token.lemma_.lower() not in word_vector and token.text not in punctuation:
+								if token.pos_ is "ADJ" and token.lemma_.lower() not in word_vector and token.text not in punctuation and token.text not in ms:
 									word = token.lemma_.lower()
 									if word[0] == '-':
 										word = word[1:]
@@ -555,6 +556,7 @@ class Orchestrator():
 
 
 orchestrator = Orchestrator()
+#orchestrator.read_data(path = ApplicationConstants.all_articles_random_v3, random= False, number_of_articles = 1000, savePath = ApplicationConstants.all_articles_random_v4_cleaned, save = True, clean = True)
 #articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v3, random= False, number_of_articles = 50)
 articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v4_cleaned, random=False, number_of_articles=50)
 #input("Press Enter to continue...") adds 1 G to mem
