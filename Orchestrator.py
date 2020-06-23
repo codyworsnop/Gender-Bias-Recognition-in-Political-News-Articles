@@ -457,6 +457,24 @@ class Orchestrator():
 		articles = [item for sublist in leanings_articles for item in sublist]
 		return articles
 
+	def load_exisiting_bow(self, model, file_name_2):
+		net = pickle.load(open(model, 'rb'))
+		weights = net.Get_Weights()
+
+		numpy_cumulative = np.load(file_name_2)
+		count_vectors = numpy_cumulative.tolist()
+		label_name = file_name_2[-4] + "_labels.npy"
+		list_labels = np.load(label_name)
+		list_labels = list_labels.tolist()
+		trainLen = int(len(count_vectors) * 0.8)
+
+		predictions = net.Predict(count_vectors[trainLen:])
+
+		acc = accuracy_score(list_labels[trainLen:], predictions)
+		target_names = ['Female', 'Male']
+		print("accuracy is: " + str(acc))
+
+
 	def run_bow(self, articles, file_name_1, file_name_2, model_name, not_pos = True, lemmad = True):
 		if os.path.isfile(file_name_1):
 			numpy_cumulative = np.load(file_name_1)
@@ -510,15 +528,19 @@ class Orchestrator():
 		print("appending")
 		count_vectors = []
 		print(len(list_articles))
+		label_name = file_name_2[-4] + "_labels.npy"
 		if os.path.isfile(file_name_2):
 			numpy_cumulative = np.load(file_name_2)
+			numpy_cum_labels = np.load(label_name)
 			count_vectors = numpy_cumulative.tolist()
+			list_labels = numpy_cum_labels.tolist()
 		else:
 			for article in list_articles:
 				count_vectors.append(self.calc_count_doc_count_vector(cumulative_word_vec, article, lemmad))
 			numpy_count = np.array(count_vectors)
-
+			numpy_label = np.array(list_labels)
 			np.save(file_name_2, numpy_count)
+			np.save(label_name, numpy_label)
 		trainLen = int(len(count_vectors) * 0.8)
 		acc = 0
 
