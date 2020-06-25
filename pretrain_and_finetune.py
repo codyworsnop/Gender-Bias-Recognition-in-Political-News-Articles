@@ -180,7 +180,7 @@ class pretrain():
 
                                         model = NN()
                                         #print(len(FT_embeddings),len(FT_labels), len(training_dataset), len(validation_dataset), len(test_dataset))
-                                        model.Train(FT_embeddings[:len(training_dataset) + len(validation_dataset)], FT_labels[:len(training_dataset) + len(validation_dataset)],
+                                        model.Train(FT_embeddings[:len(training_dataset) ], FT_labels[:len(training_dataset)],
                                                     FT_embeddings[len(training_dataset):len(training_dataset) + len(validation_dataset)], FT_labels[len(training_dataset):len(training_dataset) + len(validation_dataset)])
                                         prediction = model.Predict(FT_embeddings[len(training_dataset) + len(validation_dataset):])
 
