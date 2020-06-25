@@ -98,8 +98,8 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
                     print(pretrain_epoch, fineTune_epoch, vector_size)
                     with open(avFile, "a+") as f_av:
                         with open(allfile, "a+") as f:
-                            # if (os.path.exists('store/pretrained_model.model')):
-                            #	pretrained_article_model = self.docEmbed.Load_Model('store/pretrained_model.model')
+                            if (os.path.exists('store/pretrained_model.model')):
+                                pretrained_article_model = docEmbed.Load_Model('store/pretrained_model.model')
                             # else:
                             if notBaseline:
                                 print("Pretraining")
