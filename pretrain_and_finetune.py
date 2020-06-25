@@ -74,8 +74,8 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
         pretrain_epochs = [25]#[25, 50, 100]#, 200] #fix the next 5 lines
         fineTune_epochs = [100]#[ 25, 50, 100]#, 200]
         vector_sizes = [100]#[20, 100, 300]
-        avFile = "pretrain_and_cleaned_fineTune_av.txt"#"pretrain_and_fineTune_atnClean_av.txt"
-        allfile = "pretrain_and_cleaned_fineTune.txt"#"pretrain_and_fineTune_atnClean.txt"
+        avFile = "pretrain_and_cleaned_fineTune_av_v4.txt"#"pretrain_and_fineTune_atnClean_av.txt"
+        allfile = "pretrain_and_cleaned_fineTune_v4.txt"#"pretrain_and_fineTune_atnClean.txt"
 
     else:
         pretrain_epochs = [0]
@@ -112,11 +112,11 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
                                 del docEmbed
                             reader = DataReader()
                             if dirty:
-                                finetuneSet = reader.Load_Splits(ApplicationConstants.all_articles_random_v2, None,
+                                finetuneSet = reader.Load_Splits(ApplicationConstants.all_articles_random_v4, None,
                                                                  number_of_articles=50,
                                                                  clean=False, save=False, shouldRandomize=False)
                             else:
-                                finetuneSet = reader.Load_Splits(ApplicationConstants.all_articles_random_v3_cleaned, None,
+                                finetuneSet = reader.Load_Splits(ApplicationConstants.all_articles_random_v4_cleaned, None,
                                                                  number_of_articles=50,
                                                                  clean=False, save=False, shouldRandomize=False)
                             del reader
@@ -213,7 +213,14 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
                                     del model
     
                                     del Met
-    
+
+                                    if i == 0:
+                                        from Visualizer import Visualizer
+                                        Visualizer.plot_TSNE(leaning,
+                                                                  FT_embeddings,
+                                                                  FT_labels,
+                                                                  training_dataset + validation_dataset + test_dataset)
+
                             f_av.write("Average Breitbart Recall: " + str(breitbartTtlRecall / 5) + " Average Breitbart Precision: " + str(
                                 breitbartTtlPrecision / 5) + " Average Breitbart F1: " + str(breitbartTtlF1 / 5) + "\n")
                             f_av.write("Average Fox Recall: " + str(
@@ -247,6 +254,8 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
 
 
 
+
+
 # article_labels, article_embeddings = self.docEmbed.gen_vec(pretrained_article_model, articles, labels)
 #
 def print_all_the_news():
@@ -262,4 +271,7 @@ def print_all_the_news():
 
 
 
-pretrain_and_fineTune(dirty = True, notBaseline=True)
+pretrain_and_fineTune(dirty = False, notBaseline=True) #run pretrain and fineTune on atn, then on cleaned newsbias dataset
+
+from Orchestrator import Orchestrator
+orchestrator = Orchestrator()
