@@ -49,25 +49,26 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
     portionToLoad = 0.20
     print("Loading %.2f All The News" % portionToLoad)
     if notBaseline:
-        all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_newer_path, portionToLoad)
+        if (os.path.exists('store/pretrained_model.model')) == False:
+            all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_newer_path, portionToLoad)
 
-        dirty_pretrain_content = list(map(lambda article: article.Content,
-                                          all_the_news))  # grabbing only half cuz my computer can't fit training all this in memory
-
-
-        pretrain_content = []
-        print("Cleaning All The News")
-        for article in dirty_pretrain_content:
-            pretrain_content.append(filter_ATN_content(article))
+            dirty_pretrain_content = list(map(lambda article: article.Content,
+                                              all_the_news))  # grabbing only half cuz my computer can't fit training all this in memory
 
 
-        dirty_pretrain_content.clear()
-        del dirty_pretrain_content
+            pretrain_content = []
+            print("Cleaning All The News")
+            for article in dirty_pretrain_content:
+                pretrain_content.append(filter_ATN_content(article))
 
-        pretrain_labels = list(
-            map(lambda article: article.Label, all_the_news))  # these values are null since ATN doesn't have gender labels
-        del all_the_news
-        del reader
+
+            dirty_pretrain_content.clear()
+            del dirty_pretrain_content
+
+            pretrain_labels = list(
+                map(lambda article: article.Label, all_the_news))  # these values are null since ATN doesn't have gender labels
+            del all_the_news
+            del reader
 
         print("Opening file to append to")
 
@@ -98,17 +99,20 @@ def pretrain_and_fineTune(dirty=True, notBaseline = True):
                     print(pretrain_epoch, fineTune_epoch, vector_size)
                     with open(avFile, "a+") as f_av:
                         with open(allfile, "a+") as f:
-                            if (os.path.exists('store/pretrained_model.model')):
-                                pretrained_article_model = docEmbed.Load_Model('store/pretrained_model.model')
+
                             # else:
                             if notBaseline:
                                 print("Pretraining")
+
                                 docEmbed = doc()
-                                pretrained_article_model = docEmbed.Embed(pretrain_content, pretrain_labels,
-                                                                               vector_size=vector_size,
-                                                                               epochs=pretrain_epoch,
-                                                                               lower=False)  # started with 2. was not working. 20 worked well
-                                # pretrained_article_model.save('store/pretrained_model.model')
+                                if (os.path.exists('store/pretrained_model.model')):
+                                    pretrained_article_model = docEmbed.Load_Model('store/pretrained_model.model')
+                                else:
+                                    pretrained_article_model = docEmbed.Embed(pretrain_content, pretrain_labels,
+                                                                                   vector_size=vector_size,
+                                                                                   epochs=pretrain_epoch,
+                                                                                   lower=False)  # started with 2. was not working. 20 worked well
+                                    pretrained_article_model.save('store/pretrained_model.model')
                                 del docEmbed
                             reader = DataReader()
                             if dirty:
