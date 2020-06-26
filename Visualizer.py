@@ -55,11 +55,11 @@ class Visualizer():
 					bbox=dict(boxstyle="round", fc="w"),
 					arrowprops=dict(arrowstyle="->"))
 		self.annot.set_visible(False)
-		markers = {"Male": "o", "Female": "+"}
+		#markers = {"Male": "o", "Female": "+"}
 		#color = {"Male": ".2", "Female:": ".2"}
 		#self.sc = plt.scatter(x=results[:,0], y=results[0:,1], c=true_labels, cmap=matplotlib.colors.ListedColormap(cmap))
 		#palette=sns.color_palette("hls", 2), hue=self.genders,
-		self.sc = sns.scatterplot(x=results[:,0], y=results[0:,1], color = ".2",  markers=markers)
+		self.sc = sns.scatterplot(x=results[:,0], y=results[0:,1], color = ".2",  markers={"o", "+"})
 
 		#plt.setp(ax.get_legend().get_texts(), fontsize='40')
 		plt.legend( loc='best', prop={'size': 15})
