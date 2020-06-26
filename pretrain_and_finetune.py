@@ -137,10 +137,10 @@ class pretrain():
                                 if notBaseline:
                                     print("Fine tuning folds")
 
-                                f.write("Training vector size " + str(vector_size) + " pretrain " + str(
-                                    pretrain_epoch) + " finetune " + str(fineTune_epoch) + "\n")
-                                f_av.write("Training vector size " + str(vector_size) + " pretrain " + str(
-                                    pretrain_epoch) + " finetune " + str(fineTune_epoch) + "\n")
+                                #f.write("Training vector size " + str(vector_size) + " pretrain " + str(
+                                #    pretrain_epoch) + " finetune " + str(fineTune_epoch) + "\n")
+                                #f_av.write("Training vector size " + str(vector_size) + " pretrain " + str(
+                                #    pretrain_epoch) + " finetune " + str(fineTune_epoch) + "\n")
 
                                 print("Training vector size " + str(vector_size) + " pretrain " + str(
                                     pretrain_epoch) + " finetune " + str(fineTune_epoch))
@@ -245,10 +245,10 @@ class pretrain():
                                         #      Met.Fmeasure(prediction,FT_test_labels))
 
 
-                                        f.write("Leaning: " + lean + " precision:" +
-                                                str(Met.Precision(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])) + " recall: " +
-                                                str(Met.Recall(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])) + " F-Measure: " +
-                                                str(Met.Fmeasure(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])) + "\n")
+                                        #f.write("Leaning: " + lean + " precision:" +
+                                        #       str(Met.Precision(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])) + " recall: " +
+                                        #        str(Met.Recall(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])) + " F-Measure: " +
+                                        #        str(Met.Fmeasure(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])) + "\n")
 
                                         #f.write("Leaning:" + lean + "precision:" +
                                         #      str(Met.Precision(prediction, FT_test_labels)) + "recall:"+
@@ -267,7 +267,7 @@ class pretrain():
                                             #                          FT_train_embeddings + TF_Test_embeddings,
                                             #                          FT_labels + FT_test_labels,
                                             #                          training_dataset + validation_dataset + test_dataset)
-
+                                '''
                                 f_av.write("Average Breitbart Recall: " + str(breitbartTtlRecall / 5) + " Average Breitbart Precision: " + str(
                                     breitbartTtlPrecision / 5) + " Average Breitbart F1: " + str(breitbartTtlF1 / 5) + "\n")
                                 f_av.write("Average Fox Recall: " + str(
@@ -282,6 +282,7 @@ class pretrain():
                                 f_av.write("Average NYT Recall: " + str(
                                     nytTtlRecall / 5) + " Average NYT Precision: " + str(
                                     nytTtlPrecision / 5) + " Average NYT F1: " + str(nytTtlF1 / 5) + "\n")
+                                '''
                                 print("Average Breitbart Recall: " + str(
                                     breitbartTtlRecall / 5) + " Average Breitbart Precision: " + str(
                                     breitbartTtlPrecision / 5) + " Average Breitbart F1: " + str(breitbartTtlF1 / 5))
