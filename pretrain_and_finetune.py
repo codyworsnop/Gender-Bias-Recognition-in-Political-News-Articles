@@ -189,7 +189,7 @@ class pretrain():
                                         #model.Train(FT_embeddings[:len(training_dataset) ], FT_labels[:len(training_dataset)],
                                         #            FT_embeddings[len(training_dataset):len(training_dataset) + len(validation_dataset)], FT_labels[len(training_dataset):len(training_dataset) + len(validation_dataset)])
                                         #prediction = model.Predict(FT_embeddings[len(training_dataset) + len(validation_dataset):])
-                                        model.Train(FT_train_embeddings[:len(training_dataset)], FT_Train_labels[:len(training_dataset)], FT_train_embeddings[len(training_dataset):], FT_Train_labels[len(training_dataset):])
+                                        model.Train(FT_train_embeddings[:len(training_dataset)], FT_labels[:len(training_dataset)], FT_train_embeddings[len(training_dataset):], FT_labels[len(training_dataset):])
                                         prediction = model.Predict(TF_Test_embeddings)
 
                                         Met = Metrics()
@@ -258,13 +258,13 @@ class pretrain():
 
                                         del Met
 
-                                        #if i == 0:
+                                        if i == 0:
 
-                                            #self.Visualizer.plot_TSNE(leaning,
-                                            #                          FT_embeddings,
-                                            #                          FT_labels,
-                                            #                          training_dataset + validation_dataset + test_dataset)
-                                '''
+                                            self.Visualizer.plot_TSNE(leaning,
+                                                                      FT_train_embeddings + TF_Test_embeddings,
+                                                                      FT_labels + FT_test_labels,
+                                                                      training_dataset + validation_dataset + test_dataset)
+
                                 f_av.write("Average Breitbart Recall: " + str(breitbartTtlRecall / 5) + " Average Breitbart Precision: " + str(
                                     breitbartTtlPrecision / 5) + " Average Breitbart F1: " + str(breitbartTtlF1 / 5) + "\n")
                                 f_av.write("Average Fox Recall: " + str(
@@ -294,7 +294,8 @@ class pretrain():
                                 print("Average NYT Recall: " + str(
                                     nytTtlRecall / 5) + " Average NYT Precision: " + str(
                                     nytTtlPrecision / 5) + " Average NYT F1: " + str(nytTtlF1 / 5))
-                                '''
+
+
 
 
 
