@@ -179,7 +179,8 @@ class pretrain():
                                         FT_Test_labels, TF_Test_embeddings = docEmbed.gen_vec(fine_tuned_model,
                                                                                               fineTune_test_articles,
                                                                                             fineTune_test_labels)
-                                        FT_labels = list(FT_labels) #train + val
+                                        #FT_labels = list(FT_labels) #train + val
+                                        FT_labels = list(FT_Train_labels)
                                         FT_test_labels = list(FT_Test_labels) #test labels
                                         del docEmbed
 
