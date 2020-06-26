@@ -1,0 +1,26 @@
+Training vector size 100 pretrain 25 finetune 100
+Leaning:Breitbartprecision:0.5423728813559322recall:0.64F-Measure:0.5871559633027523
+Leaning:Foxprecision:0.4925373134328358recall:0.66F-Measure:0.5641025641025641
+Leaning:USAprecision:0.21428571428571427recall:0.42857142857142855F-Measure:0.2857142857142857
+Leaning:Huffprecision:0.56recall:0.84F-Measure:0.6720000000000002
+Leaning:NYTprecision:0.5263157894736842recall:0.9523809523809523F-Measure:0.6779661016949152
+Leaning:Breitbartprecision:0.8947368421052632recall:0.68F-Measure:0.7727272727272727
+Leaning:Foxprecision:1.0recall:0.8F-Measure:0.888888888888889
+Leaning:USAprecision:0.9333333333333333recall:0.5185185185185185F-Measure:0.6666666666666667
+Leaning:Huffprecision:0.9166666666666666recall:0.88F-Measure:0.8979591836734694
+Leaning:NYTprecision:0.85recall:0.68F-Measure:0.7555555555555556
+Leaning:Breitbartprecision:0.9411764705882353recall:0.96F-Measure:0.9504950495049505
+Leaning:Foxprecision:0.96recall:0.96F-Measure:0.96
+Leaning:USAprecision:1.0recall:0.96F-Measure:0.9795918367346939
+Leaning:Huffprecision:0.8928571428571429recall:1.0F-Measure:0.9433962264150945
+Leaning:NYTprecision:0.8928571428571429recall:1.0F-Measure:0.9433962264150945
+Leaning:Breitbartprecision:0.9545454545454546recall:0.84F-Measure:0.8936170212765958
+Leaning:Foxprecision:0.8863636363636364recall:0.78F-Measure:0.8297872340425532
+Leaning:USAprecision:0.9655172413793104recall:0.7368421052631579F-Measure:0.835820895522388
+Leaning:Huffprecision:0.9423076923076923recall:0.98F-Measure:0.9607843137254902
+Leaning:NYTprecision:1.0recall:0.42F-Measure:0.5915492957746479
+Leaning:Breitbartprecision:0.8545454545454545recall:0.94F-Measure:0.8952380952380952
+Leaning:Foxprecision:0.8596491228070176recall:0.98F-Measure:0.9158878504672898
+Leaning:USAprecision:0.9166666666666666recall:1.0F-Measure:0.9565217391304348
+Leaning:Huffprecision:0.9056603773584906recall:0.96F-Measure:0.9320388349514563
+Leaning:NYTprecision:0.8222222222222222recall:1.0F-Measure:0.9024390243902439
