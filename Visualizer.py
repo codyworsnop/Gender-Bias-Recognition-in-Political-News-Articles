@@ -58,7 +58,7 @@ class Visualizer():
 
 		#self.sc = plt.scatter(x=results[:,0], y=results[0:,1], c=true_labels, cmap=matplotlib.colors.ListedColormap(cmap))
 		#palette=sns.color_palette("hls", 2), hue=self.genders,
-		self.sc = sns.scatterplot(x=results[:,0], y=results[0:,1], color = {".2", ".2"},  markers={"o", "+"})
+		self.sc = sns.scatterplot(x=results[:,0], y=results[0:,1],  palette=sns.color_palette("hls", 2), hue=self.genders)
 
 		#plt.setp(ax.get_legend().get_texts(), fontsize='40')
 		plt.legend( loc='best', prop={'size': 15})
