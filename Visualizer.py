@@ -66,7 +66,7 @@ class Visualizer():
 		plt.title('t-SNE Article Distribution for ' + leaning, fontsize=20)
 		#self.fig.canvas.mpl_connect("motion_notify_event", self.hover)
 		#plt.show()
-		plt.savefig("visualizations/" + leaning + "_finetuned_cleaned_notall.png")
+		plt.savefig("visualizations/" + leaning + "_finetuned_cleaned.png")
 
 	def graph_sentiment(self, Fsentiment, Msentiment, graphType):
 
