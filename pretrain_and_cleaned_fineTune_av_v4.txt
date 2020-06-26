@@ -1,0 +1,12 @@
+Training vector size 100 pretrain 25 finetune 100
+Average Breitbart Recall: 0.9879999999999999 Average Breitbart Precision: 1.0 Average Breitbart F1: 0.9938981653267367
+Average Fox Recall: 0.9879999999999999 Average Fox Precision: 0.9959183673469388 Average Fox F1: 0.9919191919191921
+Average USA Recall: 1.0 Average USA Precision: 0.9941176470588236 Average USA F1: 0.9970149253731343
+Average Huffpost Recall: 0.9800000000000001 Average Huffpost Precision: 1.0 Average Huffpost F1: 0.9898165326736755
+Average NYT Recall: 0.9359999999999999 Average NYT Precision: 0.9590805455374539 Average NYT F1: 0.9410543195222395
+Training vector size 100 pretrain 25 finetune 100
+Average Breitbart Recall: 0.992 Average Breitbart Precision: 1.0 Average Breitbart F1: 0.9959183673469388
+Average Fox Recall: 0.984 Average Fox Precision: 0.9960000000000001 Average Fox F1: 0.9898144329896909
+Average USA Recall: 1.0 Average USA Precision: 0.9941176470588236 Average USA F1: 0.9970149253731343
+Average Huffpost Recall: 0.9800000000000001 Average Huffpost Precision: 1.0 Average Huffpost F1: 0.9898165326736755
+Average NYT Recall: 0.9359999999999999 Average NYT Precision: 0.9436308789249965 Average NYT F1: 0.9329474336702557
