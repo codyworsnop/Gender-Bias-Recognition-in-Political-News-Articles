@@ -82,7 +82,7 @@ class pretrain():
             pretrain_epochs = [25]#[25, 50, 100]#, 200] #fix the next 5 lines
             fineTune_epochs = [100]#[ 25, 50, 100]#, 200]
             vector_sizes = [100]#[20, 100, 300]
-            #avFile = "pretrain_and_cleaned_fineTune_av_v4_notall.txt"#"pretrain_and_fineTune_atnClean_av.txt"
+            avFile = "pretrain_and_cleaned_fineTune_av_v4_notall.txt"#"pretrain_and_fineTune_atnClean_av.txt"
             allfile = "pretrain_and_cleaned_fineTune_v4_notall.txt"#"pretrain_and_fineTune_atnClean.txt"
 
         else:
