@@ -251,9 +251,9 @@ class pretrain():
                                         #        str(Met.Fmeasure(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])) + "\n")
 
                                         f.write("Leaning:" + lean + "precision:" +
-                                              Met.Precision(prediction, FT_test_labels) + "recall:"+
-                                              Met.Recall(prediction, FT_test_labels)+ "F-Measure:" +
-                                              Met.Fmeasure(prediction, FT_test_labels) + "\n")
+                                              str(Met.Precision(prediction, FT_test_labels)) + "recall:"+
+                                              str(Met.Recall(prediction, FT_test_labels))+ "F-Measure:" +
+                                              str(Met.Fmeasure(prediction, FT_test_labels)) + "\n")
                                         del model
 
                                         del Met
