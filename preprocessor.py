@@ -28,7 +28,7 @@ class Preprocessor():
         ''' Removes POS that are NNP, PRP, or PRP$, and removes all stop words  '''
 
         #normalize the data, removing punctuation 
-        data =  unicodedata.normalize('NFKC', data)
+        data = unicodedata.normalize('NFKC', data)
         
         #remove numbers
         data = re.sub('\d+', '', data)
@@ -47,6 +47,21 @@ class Preprocessor():
         for pattern, replacement in RegexSearchPatterns.Patterns:
             data = re.sub(pattern, replacement, data, flags = re.I)
 
+        punctuation = [',', '\"', '"', '\'', '$', ''', '\n', ' ', '-', '_', ':', ';', '%', '—', '–', ''',
+                           '•', ' ', ', ', '/', '//', '[',']', '(',')', '<', '>', '=', '+', '”', '“', '’'] #list of punctation
+        for token in data:
+            for punct in punctuation:
+                if punct in token:
+                    if token[0] == punct:
+                        token = token[1:]
+                    if len(token) > 1:
+                        if token[-1] == punct:
+                            token = token[:-1]
+                    else:
+                        token = ''
+            if len(token) == 1 and (token.lower() != "a" or token.lower() != "i" or token != "." or token != "?" or token != "!"):
+                token = ''
+
         #Cleanup the punctuation / symbols
         data = re.sub(' ,', ',', data, flags = re.I)
         data = re.sub('  ', ' ', data, flags = re.I)
@@ -60,6 +75,7 @@ class Preprocessor():
 
         #replace huperson with human (an unintended consequence of our man/person regex swap)
         data = re.sub('huperson', 'human', data,  flags = re.I)
+
 
         #return processed_data
         return data

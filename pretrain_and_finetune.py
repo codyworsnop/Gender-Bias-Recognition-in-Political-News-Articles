@@ -309,18 +309,18 @@ class pretrain():
     #
     def print_all_the_news(self):
         reader = DataReader()
-        all_the_news = reader.Load_ATN(ApplicationConstants.all_the_news_path)
+        all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_newer_path, .2)
         pretrain_content = list(map(lambda article: article.Content, all_the_news))[:int(
-            len(all_the_news) * 0.25)]  # grabbing only half cuz my computer can't fit training all this in memory
-
-        for article in pretrain_content:
-            print(article)
-            input("Press Enter to continue...")
+            len(all_the_news) * 0.2)]  # grabbing only half cuz my computer can't fit training all this in memory
+        print(len(pretrain_content))
+        #or article in pretrain_content:
+        #    print(article)
+        #    input("Press Enter to continue...")
 
 
 
 pf = pretrain()
-pf.pretrain_and_fineTune(dirty = False, notBaseline=True) #run pretrain and fineTune on atn, then on cleaned newsbias dataset
-
+#pf.pretrain_and_fineTune(dirty = False, notBaseline=True) #run pretrain and fineTune on atn, then on cleaned newsbias dataset
+pf.print_all_the_news()
 #from Orchestrator import Orchestrator
 #orchestrator = Orchestrator()
