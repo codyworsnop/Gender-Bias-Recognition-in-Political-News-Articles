@@ -46,6 +46,7 @@ class Visualizer():
 		self.articles = articles
 
 		self.genders = list(map(lambda label: 'Male' if label == 1 else 'Female', true_labels))
+		self.markers = list(map(lambda label: '+' if label == 1 else 'o', true_labels))
 		tsne = TSNE(verbose=1, perplexity=15)
 		results = tsne.fit_transform(weights)
 
@@ -58,7 +59,7 @@ class Visualizer():
 
 		#self.sc = plt.scatter(x=results[:,0], y=results[0:,1], c=true_labels, cmap=matplotlib.colors.ListedColormap(cmap))
 		#palette=sns.color_palette("hls", 2), hue=self.genders,
-		self.sc = sns.scatterplot(x=results[:,0], y=results[0:,1],  palette=sns.color_palette("hls", 2), hue=self.genders)
+		self.sc = sns.scatterplot(x=results[:,0], y=results[0:,1],  palette=sns.color_palette("hls", 2), hue=self.genders, markers = self.markers)
 
 		#plt.setp(ax.get_legend().get_texts(), fontsize='40')
 		plt.legend( loc='best', prop={'size': 15})
@@ -66,7 +67,7 @@ class Visualizer():
 		plt.title('t-SNE Article Distribution for ' + leaning, fontsize=20)
 		#self.fig.canvas.mpl_connect("motion_notify_event", self.hover)
 		#plt.show()
-		plt.savefig("visualizations/" + leaning + "_finetuned_cleaned.png")
+		plt.savefig("visualizations/" + leaning + "_finetuned_cleaned_m.png")
 
 	def graph_sentiment(self, Fsentiment, Msentiment, graphType):
 
