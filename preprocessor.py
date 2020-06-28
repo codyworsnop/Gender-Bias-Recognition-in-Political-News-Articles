@@ -47,20 +47,7 @@ class Preprocessor():
         for pattern, replacement in RegexSearchPatterns.Patterns:
             data = re.sub(pattern, replacement, data, flags = re.I)
 
-        punctuation = [',', '\"', '"', '\'', '$', ''', '\n', ' ', '-', '_', ':', ';', '%', '—', '–', ''',
-                           '•', ' ', ', ', '/', '//', '[',']', '(',')', '<', '>', '=', '+', '”', '“', '’'] #list of punctation
-        for token in data:
-            for punct in punctuation:
-                if punct in token:
-                    if token[0] == punct:
-                        token = token[1:]
-                    if len(token) > 1:
-                        if token[-1] == punct:
-                            token = token[:-1]
-                    else:
-                        token = ''
-            if len(token) == 1 and (token.lower() != "a" or token.lower() != "i" or token != "." or token != "?" or token != "!"):
-                token = ''
+
 
         #Cleanup the punctuation / symbols
         data = re.sub(' ,', ',', data, flags = re.I)
