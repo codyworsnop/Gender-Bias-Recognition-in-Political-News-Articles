@@ -5,6 +5,7 @@ from Metrics import Metrics
 from Visualizer import Visualizer
 
 import ApplicationConstants
+from DataContracts import Article
 
 import re
 
@@ -14,15 +15,17 @@ from sklearn.metrics import classification_report
 from Models.NN_engine import NN
 
 import numpy as np
+from preprocessor import Preprocessor
 
 import os.path
-
+import copy 
 
 
 class pretrain():
 
     def __init__(self):
 
+        self.Preprocessor = Preprocessor()
         self.Visualizer = Visualizer()
 
     def filter_ATN_content(self, content, publication=None):
@@ -53,11 +56,18 @@ class pretrain():
     def pretrain_and_fineTune(self, dirty=True, notBaseline = True):
         reader = DataReader()  # adds 2 G
         #input("Press Enter to continue...")
-        portionToLoad = 0.20
+        portionToLoad = 0.00001
         print("Loading %.2f All The News" % portionToLoad)
         if notBaseline:
             if (os.path.exists('store/pretrained_model.model')) == False:
                 all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_newer_path, portionToLoad)
+                cleaned_articles = [] 
+
+                #dis what you want dawg? 
+                for article in copy.deepcopy(all_the_news): 
+                    cleaned_content = self.Preprocessor.Clean(article.Content)
+                    article.Content = cleaned_content 
+                    cleaned_articles.append(article)
 
                 dirty_pretrain_content = list(map(lambda article: article.Content,
                                                   all_the_news))  # grabbing only half cuz my computer can't fit training all this in memory
@@ -320,7 +330,7 @@ class pretrain():
 
 
 pf = pretrain()
-#pf.pretrain_and_fineTune(dirty = False, notBaseline=True) #run pretrain and fineTune on atn, then on cleaned newsbias dataset
+pf.pretrain_and_fineTune(dirty = False, notBaseline=True) #run pretrain and fineTune on atn, then on cleaned newsbias dataset
 pf.print_all_the_news()
 #from Orchestrator import Orchestrator
 #orchestrator = Orchestrator()
