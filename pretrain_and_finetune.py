@@ -56,7 +56,7 @@ class pretrain():
     def pretrain_and_fineTune(self, dirty=True, notBaseline = True, cleanatn = True):
         reader = DataReader()  # adds 2 G
         #input("Press Enter to continue...")
-        portionToLoad = 0.2
+        portionToLoad = 0.20
         print("Loading %.2f All The News" % portionToLoad)
         if notBaseline:
             if (os.path.exists('store/pretrained_cleaned_model.model')) == False and cleanatn:
@@ -70,6 +70,7 @@ class pretrain():
                     cleaned_content = self.Preprocessor.Clean(article.Content)
                     article.Content = cleaned_content 
                     cleaned_articles.append(article)
+                del cleaned_content
                 cleaned_articles = list(map(lambda article: article.Content,
                                                  cleaned_articles))
                 print(cleaned_articles)
