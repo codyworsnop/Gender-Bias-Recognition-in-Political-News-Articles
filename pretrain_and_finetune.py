@@ -56,7 +56,7 @@ class pretrain():
     def pretrain_and_fineTune(self, dirty=True, notBaseline = True, cleanatn = True):
         reader = DataReader()  # adds 2 G
         #input("Press Enter to continue...")
-        portionToLoad = 0.20
+        portionToLoad = 0.15
         print("Loading %.2f All The News" % portionToLoad)
         if notBaseline:
             if (os.path.exists('store/pretrained_cleaned_model.model')) == False and cleanatn:
@@ -106,8 +106,8 @@ class pretrain():
             pretrain_epochs = [0]
             fineTune_epochs = [100]
             vector_sizes =[50]
-            avFile = "pretrain_and_fineTune_nopretrain_av.txt"
-            allfile = "pretrain_and_fineTune_nopretrain_oldnums.txt"
+            avFile = "pretrain_and_fineTune_nopretrain_av_v4.txt"
+            allfile = "pretrain_and_fineTune_nopretrain_v4.txt"
 
         for pretrain_epoch in pretrain_epochs:
             for fineTune_epoch in fineTune_epochs:
@@ -129,7 +129,7 @@ class pretrain():
                                     print("Pretraining")
 
                                     docEmbed = doc()
-                                    if cleanatn ==False:
+                                    if cleanatn ==False and notBaseline:
                                         if (os.path.exists('store/pretrained_model.model')):
                                             pretrained_article_model = docEmbed.Load_Model('store/pretrained_model.model')
                                         else:
@@ -138,7 +138,7 @@ class pretrain():
                                                                                            epochs=pretrain_epoch,
                                                                                            lower=False)  # started with 2. was not working. 20 worked well
                                             pretrained_article_model.save('store/pretrained_model.model')
-                                    else:
+                                    elif notBaseline:
                                         if (os.path.exists('store/pretrained_cleaned_model.model')):
                                             print("loading cleaned atn model")
                                             pretrained_article_model = docEmbed.Load_Model('store/pretrained_cleaned_model.model')
@@ -197,10 +197,12 @@ class pretrain():
                                             fine_tuned_model = docEmbed.fine_tune(fineTune_train_articles ,fineTune_train_labels,
                                                                                         pretrained_article_model, fineTune_epoch)
                                         else:
-                                            fine_tuned_model = docEmbed.Embed(fineTune_train_articles + fineTune_test_articles, fineTune_train_labels + fineTune_test_labels,
-                                                                                      vector_size=vector_size,
-                                                                                      epochs=fineTune_epoch,
-                                                                                      lower=True)
+                                            #fine_tuned_model = docEmbed.Embed(fineTune_train_articles + fineTune_test_articles, fineTune_train_labels + fineTune_test_labels,
+                                                                                      #vector_size=vector_size,
+                                                                                      #epochs=fineTune_epoch,
+                                                                                      #lower=True)
+                                            fine_tuned_model = docEmbed.Embed(fineTune_train_articles, fineTune_train_labels,
+                                                                                       vector_size=vector_size, epochs=fineTune_epochs, lower=True)
                                         #FT_labels, FT_embeddings = docEmbed.gen_vec(fine_tuned_model,
                                         #                                                        fineTune_train_articles + fineTune_test_articles,
                                         #                                                        fineTune_train_labels + fineTune_test_labels)
@@ -281,10 +283,10 @@ class pretrain():
                                         #        str(Met.Recall(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])) + " F-Measure: " +
                                         #        str(Met.Fmeasure(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])) + "\n")
 
-                                        #f.write("Leaning:" + lean + "precision:" +
-                                        #      str(Met.Precision(prediction, FT_test_labels)) + "recall:"+
-                                        #      str(Met.Recall(prediction, FT_test_labels))+ "F-Measure:" +
-                                        #      str(Met.Fmeasure(prediction, FT_test_labels)) + "\n")
+                                        f.write("Leaning:" + lean + "precision:" +
+                                              str(Met.Precision(prediction, FT_test_labels)) + "recall:"+
+                                              str(Met.Recall(prediction, FT_test_labels))+ "F-Measure:" +
+                                              str(Met.Fmeasure(prediction, FT_test_labels)) + "\n")
                                         del model
 
                                         del Met
@@ -298,7 +300,7 @@ class pretrain():
                                                                       FT_train_embeddings + TF_Test_embeddings,
                                                                       FT_labels + FT_test_labels,
                                                                       training_dataset + validation_dataset + test_dataset)
-                                '''
+
                                 f_av.write("Average Breitbart Recall: " + str(breitbartTtlRecall / 5) + " Average Breitbart Precision: " + str(
                                     breitbartTtlPrecision / 5) + " Average Breitbart F1: " + str(breitbartTtlF1 / 5) + "\n")
                                 f_av.write("Average Fox Recall: " + str(
@@ -313,7 +315,7 @@ class pretrain():
                                 f_av.write("Average NYT Recall: " + str(
                                     nytTtlRecall / 5) + " Average NYT Precision: " + str(
                                     nytTtlPrecision / 5) + " Average NYT F1: " + str(nytTtlF1 / 5) + "\n")
-                                '''
+
                                 print("Average Breitbart Recall: " + str(
                                     breitbartTtlRecall / 5) + " Average Breitbart Precision: " + str(
                                     breitbartTtlPrecision / 5) + " Average Breitbart F1: " + str(breitbartTtlF1 / 5))
@@ -351,7 +353,7 @@ class pretrain():
 
 
 pf = pretrain()
-pf.pretrain_and_fineTune(dirty = False, notBaseline=True, cleanatn = True) #run pretrain and fineTune on atn, then on cleaned newsbias dataset
-pf.print_all_the_news()
+pf.pretrain_and_fineTune(dirty = False, notBaseline=False, cleanatn = False) #run pretrain and fineTune on atn, then on cleaned newsbias dataset
+#pf.print_all_the_news()
 #from Orchestrator import Orchestrator
 #orchestrator = Orchestrator()
