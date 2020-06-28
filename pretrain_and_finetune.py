@@ -59,33 +59,39 @@ class pretrain():
         portionToLoad = 0.2
         print("Loading %.2f All The News" % portionToLoad)
         if notBaseline:
-            if (os.path.exists('store/pretrained_model.model')) == False:
+            if (os.path.exists('store/pretrained_cleaned_model.model')) == False and cleanatn:
+                print("cleaning and all the news")
                 all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_newer_path, portionToLoad)
                 cleaned_articles = [] 
 
-                #dis what you want dawg? 
+                #dis what you want dawg?
+                print("actually cleaning atn")
                 for article in copy.deepcopy(all_the_news): 
                     cleaned_content = self.Preprocessor.Clean(article.Content)
                     article.Content = cleaned_content 
                     cleaned_articles.append(article)
-                '''
+                cleaned_articles = list(map(lambda article: article.Content,
+                                                 cleaned_articles))
+                print(cleaned_articles)
+            elif (os.path.exists('store/pretrained_model.model')) == False and cleanatn == False:
+                all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_newer_path, portionToLoad)
+
                 dirty_pretrain_content = list(map(lambda article: article.Content,
                                                   all_the_news))  # grabbing only half cuz my computer can't fit training all this in memory
 
 
-                pretrain_content = []
+                cleaned_articles = []
                 print("Cleaning All The News")
                 for article in dirty_pretrain_content:
-                    pretrain_content.append(self.filter_ATN_content(article))
+                    cleaned_articles.append(self.filter_ATN_content(article))
 
                 
                 dirty_pretrain_content.clear()
                 del dirty_pretrain_content
-                '''
-                pretrain_labels = list(
-                    map(lambda article: article.Label, all_the_news))  # these values are null since ATN doesn't have gender labels
-                del all_the_news
-                del reader
+
+            pretrain_labels = list(map(lambda article: article.Label, all_the_news))  # these values are null since ATN doesn't have gender labels
+            del all_the_news
+            del reader
 
             print("Opening file to append to")
 
@@ -126,19 +132,22 @@ class pretrain():
                                         if (os.path.exists('store/pretrained_model.model')):
                                             pretrained_article_model = docEmbed.Load_Model('store/pretrained_model.model')
                                         else:
-                                            pretrained_article_model = docEmbed.Embed(pretrain_content, pretrain_labels,
+                                            pretrained_article_model = docEmbed.Embed(cleaned_articles, pretrain_labels,
                                                                                            vector_size=vector_size,
                                                                                            epochs=pretrain_epoch,
                                                                                            lower=False)  # started with 2. was not working. 20 worked well
                                             pretrained_article_model.save('store/pretrained_model.model')
                                     else:
                                         if (os.path.exists('store/pretrained_cleaned_model.model')):
+                                            print("loading cleaned atn model")
                                             pretrained_article_model = docEmbed.Load_Model('store/pretrained_cleaned_model.model')
                                         else:
+                                            print("embedding cleaned atn model")
                                             pretrained_article_model = docEmbed.Embed(cleaned_articles, pretrain_labels,
                                                                                            vector_size=vector_size,
                                                                                            epochs=pretrain_epoch,
                                                                                            lower=False)  # started with 2. was not working. 20 worked well
+                                            print("saving cleaned embed atn")
                                             pretrained_article_model.save('store/pretrained_cleaned_model.model')
 
                                     del docEmbed
