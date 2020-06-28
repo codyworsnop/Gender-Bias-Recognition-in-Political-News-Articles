@@ -31,7 +31,7 @@ class Preprocessor():
         data = unicodedata.normalize('NFKC', data)
         
         #remove numbers
-        data = re.sub('\d+', '', data)
+        data = re.sub('\d+', '  ', data)
     
         #remove any word containing woman replace with person
         doc = self.nlp(data)
@@ -48,20 +48,34 @@ class Preprocessor():
             data = re.sub(pattern, replacement, data, flags = re.I)
 
 
+        emoticons =  re.compile("["
+                   u"\U0001F600-\U0001F64F"  # emoticons
+                   u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                   u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                   u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                   u"\U00002702-\U000027B0"
+                   u"\U000024C2-\U0001F251"
+                   "]+", flags=re.UNICODE)
+        data = emoticons.sub(' ', data)
+
+
+
+        #remove whole words from stop list 
+        for word in StopWords.StopWords: 
+            reg_string = '\\b' + word + '((-[a-zA-Z]*)|([,.!?;"\' ]))'
+            data = re.sub(reg_string, ' ', data, flags = re.I)
+
 
         #Cleanup the punctuation / symbols
         data = re.sub(' ,', ',', data, flags = re.I)
         data = re.sub('  ', ' ', data, flags = re.I)
         data = re.sub('\+', ' ', data, flags = re.I)
         data = re.sub('&', ' ', data, flags = re.I)
-
-        #remove whole words from stop list 
-        for word in StopWords.StopWords: 
-            reg_string = '\\b' + word + '((-[a-zA-Z]*)|([,.!?;"\' ]))'
-            data = re.sub(reg_string, '', data, flags = re.I)
-
+        data = re.sub('  ', ' ', data, flags=re.I)
         #replace huperson with human (an unintended consequence of our man/person regex swap)
         data = re.sub('huperson', 'human', data,  flags = re.I)
+        data = re.sub('ombudsperson', 'person', data, flags=re.I)
+        data = re.sub('ottoperson', 'norp', data, flags=re.I)
 
 
         #return processed_data

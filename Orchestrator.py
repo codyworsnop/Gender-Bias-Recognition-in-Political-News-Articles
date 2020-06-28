@@ -357,8 +357,8 @@ class Orchestrator():
 	def calc_word_vector(self, all_articles, not_pos = True, lemmad = True):
 		nlp = spacy.load("en_core_web_lg")
 		word_vector = []
-		punctuation = [',', '.', '\"', '"', '!', '?', '\'', '$', ''', '\n', ' ', '-', '_', ':', ';', '%', '—', '–', ''',
-					   '•', ' ', ', ']
+		punctuation = [',', '.', '\"', '"', '!', '?', '\'', '$', ''', '\n', '_', ':', ';', '%', '—', '–', ''',
+					   '•', ' ', ', ', '/', '>', '<', '=', '-', '’', ']', '[', '(', ')', '{', '}', '@', '#', '^', '*', '&']
 		if not_pos:
 			from nltk.corpus import stopwords
 			stops = list(stopwords.words('english'))
@@ -379,40 +379,95 @@ class Orchestrator():
 							if not token.is_punct:
 								if not lemmad:
 									word = token.orth_.lower()
-									if word[0] == '-':
-										word = word[1:]
-									if word[-1] == "-":
-										word = word[:-1]
+									for i, char in enumerate(word):
+										if len(word) > 1:
+											if word[0] in punctuation:
+												word = word[1:]
+
+											if word[-1] in punctuation:
+												word = word[:-1]
+
+									for punct in punctuation:
+										if punct in word:
+											word = '.'
+									if "gpe" in word:
+										word = "gpe"
+									if "norp" in word:
+										word = "norp"
 									if word not in punctuation and word not in word_vector and word not in stops:
-										word_vector.append(word)
+										if len(word) >= 2 and word != "\n" and ":" not in word:
+											word_vector.append(word)
 								else:
 									word = token.lemma_.lower()
-							#word = word.lower()
-									if word[0] == '-':
-										word = word[1:]
-									if word[-1] == "-":
-										word = word[:-1]
+
+									for i, char in enumerate(word):
+										if len(word) > 1:
+											if word[0] in punctuation:
+												word = word[1:]
+
+											if word[-1] in punctuation:
+												word = word[:-1]
+
+									for punct in punctuation:
+										if punct in word:
+											word = '.'
+									if "gpe" in word:
+										word = "gpe"
+									if "norp" in word:
+										word = "norp"
 									if word not in punctuation and word not in word_vector and word not in stops:
-										word_vector.append(word)
+										if len(word) >= 2 and word != "\n" and ":" not in word:
+											word_vector.append(word)
 					else:
 						ms = [' M. ', ' m. ']
 						for token in document:
 							if not lemmad:
 								if token.pos_ is "ADJ" and token.orth_.lower() not in word_vector and token.text not in punctuation and token.text not in ms:
 									word = token.orth_.lower()
-									if word[0] == '-':
-										word = word[1:]
-									if len(word) > 1 and word[-1] == "-":
-										word = word[:-1]
-									word_vector.append(word)
+									for i, char in enumerate(word):
+										if len(word) > 1:
+											if word[0] in punctuation:
+												word = word[1:]
+
+											if word[-1] in punctuation:
+												word = word[:-1]
+
+									for punct in punctuation:
+										if punct in word:
+											word = '.'
+									if "gpe" in word and "gpe" not in word_vector:
+										word = "gpe"
+									else:
+										break
+									if "norp" in word and "norp" not in word_vector:
+										word = "norp"
+									else:
+										break
+									if len(word) >= 2 and word != "\n" and ":" not in word:
+										word_vector.append(word)
 							else:
 								if token.pos_ is "ADJ" and token.lemma_.lower() not in word_vector and token.text not in punctuation and token.text not in ms:
 									word = token.lemma_.lower()
-									if word[0] == '-':
-										word = word[1:]
-									if len(word) > 1 and word[-1] == "-":
-										word = word[:-1]
-									word_vector.append(word)
+									for i, char in enumerate(word):
+										if len(word) > 1:
+											if word[0] in punctuation:
+												word = word[1:]
+											if word[-1] in punctuation:
+												word = word[:-1]
+
+									for punct in punctuation:
+										if punct in word:
+											word = '.'
+									if "gpe" in word and "gpe" not in word_vector:
+										word = "gpe"
+									else:
+										break
+									if "norp" in word and "norp" not in word_vector:
+										word = "norp"
+									else:
+										break
+									if len(word) >= 2 and word != "\n" and ":" not in word:
+										word_vector.append(word)
 			#print(word_vector)
 
 
@@ -423,6 +478,9 @@ class Orchestrator():
 		nlp = spacy.load("en_core_web_lg")
 		words = nlp(article)
 		count_vector = []
+		punctuation = [',', '.', '\"', '"', '!', '?', '\'', '$', ''', '\n', '_', ':', ';', '%', '—', '–', ''',
+					   '•', ' ', ', ', '/', '>', '<', '=', '-', '’', ']', '[', '(', ')', '{', '}', '@', '#', '^', '*',
+					   '&', ':']
 		for i in range(len(word_vector)):
 			count_vector.append(0)
 
@@ -432,10 +490,21 @@ class Orchestrator():
 			else:
 				word = token.orth_.lower()
 				# word = word.lower()
-			if word[0] == '-':
-				word = word[1:]
-			if len(word) > 1 and word[-1] == "-":
-				word = word[:-1]
+			for i, char in enumerate(word):
+				if len(word) > 1:
+					if word[0] in punctuation:
+						word = word[1:]
+
+					if word[-1] in punctuation:
+						word = word[:-1]
+
+			for punct in punctuation:
+				if punct in word:
+					word = 'aklfjakldfjlaskf'
+			if "gpe" in word:
+				word = "gpe"
+			if "norp" in word:
+				word = "norp"
 			if word in word_vector:
 				ind = word_vector.index(word)
 				count_vector[ind] += 1

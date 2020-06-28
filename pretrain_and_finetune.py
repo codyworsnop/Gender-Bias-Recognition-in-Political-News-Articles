@@ -53,10 +53,10 @@ class pretrain():
         content = re.sub(" ing ", '', content)
 
         return content
-    def pretrain_and_fineTune(self, dirty=True, notBaseline = True):
+    def pretrain_and_fineTune(self, dirty=True, notBaseline = True, cleanatn = True):
         reader = DataReader()  # adds 2 G
         #input("Press Enter to continue...")
-        portionToLoad = 0.00001
+        portionToLoad = 0.2
         print("Loading %.2f All The News" % portionToLoad)
         if notBaseline:
             if (os.path.exists('store/pretrained_model.model')) == False:
@@ -68,7 +68,7 @@ class pretrain():
                     cleaned_content = self.Preprocessor.Clean(article.Content)
                     article.Content = cleaned_content 
                     cleaned_articles.append(article)
-
+                '''
                 dirty_pretrain_content = list(map(lambda article: article.Content,
                                                   all_the_news))  # grabbing only half cuz my computer can't fit training all this in memory
 
@@ -78,10 +78,10 @@ class pretrain():
                 for article in dirty_pretrain_content:
                     pretrain_content.append(self.filter_ATN_content(article))
 
-
+                
                 dirty_pretrain_content.clear()
                 del dirty_pretrain_content
-
+                '''
                 pretrain_labels = list(
                     map(lambda article: article.Label, all_the_news))  # these values are null since ATN doesn't have gender labels
                 del all_the_news
@@ -92,8 +92,8 @@ class pretrain():
             pretrain_epochs = [25]#[25, 50, 100]#, 200] #fix the next 5 lines
             fineTune_epochs = [100]#[ 25, 50, 100]#, 200]
             vector_sizes = [100]#[20, 100, 300]
-            avFile = "pretrain_and_cleaned_fineTune_av_v4.txt"#"pretrain_and_fineTune_atnClean_av.txt"
-            allfile = "pretrain_and_cleaned_fineTune_v4.txt"#"pretrain_and_fineTune_atnClean.txt"
+            avFile = "pretrain_and_cleaned_fineTune_av_cleanedatn_v4.txt"#"pretrain_and_fineTune_atnClean_av.txt"
+            allfile = "pretrain_and_cleaned_fineTune_cleanedatn_v4.txt"#"pretrain_and_fineTune_atnClean.txt"
 
         else:
             pretrain_epochs = [0]
@@ -122,14 +122,25 @@ class pretrain():
                                     print("Pretraining")
 
                                     docEmbed = doc()
-                                    if (os.path.exists('store/pretrained_model.model')):
-                                        pretrained_article_model = docEmbed.Load_Model('store/pretrained_model.model')
+                                    if cleanatn ==False:
+                                        if (os.path.exists('store/pretrained_model.model')):
+                                            pretrained_article_model = docEmbed.Load_Model('store/pretrained_model.model')
+                                        else:
+                                            pretrained_article_model = docEmbed.Embed(pretrain_content, pretrain_labels,
+                                                                                           vector_size=vector_size,
+                                                                                           epochs=pretrain_epoch,
+                                                                                           lower=False)  # started with 2. was not working. 20 worked well
+                                            pretrained_article_model.save('store/pretrained_model.model')
                                     else:
-                                        pretrained_article_model = docEmbed.Embed(pretrain_content, pretrain_labels,
-                                                                                       vector_size=vector_size,
-                                                                                       epochs=pretrain_epoch,
-                                                                                       lower=False)  # started with 2. was not working. 20 worked well
-                                        pretrained_article_model.save('store/pretrained_model.model')
+                                        if (os.path.exists('store/pretrained_cleaned_model.model')):
+                                            pretrained_article_model = docEmbed.Load_Model('store/pretrained_cleaned_model.model')
+                                        else:
+                                            pretrained_article_model = docEmbed.Embed(cleaned_articles, pretrain_labels,
+                                                                                           vector_size=vector_size,
+                                                                                           epochs=pretrain_epoch,
+                                                                                           lower=False)  # started with 2. was not working. 20 worked well
+                                            pretrained_article_model.save('store/pretrained_cleaned_model.model')
+
                                     del docEmbed
                                 reader = DataReader()
                                 if dirty:
@@ -330,7 +341,7 @@ class pretrain():
 
 
 pf = pretrain()
-pf.pretrain_and_fineTune(dirty = False, notBaseline=True) #run pretrain and fineTune on atn, then on cleaned newsbias dataset
+pf.pretrain_and_fineTune(dirty = False, notBaseline=True, cleanatn = True) #run pretrain and fineTune on atn, then on cleaned newsbias dataset
 pf.print_all_the_news()
 #from Orchestrator import Orchestrator
 #orchestrator = Orchestrator()
