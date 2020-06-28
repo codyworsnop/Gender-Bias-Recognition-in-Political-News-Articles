@@ -352,7 +352,7 @@ class pretrain():
 
 
 pf = pretrain()
-pf.pretrain_and_fineTune(dirty = False, notBaseline=False, cleanatn = False) #run pretrain and fineTune on atn, then on cleaned newsbias dataset
+pf.pretrain_and_fineTune(dirty = False, notBaseline=True, cleanatn = True) #run pretrain and fineTune on atn, then on cleaned newsbias dataset
 #pf.print_all_the_news()
 #from Orchestrator import Orchestrator
 #orchestrator = Orchestrator()
