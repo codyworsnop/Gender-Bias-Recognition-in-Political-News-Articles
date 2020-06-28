@@ -105,7 +105,7 @@ class pretrain():
         else:
             pretrain_epochs = [0]
             fineTune_epochs = [100]
-            vector_sizes =[50]
+            vector_sizes =[100]
             avFile = "pretrain_and_fineTune_nopretrain_av_v4.txt"
             allfile = "pretrain_and_fineTune_nopretrain_v4.txt"
 
@@ -201,8 +201,7 @@ class pretrain():
                                                                                       #vector_size=vector_size,
                                                                                       #epochs=fineTune_epoch,
                                                                                       #lower=True)
-                                            fine_tuned_model = docEmbed.Embed(fineTune_train_articles, fineTune_train_labels,
-                                                                                       vector_size=vector_size, epochs=fineTune_epochs, lower=True)
+                                            fine_tuned_model = docEmbed.Embed(fineTune_train_articles, fineTune_train_labels, vector_size=vector_size, epochs=fineTune_epoch, lower=True)
                                         #FT_labels, FT_embeddings = docEmbed.gen_vec(fine_tuned_model,
                                         #                                                        fineTune_train_articles + fineTune_test_articles,
                                         #                                                        fineTune_train_labels + fineTune_test_labels)
