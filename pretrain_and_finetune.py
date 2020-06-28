@@ -20,6 +20,22 @@ from preprocessor import Preprocessor
 import os.path
 import copy 
 
+import multiprocessing
+from multiprocessing import Value
+
+Preprocessor2 = Preprocessor()
+article_count = Value('i', 0) 
+    
+def clean(article): 
+
+    global article_count
+    with article_count.get_lock():
+        print("Cleaning article: ", article_count.value)
+        article_count.value += 1
+    cleaned_content = Preprocessor2.Clean(article.Content)
+    article.Content = cleaned_content 
+
+    return article 
 
 class pretrain():
 
@@ -53,21 +69,23 @@ class pretrain():
         content = re.sub(" ing ", '', content)
 
         return content
+
+
     def pretrain_and_fineTune(self, dirty=True, notBaseline = True):
         reader = DataReader()  # adds 2 G
         #input("Press Enter to continue...")
-        portionToLoad = 0.00001
+        portionToLoad = 0.0015
         print("Loading %.2f All The News" % portionToLoad)
         if notBaseline:
             if (os.path.exists('store/pretrained_model.model')) == False:
                 all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_newer_path, portionToLoad)
-                cleaned_articles = [] 
+                 
 
                 #dis what you want dawg? 
-                for article in copy.deepcopy(all_the_news): 
-                    cleaned_content = self.Preprocessor.Clean(article.Content)
-                    article.Content = cleaned_content 
-                    cleaned_articles.append(article)
+                cpu_count = multiprocessing.cpu_count()
+                pool = multiprocessing.Pool(cpu_count)
+                cleaned_articles = pool.map(clean, copy.deepcopy(all_the_news))
+
 
                 dirty_pretrain_content = list(map(lambda article: article.Content,
                                                   all_the_news))  # grabbing only half cuz my computer can't fit training all this in memory
