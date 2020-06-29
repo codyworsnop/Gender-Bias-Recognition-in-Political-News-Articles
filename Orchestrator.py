@@ -44,6 +44,9 @@ class Orchestrator():
 	def read_data(self, path, savePath=None, clean=True, save=False, random=False, number_of_articles = 50):       
 		return self.Reader.Load_Splits(path, savePath=savePath, clean=clean, save=save, shouldRandomize=random, number_of_articles=number_of_articles)
 
+	def read_data_csv(self, path, savePath=None, clean=True, save=False, random=False, number_of_articles = 50):
+		return self.Reader.Load_ATN_csv(path, savePath=savePath, clean=clean, save=save, shouldRandomize=random, number_of_articles=number_of_articles)
+
 	def imdb(self, model, label_path, vector_path):
 		sources = {'test-neg.txt':'TEST_NEG', 'test-pos.txt':'TEST_POS', 'train-neg.txt':'TRAIN_NEG', 'train-pos.txt':'TRAIN_POS' }
 		sentences = LabeledLineSentence(sources)
@@ -654,14 +657,14 @@ class Orchestrator():
 	#def count_adjectives:
 
 
-orchestrator = Orchestrator()
-articles = orchestrator.read_data(path = ApplicationConstants.all_articles_random_v4, random= True, number_of_articles = 1000, savePath = ApplicationConstants.all_articles_random_v4_cleaned, save = True, clean = True)
+#orchestrator = Orchestrator()
+#articles = orchestrator.read_data(path = ApplicationConstants.all_articles_random_v4, random= True, number_of_articles = 1000, savePath = ApplicationConstants.all_articles_random_v4_cleaned, save = True, clean = True)
 #articles = orchestrator.read_data(path = ApplicationConstants.all_articles_random_v4_cleaned, number_of_articles = 1000, random=False)
 #articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v3, random= False, number_of_articles = 50)
 #articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v4_cleaned, random=False, number_of_articles=50)
 #input("Press Enter to continue...") adds 1 G to mem
 #articles = orchestrator.get_all_articles()
-orchestrator.run_bow(articles, "store/np_cum_vec_POS_d_50.npy", "store/np_count_vec_POS_d_50.npy", "perceptron_POS_d_50",True, False)#run bow on adj, lemmad
+#orchestrator.run_bow(articles, "store/np_cum_vec_POS_d_50.npy", "store/np_count_vec_POS_d_50.npy", "perceptron_POS_d_50",True, False)#run bow on adj, lemmad
 #orchestrator.run_bow(articles, "store/np_cum_vec_l_50.npy", "store/np_count_vec_l_50.npy", "perceptron_l_50",True, True)#run bow on all data, lemmad
 #orchestrator.run_bow(articles, "store/np_cum_vec_POS_50.npy", "store/np_count_vec_POS_50.npy", "perceptron_POS_50.sav", False, False)
 #orchestrator.pretrain_and_fineTune(dirty = True)

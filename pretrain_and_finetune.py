@@ -104,7 +104,7 @@ class pretrain():
 
         else:
             pretrain_epochs = [0]
-            fineTune_epochs = [100]
+            fineTune_epochs = [200]
             vector_sizes =[100]
             avFile = "pretrain_and_fineTune_nopretrain_av_v4.txt"
             allfile = "pretrain_and_fineTune_nopretrain_v4.txt"
@@ -157,6 +157,7 @@ class pretrain():
                                     finetuneSet = reader.Load_Splits(ApplicationConstants.all_articles_random_v4, None,
                                                                      number_of_articles=50,
                                                                      clean=False, save=False, shouldRandomize=False)
+
                                 else:
                                     finetuneSet = reader.Load_Splits(ApplicationConstants.all_articles_random_v4_cleaned, None,
                                                                      number_of_articles=50,
@@ -290,15 +291,15 @@ class pretrain():
 
                                         del Met
 
-                                        if i == 0:
+                                        #if i == 0:
                                             #self.Visualizer.plot_TSNE(leaning,
                                             #                          FT_embeddings,
                                             #                          FT_labels ,
                                             #                          training_dataset + validation_dataset + test_dataset)
-                                            self.Visualizer.plot_TSNE(leaning,
-                                                                      FT_train_embeddings + TF_Test_embeddings,
-                                                                      FT_labels + FT_test_labels,
-                                                                      training_dataset + validation_dataset + test_dataset)
+                                        #    self.Visualizer.plot_TSNE(leaning,
+                                        #                              FT_train_embeddings + TF_Test_embeddings,
+                                        #                              FT_labels + FT_test_labels,
+                                        #                              training_dataset + validation_dataset + test_dataset)
 
                                 f_av.write("Average Breitbart Recall: " + str(breitbartTtlRecall / 5) + " Average Breitbart Precision: " + str(
                                     breitbartTtlPrecision / 5) + " Average Breitbart F1: " + str(breitbartTtlF1 / 5) + "\n")
@@ -352,7 +353,7 @@ class pretrain():
 
 
 pf = pretrain()
-pf.pretrain_and_fineTune(dirty = False, notBaseline=True, cleanatn = True) #run pretrain and fineTune on atn, then on cleaned newsbias dataset
+pf.pretrain_and_fineTune(dirty = False, notBaseline=False, cleanatn = False) #run pretrain and fineTune on atn, then on cleaned newsbias dataset
 #pf.print_all_the_news()
 #from Orchestrator import Orchestrator
 #orchestrator = Orchestrator()
