@@ -16,6 +16,8 @@ fold_4 = "./folds/fold4.txt"
 fold_5 = "./folds/fold5.txt"
 all_the_news_path = './store/all-the-news.db'
 all_the_news_newer_path = './store/all-the-news-2-1.csv'
+all_the_news_cleaned_path = './store/all-the-news_cleaned_merged_final.csv'
+
 
 #leaning constants
 FarLeft = "Far_Left"
