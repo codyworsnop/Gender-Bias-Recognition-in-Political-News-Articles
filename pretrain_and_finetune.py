@@ -63,6 +63,7 @@ class pretrain():
                 print("Cleaned atn model does not exist, loading data")
                 print("Loading 100\% All The News cleaned")
                 all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_cleaned_path, 1.0)
+                print(len(all_the_news))
                 cleaned_articles = list(map(lambda article: article.Content, all_the_news))
                 pretrain_labels = list(map(lambda article: article.Label, all_the_news))
                 del all_the_news
