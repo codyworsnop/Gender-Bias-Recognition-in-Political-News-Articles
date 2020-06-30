@@ -47,7 +47,7 @@ class Visualizer():
 
 		self.genders = list(map(lambda label: 'Male' if label == 1 else 'Female', true_labels))
 		#self.markers = list(map(lambda label: '+' if label == 1 else 'o', true_labels))
-		tsne = TSNE(verbose=1, perplexity=50)
+		tsne = TSNE(verbose=1, perplexity=100)
 		results = tsne.fit_transform(weights)
 
 		self.fig, self.ax = plt.subplots()
