@@ -61,10 +61,11 @@ class pretrain():
         if notBaseline:
             if (os.path.exists('store/pretrained_cleaned_model.model')) == False and cleanatn:
                 print("Cleaned atn model does not exist, loading data")
-                print("Loading 100\% All The News cleaned")
+                print("Loading 100% All The News cleaned")
                 all_the_news = reader.Load_newer_ATN(ApplicationConstants.all_the_news_cleaned_path, 1.0)
                 print(len(all_the_news))
                 cleaned_articles = list(map(lambda article: article.Content, all_the_news))
+                print(cleaned_articles[0])
                 pretrain_labels = list(map(lambda article: article.Label, all_the_news))
                 del all_the_news
             elif (os.path.exists('store/pretrained_model.model')) == False and cleanatn == False:
@@ -169,7 +170,11 @@ class pretrain():
 
                             print("Training vector size " + str(vector_size) + " pretrain " + str(
                                 pretrain_epoch) + " finetune " + str(fineTune_epoch))
-
+                            tsneBreit = False
+                            tsneFox = False
+                            tsneUSA = False
+                            tsneHuff = False
+                            tsneNYT = False
                             for i, split in enumerate(finetuneSet):
                                 print("Fold " + str (i+1))
                                 for j, leaning in enumerate(split):
@@ -283,8 +288,24 @@ class pretrain():
                                     del model
 
                                     del Met
-                                    if i == 0:
-                                        self.visualize_all(fine_tuned_model, leaning)
+                                    if Met.Fmeasure(prediction, FT_test_labels) > 0.70:
+                                        if leaning == 'breitbart' and not tsneBreit:
+                                            self.visualize_all(fine_tuned_model, leaning)
+                                            tsneBreit = True
+                                        if leaning == 'fox' and not tsneFox:
+                                            self.visualize_all(fine_tuned_model, leaning)
+                                            tsneFox = True
+                                        if leaning == 'usa_today' and not tsneUSA:
+                                            self.visualize_all(fine_tuned_model, leaning)
+                                            tsneUSA = True
+                                        if leaning == 'huffpost' and not tsneHuff:
+                                            self.visualize_all(fine_tuned_model, leaning)
+                                            tsneHuff = True
+                                        if leaning == 'new_york_times' and not tsneNYT:
+                                            self.visualize_all(fine_tuned_model, leaning)
+                                            tsneNYT = True
+                                    #if i == 0:
+                                    #   self.visualize_all(fine_tuned_model, leaning)
                                     #if i == 0:
                                         #self.Visualizer.plot_TSNE(leaning,
                                         #                          FT_embeddings,
