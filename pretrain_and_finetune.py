@@ -287,7 +287,7 @@ class pretrain():
                                           str(Met.Fmeasure(prediction, FT_test_labels)) + "\n")
                                     del model
 
-                                    del Met
+
                                     if Met.Fmeasure(prediction, FT_test_labels) > 0.70:
                                         if leaning == 'breitbart' and not tsneBreit:
                                             self.visualize_all(fine_tuned_model, leaning)
@@ -304,6 +304,7 @@ class pretrain():
                                         if leaning == 'new_york_times' and not tsneNYT:
                                             self.visualize_all(fine_tuned_model, leaning)
                                             tsneNYT = True
+                                    del Met
                                     #if i == 0:
                                     #   self.visualize_all(fine_tuned_model, leaning)
                                     #if i == 0:
