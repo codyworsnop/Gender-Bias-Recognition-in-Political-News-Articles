@@ -5,14 +5,18 @@ all_articles = "./Data/articles.updatedv2.json"
 all_articles_random_v2 = "./Data/articles_random_v2.json"
 all_articles_random_v2_cleaned = "./Data/articles_random_v2_cleaned.json"
 all_articles_random_v3 = "./Data/articles_random_v3.json"
+all_articles_random_v3_cleaned = "./Data/articles_random_v3_cleaned.json" #duplicates, mccain, and names fixed, also cleaned
 all_articles_random_v4= "./Data/articles_random_v4.json"
-all_articles_random_v3_cleaned = "./Data/articles_random_v3_cleaned.json"
 all_articles_random_v4_cleaned = "./Data/articles_random_v4_cleaned.json"
+
+#foldnames
 fold_1 = "./folds/fold1.txt"
 fold_2 = "./folds/fold2.txt"
 fold_3 = "./folds/fold3.txt"
 fold_4 = "./folds/fold4.txt"
 fold_5 = "./folds/fold5.txt"
+
+#all the news files- all_the_news_newer is 2.0, and cleaned has been cleaned using our process
 all_the_news_path = './store/all-the-news.db'
 all_the_news_newer_path = './store/all-the-news-2-1.csv'
 all_the_news_cleaned_path = './store/all-the-news_cleaned_merged_final.csv'
