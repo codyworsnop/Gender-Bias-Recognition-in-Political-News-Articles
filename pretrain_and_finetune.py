@@ -342,6 +342,4 @@ class pretrain():
                     self.Visualizer.plot_TSNE(leaning, embeddings, labels, training_dataset + validation_dataset + test_dataset)
 
 
-pf = pretrain()
-fine_tuned_model = pf.pretrain_and_fineTune(dirty = False, notBaseline=True, cleanatn = True) #run pretrain and fineTune on atn, then on cleaned newsbias dataset
 

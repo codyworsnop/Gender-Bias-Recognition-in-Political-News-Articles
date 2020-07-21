@@ -545,7 +545,7 @@ class Orchestrator():
 											  ,save=False)
 				else:
 					articles = self.read_data(path = ApplicationConstants.all_articles_random_v4_cleaned_pos_candidate_names,
-											  number_of_articles =1, save = False)
+											  number_of_articles =1000, save = False)
 
 				#create the cumulative word vec for all articles, and save it as numpy array in store directory
 				cumulative_word_vec = self.calc_word_vector(articles, not_pos, lemmad, print_vocab)
@@ -638,35 +638,3 @@ class Orchestrator():
 			for index in resBottom:
 				fout.write(cumulative_word_vec[index] + ' ' + str(float(weights[index])) + '\n')
 
-
-
-orchestrator = Orchestrator()
-#articles = orchestrator.read_data(path = ApplicationConstants.all_articles_random_v3, number_of_articles = 1000, save = True, savePath = "Data/testingReg+Stopchanges.json", clean = True, random = True)
-'''
-training_ttl = 0
-val_ttl = 0
-test_ttl = 0
-for leaning in articles[0]:
-
-		training_dataset = articles[0][leaning][ApplicationConstants.Train]
-		validation_dataset = articles[0][leaning][ApplicationConstants.Validation]
-		test_dataset = articles[0][leaning][ApplicationConstants.Test]
-		training_ttl += len(training_dataset)
-		val_ttl += len(validation_dataset)
-		test_ttl += len(test_dataset)
-print("total articles: ", str(training_ttl+val_ttl+test_ttl))
-'''
-
-#articles = orchestrator.read_data(path = ApplicationConstants.all_articles_random_v4_cleaned, number_of_articles = 1000, random=False)
-#articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v3, random= False, number_of_articles = 50)
-#articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v4_cleaned, random=False, number_of_articles=50)
-#input("Press Enter to continue...") adds 1 G to mem
-#articles = orchestrator.get_all_articles()
-#orchestrator.run_bow( "store/np_cum_vec_POSnoL.npy", "store/np_count_vec_POSnoL.npy", "store/perceptron_POSnoL.sav",True, False, True) #notPos, lemmad, printvocab
-#orchestrator.pretrain_and_fineTune(dirty = True)
-#orchestrator.print_all_the_news()
-#debias, zhao, not_shared = word_sets()
-
-#orchestrator.check_word_content(not_shared, articles)
-
-#orchestrator.train_sent_models(articles, leanings, ApplicationConstants.all_articles_doc2vec_labels_cleaned_path, ApplicationConstants.all_articles_doc2vec_vector_cleaned_path, ApplicationConstants.all_articles_doc2vec_model_cleaned_path, ApplicationConstants.imdb_sentiment_label_cleaned_path, ApplicationConstants.imdb_sentiment_vector_cleaned_path)
