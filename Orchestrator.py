@@ -441,7 +441,7 @@ class Orchestrator():
 				elif not not_pos and lemmad:
 					name = "vocabulary/adjVocab_lemmad.txt"
 				else:
-					name = "vocabulary/adjVocab_notLammad.txt"
+					name = "vocabulary/adjVocab_notLemmad.txt"
 				fout = open(name, 'w')
 				for item in printed_word_vec:
 					fout.write(item + '\n')
