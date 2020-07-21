@@ -1,3 +1,5 @@
+#######This file reads jsons (newsbias), csv (ATN), and SQL (ATN)  #######
+
 import json
 import sys
 from DataContracts import Article
@@ -12,7 +14,7 @@ import random
 import sqlite3
 import csv
 import sys
-import numpy as np
+
 
 csv.field_size_limit(sys.maxsize)
 
@@ -185,7 +187,7 @@ class DataReader():
 
         return articles
 
-    def Load_Splits(self, filePath, savePath, number_of_articles=50, clean=True, save=False, shouldRandomize=True):
+    def Load_Splits(self, filePath, savePath, number_of_articles=50, clean=True, save=False, shouldRandomize=True, pos_tagged = False):
 
         candidate_split_file_names = [ApplicationConstants.fold_1, ApplicationConstants.fold_2,
                                       ApplicationConstants.fold_3, ApplicationConstants.fold_4,
@@ -245,6 +247,7 @@ class DataReader():
 
             # clean, putting cleaned data back into the split dictionary
             for article_index, article in enumerate(articles):
+                print("Source: ", source[0], article_index, '/', len(articles))
 
                 # convert labels to ints
                 if (article.Label.TargetGender == ApplicationConstants.Female):
@@ -255,8 +258,11 @@ class DataReader():
                 content = article.Content
 
                 # print(article.Title)
-                if (clean):
+                if (clean and not pos_tagged):
                     cleaned_content = self.Preprocessor.Clean(content)
+                    sources[source_index][1][article_index].Content = cleaned_content
+                elif (clean and pos_tagged):
+                    cleaned_content = self.Preprocessor.Clean_POS(content)
                     sources[source_index][1][article_index].Content = cleaned_content
 
         if (save and savePath is not None):

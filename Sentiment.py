@@ -1,4 +1,4 @@
-
+#######This file calculates sentiment (OLD)#######
 from DataReader import DataReader
 from Models.SVM_engine import SVM
 from Models.NN_engine import NN

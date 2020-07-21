@@ -1,4 +1,6 @@
+#######This file runs several processes #######
 #classes
+
 
 from DataReader import DataReader
 from DataContracts import Article
@@ -7,12 +9,10 @@ from Metrics import Metrics
 from Visualizer import Visualizer
 from imdb_data import LabeledLineSentence
 import ApplicationConstants
-import nltk
-import re
 import StopWords
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
-import pickle
+
 #models
 from Models.SVM_engine import SVM
 from Models.KNN_engine import KNN
@@ -20,15 +20,19 @@ from Models.Naive_Bayes_engine import Naive_Bayes
 from Models.Linear_Classification_engine import Linear_Classifier
 from Models.NN_engine import NN
 from Models.NN_engine import  Linear_NN
-import random
+
 
 #helpers
 import statistics
 import numpy as np 
 import matplotlib.pyplot as plt
 import os.path
-
+import timeit
 import spacy
+import nltk
+import re
+import random
+import pickle
 
 class Orchestrator():
 
@@ -41,8 +45,8 @@ class Orchestrator():
 		self.Metrics = Metrics()
 		self.Visualizer = Visualizer()
 
-	def read_data(self, path, savePath=None, clean=True, save=False, random=False, number_of_articles = 50):       
-		return self.Reader.Load_Splits(path, savePath=savePath, clean=clean, save=save, shouldRandomize=random, number_of_articles=number_of_articles)
+	def read_data(self, path, savePath=None, clean=True, save=False, random=False, number_of_articles = 50, pos_tagged = False):
+		return self.Reader.Load_Splits(path, savePath=savePath, clean=clean, save=save, shouldRandomize=random, number_of_articles=number_of_articles, pos_tagged = pos_tagged)
 
 	def read_data_csv(self, path, savePath=None, clean=True, save=False, random=False, number_of_articles = 50):
 		return self.Reader.Load_ATN_csv(path, savePath=savePath, clean=clean, save=save, shouldRandomize=random, number_of_articles=number_of_articles)
@@ -168,8 +172,8 @@ class Orchestrator():
 		return breitbartneg, breitbartpos, foxneg, foxpos, usaneg, usapos, huffneg, huffpos, nytneg, nytpos
 
 
-	#def print_shit(self, fileName, allF, allM, conf):
-	def print_shit(self, fileName, allF, allM):
+
+	def print(self, fileName, allF, allM):
 		file = open(fileName, 'w')
 		print('FEMALE\n', file = file)
 		print(allF, file = file)
@@ -188,7 +192,6 @@ class Orchestrator():
 		labels: a list of labels corresponding to the article genders
 		''' 
 
-		#emb = self.docEmbed.word2vec() 
 		model = self.docEmbed.Embed(articles, labels)
 		targets, regressors = self.docEmbed.gen_vec(model, articles, labels)
 
@@ -203,9 +206,10 @@ class Orchestrator():
 
 		''' 
 		#models = [SVM(), KNN(), Naive_Bayes(), Linear_Classifier(), NN()]
+		models = [NN()]
 		bP, bR, bF, fP, fR, fF, uP, uR, uF, hP, hR, hF, nP, nR, nF = [], [], [], [], [], [], [], [], [], [], [], [], [], []
 
-		models = [NN()]
+
 
 		split_count = 0 
 
@@ -247,8 +251,7 @@ class Orchestrator():
 					print("Model:", str(type(model)).split('.')[2].split('\'')[0], "precision:", self.Metrics.Precision(prediction, test_labels), "recall:", self.Metrics.Recall(prediction, test_labels), "F-Measure:", self.Metrics.Fmeasure(prediction, test_labels))   
 
 				
-				#model = models[0] 
-				#model.Model.coefs_[model.Model.n_layers_ - 2]
+
 				if split_count == 1:
 					self.Visualizer.plot_TSNE(leaning, training_embeddings + validation_embeddings + test_embeddings, training_labels + validation_labels + test_labels, training_dataset + validation_dataset + test_dataset)
 		
@@ -357,16 +360,14 @@ class Orchestrator():
 		print("total use: ",zipped)
 
 
-	def calc_word_vector(self, all_articles, not_pos = True, lemmad = True):
+	def calc_word_vector(self, all_articles, not_pos = True, lemmad = True, print_vocab=False):
 		nlp = spacy.load("en_core_web_lg")
-		word_vector = []
-		punctuation = [',', '.', '\"', '"', '!', '?', '\'', '$', ''', '\n', '_', ':', ';', '%', '—', '–', ''',
-					   '•', ' ', ', ', '/', '>', '<', '=', '-', '’', ']', '[', '(', ')', '{', '}', '@', '#', '^', '*', '&']
+		word_vector = set([])
+		punctuation = [',', '.', '\"', '"', '!', '?', '\'', '$', ''', '\n', '_', ':', ';', '%', '—', '–', ''','~','―','′', ',', '≠', '|',
+					   '•', ' ', ', ', '/', '>', '<', '=', '-', '’', ']', '[', '(', ')', '{', '}', '@', '#', '^', '*', '&', '­']
 		if not_pos:
 			from nltk.corpus import stopwords
 			stops = list(stopwords.words('english'))
-			#punctuation = [',', '.', '\"','"','!', '?', '\'', '$', ''', '\n', ' ', '-', '_', ':', ';', '%', '—', '–', ''', '•']
-			#no_no = ['oval','Oval', 'Rep', 'rep', 'Rep.', 'rep.', 'Dem.', 'Dem', 'dem', 'dem.', 'son', 'p.m', 'ms']
 		for i, split in enumerate(all_articles):
 			print("Fold " + str(i + 1))
 			for j, leaning in enumerate(split):
@@ -382,117 +383,89 @@ class Orchestrator():
 							if not token.is_punct:
 								if not lemmad:
 									word = token.orth_.lower()
-									for i, char in enumerate(word):
-										if len(word) > 1:
-											if word[0] in punctuation:
-												word = word[1:]
-
-											if word[-1] in punctuation:
-												word = word[:-1]
-
-									for punct in punctuation:
-										if punct in word:
-											word = '.'
-									if "gpe" in word:
-										word = "gpe"
-									if "norp" in word:
-										word = "norp"
-									if word not in punctuation and word not in word_vector and word not in stops:
-										if len(word) >= 2 and word != "\n" and ":" not in word:
-											word_vector.append(word)
 								else:
 									word = token.lemma_.lower()
+								for i, char in enumerate(word):
+									if len(word) > 1:
+										if word[0] in punctuation:
+											word = word[1:]
+										if word[-1] in punctuation:
+											word = word[:-1]
+								for punct in punctuation:
+									if punct in word:
+										word = '.'
+								if "gpe" in word:
+									word = "gpe"
+								if "norp" in word:
+									word = "norp"
+								if word not in punctuation and word not in word_vector and word not in stops:
+									if len(word) >= 2 and word != "\n" and ":" not in word:
+										word_vector.add(word)
 
-									for i, char in enumerate(word):
-										if len(word) > 1:
-											if word[0] in punctuation:
-												word = word[1:]
-
-											if word[-1] in punctuation:
-												word = word[:-1]
-
-									for punct in punctuation:
-										if punct in word:
-											word = '.'
-									if "gpe" in word:
-										word = "gpe"
-									if "norp" in word:
-										word = "norp"
-									if word not in punctuation and word not in word_vector and word not in stops:
-										if len(word) >= 2 and word != "\n" and ":" not in word:
-											word_vector.append(word)
 					else:
-						ms = [' M. ', ' m. ']
+						#ms = [' M. ', ' m. ']
 						for token in document:
-							if not lemmad:
-								if token.pos_ is "ADJ" and token.orth_.lower() not in word_vector and token.text not in punctuation and token.text not in ms:
+							if token.pos_ is "ADJ" and token.orth_.lower() not in word_vector and token.text not in punctuation:# and token.text not in ms:
+								if not lemmad:
 									word = token.orth_.lower()
-									for i, char in enumerate(word):
-										if len(word) > 1:
-											if word[0] in punctuation:
-												word = word[1:]
-
-											if word[-1] in punctuation:
-												word = word[:-1]
-
-									for punct in punctuation:
-										if punct in word:
-											word = '.'
-									if "gpe" in word and "gpe" not in word_vector:
-										word = "gpe"
-									else:
-										break
-									if "norp" in word and "norp" not in word_vector:
-										word = "norp"
-									else:
-										break
-									if len(word) >= 2 and word != "\n" and ":" not in word:
-										word_vector.append(word)
-							else:
-								if token.pos_ is "ADJ" and token.lemma_.lower() not in word_vector and token.text not in punctuation and token.text not in ms:
+								else:
 									word = token.lemma_.lower()
-									for i, char in enumerate(word):
-										if len(word) > 1:
-											if word[0] in punctuation:
-												word = word[1:]
-											if word[-1] in punctuation:
-												word = word[:-1]
+								for i, char in enumerate(word):
+									if len(word) > 1:
+										if word[0] in punctuation:
+											word = word[1:]
 
-									for punct in punctuation:
-										if punct in word:
-											word = '.'
-									if "gpe" in word and "gpe" not in word_vector:
-										word = "gpe"
-									else:
-										break
-									if "norp" in word and "norp" not in word_vector:
-										word = "norp"
-									else:
-										break
-									if len(word) >= 2 and word != "\n" and ":" not in word:
-										word_vector.append(word)
-			#print(word_vector)
+										if word[-1] in punctuation:
+											word = word[:-1]
 
+								for punct in punctuation:
+									if punct in word:
+										word = '.'
+								if "gpe" in word and "gpe" not in word_vector:
+									word = "gpe"
+								else:
+									break
+								if "norp" in word and "norp" not in word_vector:
+									word = "norp"
+								else:
+									break
+								if len(word) >= 2 and word != "\n" and ":" not in word:
+									word_vector.add(word)
 
+			if print_vocab:
+				printed_word_vec = sorted(word_vector)
+				if not_pos and lemmad:
+					name = "vocabulary/fullVocab_lemmad.txt"
+				elif not_pos and not lemmad:
+					name = "vocabulary/fullVocab_notLemmad.txt"
+				elif not not_pos and lemmad:
+					name = "vocabulary/adjVocab_lemmad.txt"
+				else:
+					name = "vocabulary/adjVocab_notLammad.txt"
+				fout = open(name, 'w')
+				for item in printed_word_vec:
+					fout.write(item + '\n')
+				fout.close()
 
-			return word_vector
+			return list(word_vector)
 
-	def calc_count_doc_count_vector(self, word_vector, article, lemmad = True):
-		nlp = spacy.load("en_core_web_lg")
+	def calc_count_doc_count_vector(self, word_vector, article, nlp, lemmad = False):
+
 		words = nlp(article)
-		count_vector = []
+		count_vector = [0]*len(word_vector)
+		count_set = {}
 		punctuation = [',', '.', '\"', '"', '!', '?', '\'', '$', ''', '\n', '_', ':', ';', '%', '—', '–', ''',
 					   '•', ' ', ', ', '/', '>', '<', '=', '-', '’', ']', '[', '(', ')', '{', '}', '@', '#', '^', '*',
 					   '&', ':']
-		for i in range(len(word_vector)):
-			count_vector.append(0)
+		for word in word_vector:
+			count_set[word] = 0
 
 		for token in words:
 			if lemmad:
 				word = token.lemma_.lower()
 			else:
 				word = token.orth_.lower()
-				# word = word.lower()
+
 			for i, char in enumerate(word):
 				if len(word) > 1:
 					if word[0] in punctuation:
@@ -503,15 +476,16 @@ class Orchestrator():
 
 			for punct in punctuation:
 				if punct in word:
-					word = 'aklfjakldfjlaskf'
+					word = 'aklfjakldfjlaskf' #if there's punctuation still in the middle of the word, it's a garbage word, and we insert a garbage word that doesn't exist in the cum_vec
 			if "gpe" in word:
 				word = "gpe"
 			if "norp" in word:
 				word = "norp"
-			if word in word_vector:
-				ind = word_vector.index(word)
-				count_vector[ind] += 1
-			#print(sum(count_vector))
+			if word in count_set:
+				count_set[word] +=1
+
+		for i in range(len(word_vector)):
+			count_vector[i] = count_set[word_vector[i]]
 		return count_vector
 
 	def get_all_articles(self):
@@ -550,81 +524,91 @@ class Orchestrator():
 		print("accuracy is: " + str(acc))
 
 
-	def run_bow(self, articles, file_name_1, file_name_2, model_name, not_pos = True, lemmad = True):
-		if os.path.isfile(file_name_1):
+	def run_bow(self, file_name_1, file_name_2, model_name, not_pos = True, lemmad = True, print_vocab = False):
+		label_name = file_name_2[:-4] + "_labels.npy"
+		#if file_name_2 exists, then all np arrays exists. load them and do BOW
+		if os.path.isfile(file_name_2):
+			numpy_counts = np.load(file_name_2)
+			numpy_cum_labels = np.load(label_name)
+			count_vectors = numpy_counts.tolist()
+			list_labels = numpy_cum_labels.tolist()
 			numpy_cumulative = np.load(file_name_1)
 			cumulative_word_vec = numpy_cumulative.tolist()
-
 		else:
-			cumulative_word_vec = self.calc_word_vector(articles, not_pos, lemmad)
-			printed_word_vec = sorted(cumulative_word_vec)
-			with open("words.txt", "w+") as f:
-				for word in printed_word_vec:
-					f.write(word)
-					f.write("\n")
-			hjjghjgjg
-			numpy_cumulative = np.array(cumulative_word_vec)
-			np.save(file_name_1, numpy_cumulative)
-			print("store/total num words = " + str(len(cumulative_word_vec)))
-		list_articles_list = []
-		list_labels = []
-		for i, split in enumerate(articles):
-			print("Fold " + str(i + 1))
-			for j, leaning in enumerate(split):
+			if os.path.isfile(file_name_1) : #check if file_name 1 exists, and load if it does
+				numpy_cumulative = np.load(file_name_1)
+				cumulative_word_vec = numpy_cumulative.tolist()
 
-				if i is 0:
-					training_dataset = split[leaning][ApplicationConstants.Train]
-					validation_dataset = split[leaning][ApplicationConstants.Validation]
-					test_dataset = split[leaning][ApplicationConstants.Test]
-					articles_list = list(map(lambda article: article.Content, training_dataset + validation_dataset + test_dataset))
-					list_articles_list.append(articles_list)
-					labels = list(map(lambda article: article.Label.TargetGender, training_dataset + validation_dataset +test_dataset))
-					list_labels.append(labels)
+			else: #otherwise, load the correct json
+				if not_pos:
+					articles = self.read_data(path=ApplicationConstants.all_articles_random_v4_cleaned, number_of_articles=1000
+											  ,save=False)
 				else:
+					articles = self.read_data(path = ApplicationConstants.all_articles_random_v4_cleaned_pos_candidate_names,
+											  number_of_articles =1, save = False)
+
+				#create the cumulative word vec for all articles, and save it as numpy array in store directory
+				cumulative_word_vec = self.calc_word_vector(articles, not_pos, lemmad, print_vocab)
+				numpy_cumulative = np.array(cumulative_word_vec)
+				np.save(file_name_1, numpy_cumulative)
+				print("store/total num words = " + str(len(cumulative_word_vec)))
+
+				#get all articles in a list
+			list_articles_list = []
+			list_labels = []
+			for i, split in enumerate(articles):
+				print("Fold " + str(i + 1))
+				for j, leaning in enumerate(split):
+					if i is 0:
+						training_dataset = split[leaning][ApplicationConstants.Train]
+						validation_dataset = split[leaning][ApplicationConstants.Validation]
+						test_dataset = split[leaning][ApplicationConstants.Test]
+						articles_list = list(map(lambda article: article.Content, training_dataset +
+												 validation_dataset + test_dataset))
+						list_articles_list.append(articles_list)
+						labels = list(map(lambda article: article.Label.TargetGender, training_dataset +
+										  validation_dataset +test_dataset))
+						list_labels.append(labels)
+					else:
+						break
+				if i > 0:
 					break
-			if i > 0:
-				break
-		articles_list = [j for sub in list_articles_list for j in sub]
-		labels = [j for sub in list_labels for j in sub]
-		#print(articles_list)
-		#print(labels)
-		#fafdadfsd
-		print("zipping and shuffling")
-		zippedArticles = list(zip(articles_list, labels))
-		random.shuffle(zippedArticles)
+			articles_list = [j for sub in list_articles_list for j in sub]
+			labels = [j for sub in list_labels for j in sub]
 
-		list_articles = []
-		list_labels = []
-		print("unzipping")
-		for article, label in zippedArticles:
-			list_articles.append(article)
-			list_labels.append(label)
+			#zip and shuffle the list of articles
+			print("zipping and shuffling")
+			zippedArticles = list(zip(articles_list, labels))
+			random.shuffle(zippedArticles)
 
-		print("enumerating")
-		for i, label in enumerate(list_labels):
-			if label == 0:
-				list_labels[i] = -1
+			list_articles = []
+			list_labels = []
+			print("unzipping")
+			for article, label in zippedArticles:
+				list_articles.append(article)
+				list_labels.append(label)
 
-		print("appending")
-		count_vectors = []
-		print(len(list_articles))
-		label_name = file_name_2[-4] + "_labels.npy"
-		if os.path.isfile(file_name_2):
-			numpy_cumulative = np.load(file_name_2)
-			numpy_cum_labels = np.load(label_name)
-			count_vectors = numpy_cumulative.tolist()
-			list_labels = numpy_cum_labels.tolist()
-		else:
+			#change the 0 labels to -1 for easier training
+			print("enumerating")
+			for i, label in enumerate(list_labels):
+				if label == 0:
+					list_labels[i] = -1
+
+			#Create a word count vector for every article in the dataset and save the count vector in numpy array
+			print("appending")
+			count_vectors = []
+			i = 0
+			nlp = spacy.load("en_core_web_lg")
 			for article in list_articles:
-				count_vectors.append(self.calc_count_doc_count_vector(cumulative_word_vec, article, lemmad))
+				count_vectors.append(self.calc_count_doc_count_vector(cumulative_word_vec, article, nlp, lemmad))
 			numpy_count = np.array(count_vectors)
 			numpy_label = np.array(list_labels)
 			np.save(file_name_2, numpy_count)
 			np.save(label_name, numpy_label)
+
+		#Build and train an SVM BOW
 		trainLen = int(len(count_vectors) * 0.8)
 		acc = 0
-
-
 		print("building net")
 		net = SVM()
 		print("training")
@@ -635,38 +619,50 @@ class Orchestrator():
 		acc = accuracy_score(list_labels[trainLen:], predictions)
 		target_names = ['Female', 'Male']
 		print("accuracy is: " + str(acc))
+
+		#if the accuracy is high enough, print the metrics, and print top words to a file
 		if acc >= 0.60:
 			print(classification_report(list_labels[trainLen:], predictions, target_names=target_names))
 
 			weights = weights[0]
-			#print(weights)
 
 			resTop = sorted(range(len(weights)), key=lambda sub: weights[sub])[-21:]
 			resBottom = sorted(range(len(weights)), key=lambda sub: weights[sub])[:21]
 			model_name_amp = model_name + "_" + str(acc) + "_.sav"
 			pickle.dump(net, open(model_name_amp, 'wb'))
-			print("Male Top Words: ")
+			fout = open('output_words.txt', 'w')
+			fout.write("Male Top Words: \n")
 			for index in resTop:
-				print(cumulative_word_vec[index], float(weights[index]))
-			print("Female Top Words: ")
+				fout.write(cumulative_word_vec[index] + ' ' + str(float(weights[index])) + '\n')
+			fout.write("Female Top Words: \n")
 			for index in resBottom:
-				print(cumulative_word_vec[index], float(weights[index]))
-
-	#def test_hyperparams(self):
-
-	#def count_adjectives:
+				fout.write(cumulative_word_vec[index] + ' ' + str(float(weights[index])) + '\n')
 
 
-#orchestrator = Orchestrator()
-#articles = orchestrator.read_data(path = ApplicationConstants.all_articles_random_v4, random= True, number_of_articles = 1000, savePath = ApplicationConstants.all_articles_random_v4_cleaned, save = True, clean = True)
+
+orchestrator = Orchestrator()
+#articles = orchestrator.read_data(path = ApplicationConstants.all_articles_random_v3, number_of_articles = 1000, save = True, savePath = "Data/testingReg+Stopchanges.json", clean = True, random = True)
+'''
+training_ttl = 0
+val_ttl = 0
+test_ttl = 0
+for leaning in articles[0]:
+
+		training_dataset = articles[0][leaning][ApplicationConstants.Train]
+		validation_dataset = articles[0][leaning][ApplicationConstants.Validation]
+		test_dataset = articles[0][leaning][ApplicationConstants.Test]
+		training_ttl += len(training_dataset)
+		val_ttl += len(validation_dataset)
+		test_ttl += len(test_dataset)
+print("total articles: ", str(training_ttl+val_ttl+test_ttl))
+'''
+
 #articles = orchestrator.read_data(path = ApplicationConstants.all_articles_random_v4_cleaned, number_of_articles = 1000, random=False)
 #articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v3, random= False, number_of_articles = 50)
 #articles = orchestrator.read_data(ApplicationConstants.all_articles_random_v4_cleaned, random=False, number_of_articles=50)
 #input("Press Enter to continue...") adds 1 G to mem
 #articles = orchestrator.get_all_articles()
-#orchestrator.run_bow(articles, "store/np_cum_vec_POS_d_50.npy", "store/np_count_vec_POS_d_50.npy", "perceptron_POS_d_50",True, False)#run bow on adj, lemmad
-#orchestrator.run_bow(articles, "store/np_cum_vec_l_50.npy", "store/np_count_vec_l_50.npy", "perceptron_l_50",True, True)#run bow on all data, lemmad
-#orchestrator.run_bow(articles, "store/np_cum_vec_POS_50.npy", "store/np_count_vec_POS_50.npy", "perceptron_POS_50.sav", False, False)
+#orchestrator.run_bow( "store/np_cum_vec_POSnoL.npy", "store/np_count_vec_POSnoL.npy", "store/perceptron_POSnoL.sav",True, False, True) #notPos, lemmad, printvocab
 #orchestrator.pretrain_and_fineTune(dirty = True)
 #orchestrator.print_all_the_news()
 #debias, zhao, not_shared = word_sets()

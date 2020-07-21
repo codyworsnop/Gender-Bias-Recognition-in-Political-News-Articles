@@ -1,0 +1,103 @@
+Source: breitbart
+Pos Female: 
+     Elizabeth_Warren: 5
+     Sarah_Palin: 5
+     Hillary_Clinton: 3
+     Betsy_Devos: 5
+     Alexandria_ocasio-cortez: 2
+Neg Female: 
+     Alexandria_ocasio-cortez: 9
+     Sarah_Palin: 8
+     Elizabeth_Warren: 5
+     Betsy_Devos: 4
+     Hillary_Clinton: 12
+Pos Male: 
+     Barack_Obama: 7
+     Bernie_Sanders: 2
+     Donald_Trump: 3
+     Mitch_Mcconnell: 4
+Neg Male: 
+     Mitch_Mcconnell: 6
+     Joe_Biden: 2
+     Donald_Trump: 5
+     Bernie_Sanders: 3
+     Barack_Obama: 5
+Source: fox
+Pos Female: 
+     Elizabeth_Warren: 3
+     Sarah_Palin: 6
+     Alexandria_ocasio-cortez: 1
+     Betsy_Devos: 3
+Neg Female: 
+     Alexandria_ocasio-cortez: 5
+     Sarah_Palin: 3
+     Hillary_Clinton: 3
+     Elizabeth_Warren: 1
+     Betsy_Devos: 1
+Pos Male: 
+     Barack_Obama: 1
+     Bernie_Sanders: 1
+     Donald_Trump: 1
+Neg Male: 
+     Joe_Biden: 3
+     Donald_Trump: 4
+     Bernie_Sanders: 1
+     Barack_Obama: 1
+     Mitch_Mcconnell: 2
+Source: usa_today
+Pos Female: 
+     Betsy_Devos: 1
+     Hillary_Clinton: 1
+Neg Female: 
+     Alexandria_ocasio-cortez: 4
+     Sarah_Palin: 1
+     Hillary_Clinton: 2
+     Betsy_Devos: 1
+Pos Male: 
+     Barack_Obama: 4
+Neg Male: 
+     Mitch_Mcconnell: 1
+     Joe_Biden: 1
+     Bernie_Sanders: 1
+     Donald_Trump: 2
+Source: huffpost
+Pos Female: 
+     Hillary_Clinton: 4
+     Sarah_Palin: 2
+     Betsy_Devos: 1
+     Elizabeth_Warren: 3
+Neg Female: 
+     Alexandria_ocasio-cortez: 7
+     Hillary_Clinton: 4
+     Betsy_Devos: 1
+     Sarah_Palin: 4
+Pos Male: 
+     Bernie_Sanders: 1
+     Barack_Obama: 4
+     Donald_Trump: 2
+Neg Male: 
+     Mitch_Mcconnell: 5
+     Joe_Biden: 3
+     Donald_Trump: 2
+     Barack_Obama: 1
+Source: new_york_times
+Pos Female: 
+     Hillary_Clinton: 6
+     Elizabeth_Warren: 2
+     Sarah_Palin: 4
+Neg Female: 
+     Sarah_Palin: 1
+     Elizabeth_Warren: 2
+Pos Male: 
+     Bernie_Sanders: 1
+     Barack_Obama: 1
+     Joe_Biden: 1
+Neg Male: 
+     Mitch_Mcconnell: 1
+     Bernie_Sanders: 6
+     Joe_Biden: 4
+
+f pos {'breitbart': 20, 'fox': 13, 'usa_today': 2, 'huffpost': 10, 'new_york_times': 12}
+f neg {'breitbart': 38, 'fox': 13, 'usa_today': 8, 'huffpost': 16, 'new_york_times': 3}
+m pos {'breitbart': 16, 'fox': 3, 'usa_today': 4, 'huffpost': 7, 'new_york_times': 3}
+m neg {'breitbart': 21, 'fox': 11, 'usa_today': 5, 'huffpost': 11, 'new_york_times': 11}

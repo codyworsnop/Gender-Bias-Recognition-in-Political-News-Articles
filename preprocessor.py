@@ -1,13 +1,13 @@
-
+#######This file cleans data as it's read, if clean = True #######
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.tag import pos_tag
 import unicodedata
-import string 
+import string
 import re
 import StopWords
-import json 
+import json
 from collections import Counter
 import spacy
 from spacy import displacy
@@ -23,6 +23,61 @@ class Preprocessor():
         if lower:
             token = token = token.lower()
         return token.strip()
+
+    def Clean_POS(self, data: str):
+        # normalize the data, removing punctuation
+        data = unicodedata.normalize('NFKC', data)
+
+        # remove numbers
+        data = re.sub('\d+', '  ', data)
+
+        # remove any word containing woman replace with person
+        doc = self.nlp(data)
+
+        data = ''
+        # Used tagged entities to replace names of places and people
+        for token in doc:
+            if token.pos_ == "ADJ":
+                data = data + ' ' + str(token)
+
+        # replace gendered words with person and non gendered pronouns
+        for pattern, replacement in RegexSearchPatterns.Patterns:
+            data = re.sub(pattern, replacement, data, flags=re.I)
+
+        emoticons = re.compile("["
+                               u"\U0001F600-\U0001F64F"  # emoticons
+                               u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                               u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                               u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                               u"\U00002702-\U000027B0"
+                               u"\U000024C2-\U0001F251"
+                               u"\U0000200B"
+                               u"\U0000202C"
+                               u"\U00002069"
+                               u"\U00002066"
+                               u"\U0000202A" 
+                               "]+", flags=re.UNICODE)
+        data = emoticons.sub(' ', data)
+
+        # remove whole words from stop list
+        for word in StopWords.StopWords:
+            reg_string = '\\b' + word + '((-[a-zA-Z]*)|([,.!?;"\' ]))'
+            data = re.sub(reg_string, ' ', data, flags=re.I)
+
+        # Cleanup the punctuation / symbols
+        data = re.sub(' ,', ',', data, flags=re.I)
+        data = re.sub('  ', ' ', data, flags=re.I)
+        data = re.sub('\+', ' ', data, flags=re.I)
+        data = re.sub('&', ' ', data, flags=re.I)
+        data = re.sub('  ', ' ', data, flags=re.I)
+        # replace huperson with human (an unintended consequence of our man/person regex swap)
+        data = re.sub('huperson', 'human', data, flags=re.I)
+        data = re.sub('ombudsperson', 'person', data, flags=re.I)
+        data = re.sub('ottoperson', 'norp', data, flags=re.I)
+
+        # return processed_data
+        return data
+
 
     def Clean(self, data : str):
         ''' Removes POS that are NNP, PRP, or PRP$, and removes all stop words  '''
@@ -40,7 +95,7 @@ class Preprocessor():
         for ent in reversed(doc.ents):
             # print(ent.text, ent.start_char, ent.end_char, ent.label_)
             if ent.label_ == 'PERSON' or ent.label_ == 'NORP' or ent.label_ == 'GPE' or ent.label == 'LOC':
-                data = data[:ent.start_char] + ent.label_.lower() + data[ent.end_char:]
+                data = data[:ent.start_char] + ent.label_.lower() + " " + data[ent.end_char:]
 
 
         #replace gendered words with person and non gendered pronouns
@@ -55,6 +110,11 @@ class Preprocessor():
                    u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
                    u"\U00002702-\U000027B0"
                    u"\U000024C2-\U0001F251"
+                   u"\U0000200B"
+                   u"\U0000202C"
+                   u"\U00002069"
+                   u"\U00002066"
+                   u"\U0000202A"             
                    "]+", flags=re.UNICODE)
         data = emoticons.sub(' ', data)
 
@@ -72,6 +132,8 @@ class Preprocessor():
         data = re.sub('\+', ' ', data, flags = re.I)
         data = re.sub('&', ' ', data, flags = re.I)
         data = re.sub('  ', ' ', data, flags=re.I)
+        data = re.sub('â€', ' ', data, flags=re.I)
+        data = re.sub('ão', ' ', data, flags=re.I)
         #replace huperson with human (an unintended consequence of our man/person regex swap)
         data = re.sub('huperson', 'human', data,  flags = re.I)
         data = re.sub('ombudsperson', 'person', data, flags=re.I)

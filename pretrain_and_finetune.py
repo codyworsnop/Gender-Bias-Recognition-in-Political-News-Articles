@@ -1,3 +1,6 @@
+'''This file will perform doc2vec pretrain on atn and finetune on newsbias, then use the doc2vec embeddings to
+generate a Neural Network Model, and TSNE visualizations
+'''
 from DataReader import DataReader
 from DataContracts import Article
 from doc2vec import doc
@@ -191,19 +194,11 @@ class pretrain():
 
                                     docEmbed = doc()
                                     if notBaseline:
-                                        #fine_tuned_model = docEmbed.fine_tune(fineTune_train_articles + fineTune_test_articles, fineTune_train_labels + fineTune_test_labels,
-                                        #                                           pretrained_article_model, fineTune_epoch)
                                         fine_tuned_model = docEmbed.fine_tune(fineTune_train_articles ,fineTune_train_labels,
                                                                                     pretrained_article_model, fineTune_epoch)
                                     else:
-                                        #fine_tuned_model = docEmbed.Embed(fineTune_train_articles + fineTune_test_articles, fineTune_train_labels + fineTune_test_labels,
-                                                                                  #vector_size=vector_size,
-                                                                                  #epochs=fineTune_epoch,
-                                                                                  #lower=True)
+
                                         fine_tuned_model = docEmbed.Embed(fineTune_train_articles, fineTune_train_labels, vector_size=vector_size, epochs=fineTune_epoch, lower=True)
-                                    #FT_labels, FT_embeddings = docEmbed.gen_vec(fine_tuned_model,
-                                    #                                                        fineTune_train_articles + fineTune_test_articles,
-                                    #                                                        fineTune_train_labels + fineTune_test_labels)
                                     FT_Train_labels, FT_train_embeddings = docEmbed.gen_vec(fine_tuned_model,
                                                                                          fineTune_train_articles,
                                                                                           fineTune_train_labels)
@@ -216,10 +211,6 @@ class pretrain():
                                     del docEmbed
 
                                     model = NN()
-                                    #print(len(FT_embeddings),len(FT_labels), len(training_dataset), len(validation_dataset), len(test_dataset))
-                                    #model.Train(FT_embeddings[:len(training_dataset) ], FT_labels[:len(training_dataset)],
-                                    #            FT_embeddings[len(training_dataset):len(training_dataset) + len(validation_dataset)], FT_labels[len(training_dataset):len(training_dataset) + len(validation_dataset)])
-                                    #prediction = model.Predict(FT_embeddings[len(training_dataset) + len(validation_dataset):])
                                     model.Train(FT_train_embeddings[:len(training_dataset)], FT_labels[:len(training_dataset)], FT_train_embeddings[len(training_dataset):], FT_labels[len(training_dataset):])
                                     prediction = model.Predict(TF_Test_embeddings)
 
@@ -227,59 +218,34 @@ class pretrain():
                                     if j == 0:
                                         lean = "Breitbart"
                                         print(len(prediction), len(FT_labels), len(training_dataset) + len(validation_dataset))
-                                        #breitbartTtlPrecision += Met.Precision(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
-                                        #breitbartTtlRecall += Met.Recall(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
-                                        #breitbartTtlF1 += Met.Fmeasure(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
                                         breitbartTtlPrecision += Met.Precision(prediction, FT_test_labels)
                                         breitbartTtlRecall += Met.Recall(prediction, FT_test_labels)
                                         breitbartTtlF1 += Met.Fmeasure(prediction, FT_test_labels)
                                     if j == 1:
                                         lean = "Fox"
-                                        #foxTtlPrecision += Met.Precision(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
-                                        #foxTtlRecall += Met.Recall(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
-                                        #foxTtlF1 += Met.Fmeasure(prediction,FT_labels[len(training_dataset) + len(validation_dataset):])
                                         foxTtlPrecision += Met.Precision(prediction, FT_test_labels)
                                         foxTtlRecall += Met.Recall(prediction, FT_test_labels)
                                         foxTtlF1 += Met.Fmeasure(prediction,FT_test_labels)
                                     if j == 2:
                                         lean = "USA"
-                                        #usaTtlPrecision += Met.Precision(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
-                                        #usaTtlRecall += Met.Recall(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
-                                        #usaTtlF1 += Met.Fmeasure(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
                                         usaTtlPrecision += Met.Precision(prediction, FT_test_labels)
                                         usaTtlRecall += Met.Recall(prediction, FT_test_labels)
                                         usaTtlF1 += Met.Fmeasure(prediction, FT_test_labels)
                                     if j == 3:
                                         lean = "Huff"
-                                        #huffTtlPrecision += Met.Precision(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
-                                        #huffTtlRecall += Met.Recall(prediction,FT_labels[len(training_dataset) + len(validation_dataset):])
-                                        #huffTtlF1 += Met.Fmeasure(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
                                         huffTtlPrecision += Met.Precision(prediction, FT_test_labels)
                                         huffTtlRecall += Met.Recall(prediction, FT_test_labels)
                                         huffTtlF1 += Met.Fmeasure(prediction, FT_test_labels)
                                     if j == 4:
                                         lean = "NYT"
-                                        #nytTtlPrecision += Met.Precision(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
-                                        #nytTtlRecall += Met.Recall(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
-                                        #nytTtlF1 += Met.Fmeasure(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])
                                         nytTtlPrecision += Met.Precision(prediction, FT_test_labels)
                                         nytTtlRecall += Met.Recall(prediction,  FT_test_labels)
                                         nytTtlF1 += Met.Fmeasure(prediction,  FT_test_labels)
-                                    #print("Leaning:", lean, "precision:",
-                                    #      Met.Precision(prediction, FT_labels[len(training_dataset) + len(validation_dataset):]), "recall:",
-                                    #      Met.Recall(prediction, FT_labels[len(training_dataset) + len(validation_dataset):]), "F-Measure:",
-                                    #      Met.Fmeasure(prediction, FT_labels[len(training_dataset) + len(validation_dataset):]))
 
                                     print("Leaning:", lean, "precision:",
                                           Met.Precision(prediction,FT_test_labels), "recall:",
                                           Met.Recall(prediction,FT_test_labels),  "F-Measure:",
                                           Met.Fmeasure(prediction,FT_test_labels))
-
-
-                                    #f.write("Leaning: " + lean + " precision:" +
-                                    #       str(Met.Precision(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])) + " recall: " +
-                                    #        str(Met.Recall(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])) + " F-Measure: " +
-                                    #        str(Met.Fmeasure(prediction, FT_labels[len(training_dataset) + len(validation_dataset):])) + "\n")
 
                                     f.write("Leaning:" + lean + "precision:" +
                                           str(Met.Precision(prediction, FT_test_labels)) + "recall:"+
@@ -288,7 +254,7 @@ class pretrain():
                                     del model
 
 
-                                    if Met.Fmeasure(prediction, FT_test_labels) > 0.70:
+                                    if Met.Fmeasure(prediction, FT_test_labels) > 0.70 and Met.Fmeasure(prediction, FT_test_labels) < 0.90:
                                         if leaning == 'breitbart' and not tsneBreit:
                                             self.visualize_all(fine_tuned_model, leaning)
                                             tsneBreit = True
@@ -305,17 +271,7 @@ class pretrain():
                                             self.visualize_all(fine_tuned_model, leaning)
                                             tsneNYT = True
                                     del Met
-                                    #if i == 0:
-                                    #   self.visualize_all(fine_tuned_model, leaning)
-                                    #if i == 0:
-                                        #self.Visualizer.plot_TSNE(leaning,
-                                        #                          FT_embeddings,
-                                        #                          FT_labels ,
-                                        #                          training_dataset + validation_dataset + test_dataset)
-                                    #    self.Visualizer.plot_TSNE(leaning,
-                                    #                              FT_train_embeddings + TF_Test_embeddings,
-                                    #                              FT_labels + FT_test_labels,
-                                    #                              training_dataset + validation_dataset + test_dataset)
+
 
                             f_av.write("Average Breitbart Recall: " + str(breitbartTtlRecall / 5) + " Average Breitbart Precision: " + str(
                                 breitbartTtlPrecision / 5) + " Average Breitbart F1: " + str(breitbartTtlF1 / 5) + "\n")
@@ -389,7 +345,3 @@ class pretrain():
 pf = pretrain()
 fine_tuned_model = pf.pretrain_and_fineTune(dirty = False, notBaseline=True, cleanatn = True) #run pretrain and fineTune on atn, then on cleaned newsbias dataset
 
-
-#pf.print_all_the_news()
-#from Orchestrator import Orchestrator
-#orchestrator = Orchestrator()

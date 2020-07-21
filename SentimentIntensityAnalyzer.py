@@ -1,4 +1,5 @@
-import nltk 
+#######This file calculates sentiment (OLD) #######
+import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk import tokenize 
 import statistics

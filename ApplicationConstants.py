@@ -8,6 +8,10 @@ all_articles_random_v3 = "./Data/articles_random_v3.json"
 all_articles_random_v3_cleaned = "./Data/articles_random_v3_cleaned.json" #duplicates, mccain, and names fixed, also cleaned
 all_articles_random_v4= "./Data/articles_random_v4.json"
 all_articles_random_v4_cleaned = "./Data/articles_random_v4_cleaned.json"
+all_articles_random_v4_candidate_names = "./Data/'articles_random_v4_sentences_len2.json" #json containing articles with target name and at least 2 sentences
+all_articles_random_v4_cleaned_pos = "./Data/articles_random_v4_cleaned_pos.json" #json containing articles with POS only
+all_articles_random_v4_cleaned_pos_candidate_names = "./Data/articles_random_v4_cleaned_pos_candidate_names.json" #json containing articles with POS surrounding target name
+all_articles_sentiment_counts = "./Data/articles_w_pos_neg_cnts.json" #json containing sentiment counts
 
 #foldnames
 fold_1 = "./folds/fold1.txt"

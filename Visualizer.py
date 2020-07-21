@@ -1,3 +1,4 @@
+#######This file generates TSNE visualizations and other neat plots #######
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt 
 import matplotlib

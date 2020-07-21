@@ -1,5 +1,23 @@
+#######This file will generate various versions (see below) of jsons after gathering them using links #######
+
 from Orchestrator import *
+import ApplicationConstants
+from parse_sentences import run
 
 orchestrator = Orchestrator()
-#orchestrator.read_data(path = "Data/articles_random_v4.json", random= True, number_of_articles = 1000, savePath = "Data/articles_random_v4_cleaned.json", save = True, clean = True)
-orchestrator.read_data_csv(path = "store/all-the-news-2-1.csv", random= True, number_of_articles = 1000, savePath = "store/all-the-news_cleaned.csv", save = True, clean = True)
+#Clean the articles
+orchestrator.read_data(path = "Data/articles_random_v3.json", save = True,
+                       savePath = "Data/articles_random_v4_cleaned.json", random = True, number_of_articles=1000)
+
+#Create the candidate name sentence json
+run()
+
+#Clean the sentences containing the candidate name, then do POS tagging, save ADJ
+orchestrator.read_data(path = ApplicationConstants.all_articles_random_v4_candidate_names, save = True,
+                       savePath = ApplicationConstants.all_articles_random_v4_cleaned_pos_candidate_names, clean = True,
+                        random = True, number_of_articles = 1000, pos_tagged = True)
+
+#Clean all of the sentences (regardless of if candidate name is there), then do POS tagging, save ADJ
+orchestrator.read_data(path = ApplicationConstants.all_articles_random_v4, save = True,
+                       savePath = ApplicationConstants.all_articles_random_v4_cleaned_pos, clean = True,
+                        random = True, number_of_articles = 1000, pos_tagged = True)

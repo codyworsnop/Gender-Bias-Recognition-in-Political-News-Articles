@@ -1,4 +1,4 @@
-
+#######This file calculates accuracy, fmeasre, recall, and precision #######
 from sklearn.metrics import accuracy_score
 
 class Metrics():

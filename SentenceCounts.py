@@ -1,4 +1,4 @@
-
+#######This file calculates gers sentence counts of news sources and candidate targets #######
 from nltk.tokenize import sent_tokenize
 import ApplicationConstants
 from DataReader import DataReader
