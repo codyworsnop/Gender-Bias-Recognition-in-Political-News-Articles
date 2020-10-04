@@ -656,19 +656,6 @@ class Orchestrator():
         if allPeople:
             trainLen = int(len(count_vectors) * 0.8)
         else:
-            if not_pos:
-                articles = self.read_data(path=ApplicationConstants.all_articles_random_v4_cleaned,
-                                          number_of_articles=numArticles
-                                          , save=False)
-            else:
-                articles = self.read_data(path=ApplicationConstants.all_articles_random_v4_cleaned_pos_candidate_names,
-                                          number_of_articles=numArticles, save=False)
-            articles_list = list(map(lambda leaning: articles[4][leaning][ApplicationConstants.Train] +
-                                                     articles[4][leaning][ApplicationConstants.Validation] +
-                                                     articles[4][leaning][ApplicationConstants.Test], articles[4]))
-            articles_list = [item for sublist in articles_list for item in sublist]
-            train_articles = list(filter(lambda article: article.Label.TargetName != ApplicationConstants.person,
-                                         articles_list))  # change this line
             trainLen = len(train_articles)
         acc = 0
         print("building net")
