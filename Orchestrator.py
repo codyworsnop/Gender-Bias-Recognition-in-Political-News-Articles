@@ -611,7 +611,7 @@ class Orchestrator():
                 test_content = list(map(lambda article: article.Content, train_articles))
                 test_label = list(map(lambda article: article.Label.TargetGender, test_articles))
 
-                print("content lengths", str(train_content), str(test_content))
+                print("content lengths", str(len(train_content)), str(len(test_content)))
                 labels = train_label + test_label
                 print("numlabels:" , str(len(labels)))
 
