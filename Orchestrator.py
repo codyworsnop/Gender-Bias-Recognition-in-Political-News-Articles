@@ -661,12 +661,12 @@ class Orchestrator():
         print("building net")
         net = SVM()
         print("training")
-        print(len(labels), print(len(labels[:trainLen])))
+        print(len(labels), len(labels[:trainLen]))
         net.Train(count_vectors[:trainLen], labels[:trainLen], count_vectors[:trainLen],
                   labels[:trainLen])  # was list_labels
         weights = net.Get_Weights()
         predictions = net.Predict(count_vectors[trainLen:])
-        print(len(predictions), len(labels[trainLen:]),len(labels))
+        print(trainLen, len(predictions), len(labels[trainLen:]),len(labels))
 
         acc = accuracy_score(labels[trainLen:], predictions)  # was list_labels
         target_names = ['Female', 'Male']
