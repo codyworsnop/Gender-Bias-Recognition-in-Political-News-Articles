@@ -662,6 +662,7 @@ class Orchestrator():
         net = SVM()
         print("training")
         print(len(labels), len(labels[:trainLen]))
+        print(len(count_vectors), len(count_vectors[:trainLen]), len(count_vectors[trainLen:]))
         net.Train(count_vectors[:trainLen], labels[:trainLen], count_vectors[:trainLen],
                   labels[:trainLen])  # was list_labels
         weights = net.Get_Weights()
