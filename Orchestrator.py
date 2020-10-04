@@ -610,8 +610,12 @@ class Orchestrator():
                                             articles_list))  # change this line
                 test_content = list(map(lambda article: article.Content, train_articles))
                 test_label = list(map(lambda article: article.Label.TargetGender, test_articles))
+
+                print("content lengths", str(train_content), str(test_content))
                 labels = train_label + test_label
                 print("numlabels:" , str(len(labels)))
+
+
             # zip and shuffle the list of articles
             # print("zipping and shuffling")
             # zippedArticles = list(zip(articles_list, labels))
