@@ -611,7 +611,7 @@ class Orchestrator():
                 test_content = list(map(lambda article: article.Content, train_articles))
                 test_label = list(map(lambda article: article.Label.TargetGender, test_articles))
                 labels = train_label + test_label
-
+                print("numlabels:" , str(len(labels)))
             # zip and shuffle the list of articles
             # print("zipping and shuffling")
             # zippedArticles = list(zip(articles_list, labels))
@@ -666,7 +666,7 @@ class Orchestrator():
                   labels[:trainLen])  # was list_labels
         weights = net.Get_Weights()
         predictions = net.Predict(count_vectors[trainLen:])
-        print(len(predictions), len(labels[trainLen:]))
+        print(len(predictions), len(labels[trainLen:]),len(labels))
 
         acc = accuracy_score(labels[trainLen:], predictions)  # was list_labels
         target_names = ['Female', 'Male']
