@@ -602,11 +602,11 @@ class Orchestrator():
                                                          articles[4][leaning][ApplicationConstants.Validation] +
                                                          articles[4][leaning][ApplicationConstants.Test], articles[4]))
                 articles_list = [item for sublist in articles_list for item in sublist]
-                train_articles = list(filter(lambda article: article.Label.TargetName != ApplicationConstants.person,
+                train_articles = list(filter(lambda article: article.Label.TargetName != person,
                                              articles_list))  # change this line
                 train_content = list(map(lambda article: article.Content, train_articles))
                 train_label = list(map(lambda article: article.Label.TargetGender, train_articles))
-                test_articles = list(filter(lambda article: article.Label.TargetName == ApplicationConstants.person,
+                test_articles = list(filter(lambda article: article.Label.TargetName == person,
                                             articles_list))  # change this line
                 test_content = list(map(lambda article: article.Content, train_articles))
                 test_label = list(map(lambda article: article.Label.TargetGender, test_articles))
@@ -693,7 +693,10 @@ class Orchestrator():
             resBottom = sorted(range(len(weights)), key=lambda sub: weights[sub])[:25]
             model_name_amp = model_name + "_" + str(acc) + "_.sav"
             pickle.dump(net, open(model_name_amp, 'wb'))
-            fout = open('output_words_HC.txt', 'w')
+            if not allPeople:
+                fout = open('output_words' + person +'.txt', 'w')
+            else:
+                fout = open('output_words.txt', 'w')
             fout.write("Male Top Words: \n")
             for index in resTop:
                 fout.write(cumulative_word_vec[index] + ' ' + str(float(weights[index])) + '\n')
