@@ -672,7 +672,7 @@ class Orchestrator():
         weights = net.Get_Weights()
         predictions = net.Predict(count_vectors[trainLen:])
         #print("trainLen", str(trainLen))
-        print( len(predictions), len(labels[trainLen:]),len(labels))
+        print( len(predictions), labels[:10],len(labels))
 
         acc = accuracy_score(labels[trainLen:], predictions)  # was list_labels
         target_names = ['Female', 'Male']
