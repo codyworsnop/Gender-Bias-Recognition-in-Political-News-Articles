@@ -539,7 +539,7 @@ class Orchestrator():
                 balanced=True, allPeople=True):
         label_name = file_name_2[:-4] + "_labels.npy"
         if balanced:
-            numArticles = 5
+            numArticles = 50
         else:
             numArticles = 1000
         if os.path.exists("./store/") == False:
