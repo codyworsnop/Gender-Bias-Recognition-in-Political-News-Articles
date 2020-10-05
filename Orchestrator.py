@@ -608,12 +608,12 @@ class Orchestrator():
                 train_label = list(map(lambda article: article.Label.TargetGender, train_articles))
                 test_articles = list(filter(lambda article: article.Label.TargetName == person,
                                             articles_list))  # change this line
-                test_content = list(map(lambda article: article.Content, train_articles))
+                test_content = list(map(lambda article: article.Content, test_articles))
                 test_label = list(map(lambda article: article.Label.TargetGender, test_articles))
 
-                print("content lengths", train_content[0], test_content[0])
+                #print("content lengths", train_content[0], test_content[0])
                 labels = train_label + test_label
-                print("numlabels:" , str(len(labels)))
+                #print("numlabels:" , str(len(labels)))
 
 
             # zip and shuffle the list of articles
@@ -665,13 +665,13 @@ class Orchestrator():
         print("building net")
         net = SVM()
         print("training")
-        print(len(labels), len(labels[:trainLen]))
+        #print(len(labels), len(labels[:trainLen]))
         print(len(count_vectors), len(count_vectors[:trainLen]), len(count_vectors[trainLen:]))
         net.Train(count_vectors[:trainLen], labels[:trainLen], count_vectors[:trainLen],
                   labels[:trainLen])  # was list_labels
         weights = net.Get_Weights()
         predictions = net.Predict(count_vectors[trainLen:])
-        print("trainLen", str(trainLen))
+        #print("trainLen", str(trainLen))
         print( len(predictions), len(labels[trainLen:]),len(labels))
 
         acc = accuracy_score(labels[trainLen:], predictions)  # was list_labels
