@@ -46,7 +46,7 @@ NOTE: to run this file, articles must have been collected and run_preprocessor.p
 
 
 def one_person_holdOut():
-    person = "Hillary_Clinton"
+    person = "Sarah_Palin"
     articles = orchestrator.read_data(path=ApplicationConstants.all_articles_random_v4_cleaned_pos_candidate_names,
         number_of_articles=50, save=False)
     cumulative_word_vec = orchestrator.calc_word_vector(articles, True, False, True)
@@ -58,16 +58,19 @@ def one_person_holdOut():
     articles_list = [item for sublist in articles_list for item in sublist]
     train_articles = list(filter(lambda article: article.Label.TargetName != person,
                                  articles_list))  # change this line
+    test_articles = list(filter(lambda article: article.Label.TargetName == person,
+                                articles_list))  # change this line
+    train_articles = train_articles + test_articles
     train_content = list(map(lambda article: article.Content, train_articles))
     train_label = list(map(lambda article: article.Label.TargetGender, train_articles))
 
 
-    test_articles = list(filter(lambda article: article.Label.TargetName == person,
-                                articles_list))  # change this line
-    test_content = list(map(lambda article: article.Content, test_articles))
-    test_label = list(map(lambda article: article.Label.TargetGender, test_articles))
 
-    labels = train_label + test_label
+    #test_content = list(map(lambda article: article.Content, test_articles))
+    #test_label = list(map(lambda article: article.Label.TargetGender, test_articles))
+
+    #labels = train_label + test_label
+    labels = train_label
     for i, label in enumerate(labels):  # was list_labels
         if label == 0:
             labels[i] = -1  # was list_labels
@@ -76,46 +79,67 @@ def one_person_holdOut():
     nlp = spacy.load("en_core_web_lg")
     for article in train_content:
         count_vectors.append(orchestrator.calc_count_doc_count_vector(cumulative_word_vec, article, nlp, False))
-    for article in test_content:
-        count_vectors.append(orchestrator.calc_count_doc_count_vector(cumulative_word_vec, article, nlp, False))
+    #for article in test_content:
+    #    count_vectors.append(orchestrator.calc_count_doc_count_vector(cumulative_word_vec, article, nlp, False))
 
     trainLen = len(train_articles)
+    diffLen = len(train_articles) - len(test_articles)
 
     acc = 0
     print("building net")
     net = SVM()
     print("training")
     # print(len(labels), len(labels[:trainLen]))
-    print(len(count_vectors), len(count_vectors[:trainLen]), len(count_vectors[trainLen:]))
-    net.Train(count_vectors[:trainLen], labels[:trainLen], count_vectors[:trainLen],
-              labels[:trainLen])  # was list_labels
-    weights = net.Get_Weights()
-    predictions = net.Predict(count_vectors[trainLen:])
-    # print("trainLen", str(trainLen))
-    print(len(predictions), labels[-10:], len(labels))
+    print(trainLen, diffLen)
+    print(len(count_vectors), len(count_vectors[:diffLen]))
 
-    acc = accuracy_score(labels[trainLen:], predictions)  # was list_labels
+
+    net.Train(count_vectors[:diffLen], labels[:diffLen], count_vectors[:diffLen],
+              labels[:diffLen])  # was list_labels
+    weights = net.Get_Weights()
+    #predictions = net.Predict(count_vectors[trainLen:])
+    predictions = net.Predict(count_vectors[diffLen:])
+    # print("trainLen", str(trainLen))
+    print(len(predictions), len(labels[diffLen:]))
+
+    #acc = accuracy_score(labels[trainLen:], predictions)  # was list_labels
+    acc = accuracy_score(labels[diffLen:], predictions)
+    #tp = 0
+    #testLabels = labels[diffLen:]
+    #for i, prediction in enumerate(predictions):
+    #    if prediction == testLabels[i]:
+    #        tp+=1
+    #acc = tp/len(testLabels)
+
+
+
+
     target_names = ['Female', 'Male']
     print("accuracy is: " + str(acc))
 
     # if the accuracy is high enough, print the metrics, and print top words to a file
-    if acc >= 0.60:
-        print(classification_report(labels[trainLen:], predictions, target_names=target_names))  # was list_labels
 
-        weights = weights[0]
+    #print(classification_report(labels[trainLen:], predictions, target_names=target_names))  # was list_labels
+    print(classification_report(labels[diffLen:], predictions, target_names=target_names))
+    weights = weights[0]
 
-        resTop = sorted(range(len(weights)), key=lambda sub: weights[sub])[-25:]
-        resBottom = sorted(range(len(weights)), key=lambda sub: weights[sub])[:25]
-        model_name_amp ="store/perceptron_ALLnoL_HC.sav"
-        pickle.dump(net, open(model_name_amp, 'wb'))
-        fout = open('output_words' + person + '.txt', 'w')
-
-        fout.write("Male Top Words: \n")
-        for index in resTop:
-            fout.write(cumulative_word_vec[index] + ' ' + str(float(weights[index])) + '\n')
-        fout.write("Female Top Words: \n")
-        for index in resBottom:
-            fout.write(cumulative_word_vec[index] + ' ' + str(float(weights[index])) + '\n')
-
+    resTop = sorted(range(len(weights)), key=lambda sub: weights[sub])[-25:]
+    resTop.reverse() #put from largest to smallest
+    resBottom = sorted(range(len(weights)), key=lambda sub: weights[sub])[:25]
+    model_name_amp ="store/perceptron_ALLnoL_HC.sav"
+    pickle.dump(net, open(model_name_amp, 'wb'))
+    fout = open('output_words' + person + '.txt', 'w')
+    fscores = open('output_word_scores_by_person.txt', 'a')
+    fscores.write("\n\n"+person + "\n")
+    fscores.write("Accuracy is: " + str(acc) +"\n")
+    fscores.write(str(classification_report(labels[diffLen:], predictions, target_names=target_names)) + "\n")
+    fout.write("Male Top Words: \n")
+    for index in resTop:
+        fout.write(cumulative_word_vec[index] + ' ' + str(float(weights[index])) + '\n')
+    fout.write("Female Top Words: \n")
+    for index in resBottom:
+        fout.write(cumulative_word_vec[index] + ' ' + str(float(weights[index])) + '\n')
+    fout.close()
+    fscores.close()
 
 one_person_holdOut()
